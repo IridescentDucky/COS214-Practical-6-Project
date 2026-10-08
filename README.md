@@ -6,11 +6,6 @@ https://docs.google.com/document/d/18jkW9gRDppPR8AhWRa4KiVEVAtO7DtYo8ME8rW1wpag/
 
 
 ### To Do:
-Task 2 - Scenario
-
-Task 4 - GoF particiants (why) and how they interact. What may vary
-
-Task 5 - Fix final class diagram (add multiplicities, ownership relations, )
-
-Task 7: Document changes & dicisions 
+Task 5 - Fix final class diagram (add multiplicities, ownership relations)
+Task 7: Document changes & decisions 
 
