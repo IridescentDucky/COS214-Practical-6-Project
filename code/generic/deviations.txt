@@ -1,0 +1,12 @@
+Deviations from the generic UML diagram (Strategy + Memento + Chain of Responsibility)
+
+Strategy:
+ - No deviations the code was implemented identical to the UML class diagram
+
+Memento:
+ - Caretaker Implementation: In the generic UML diagram, Caretaker is modeled without attributes or methods. In C++, the attribute std::vector<WorkItemMemento*> and the functions addMemento(), getMemento(), and a cleanup destructor were added so the class can store and retrieve snapshots.
+
+Chain of Responsibility:
+  - There is no handler class, so I changed successor from being of type Handler to TaskEscalationManager.
+  - I also changed successor to be a protected member instead of private so that the handlers have access to it.
+  - I also added a function setSuccessor() that allows us to set the successor of a handler. 
