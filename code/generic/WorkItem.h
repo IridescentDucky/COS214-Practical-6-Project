@@ -28,6 +28,9 @@ public:
     virtual void set(const std::string& data) = 0;
     virtual std::string get() const = 0;
     virtual void addTimeSpent(int units) = 0;
+    
+    virtual WorkItemMemento* createMemento() = 0;
+    virtual void setMemento(WorkItemMemento* m) = 0;
 
 protected:
     int id;
@@ -53,6 +56,9 @@ public:
     void set(const std::string& data) override;
     std::string get() const override;
     void addTimeSpent(int units) override;
+    
+    WorkItemMemento* createMemento() override;
+    void setMemento(WorkItemMemento* m) override;
 
     WorkItemState* getState() const;
     void setState(WorkItemState* newState);

@@ -116,3 +116,28 @@ void WorkItem::notifyWorkflow()
 {
     mediator->notify(this);
 }
+
+WorkItemMemento* WorkItem::createMemento()
+{
+    std::cout << "[WorkItem] " << name << " creating snapshot of state: "
+              << (state ? state->getName() : "None") << std::endl;
+              
+    return new WorkItemMemento(this->state);
+}
+
+void WorkItem::setMemento(WorkItemMemento* m)
+{
+    if (m == nullptr)
+    {
+        std::cout << "[WorkItem] " << name << " cannot restore from null memento." << std::endl;
+        return;
+    }
+
+    WorkItemState* savedState = m->getState();
+    if (savedState != nullptr)
+    {
+        std::cout << "[WorkItem] " << name << " restoring state from memento: "
+                  << savedState->getName() << std::endl;
+        this->setState(savedState);
+    }
+}
