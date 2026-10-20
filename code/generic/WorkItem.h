@@ -1,7 +1,6 @@
 #ifndef WORKITEM_H
 #define WORKITEM_H
 
-#include "Subject.h"
 #include "Component.h"
 
 #include <string>
@@ -38,14 +37,20 @@ public:
     virtual WorkItemMemento* createMemento() = 0;
     virtual void setMemento(WorkItemMemento* m) = 0;
 
+    void attach(Observer* observer);        //Observer
+    void detach(Observer* observer);        //Observer
+    void notify();                          //Observer
+
 protected:
     int id;
     std::string name;
     WorkItemState* state;
     WorkflowMediator* mediator;
+private:
+    std::vector<Observer*> observers; //Subject holds its observers
 };
 
-class WorkItem : public AbstractWorkItem, public Component, public Subject
+class WorkItem : public AbstractWorkItem, public Component
 {
 public:
     WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator);
@@ -75,15 +80,12 @@ public:
 
     void operation();//Decorator
 
-    void attach(Observer* observer);        //Observer
-    void detach(Observer* observer);        //Observer
-    void notify();                          //Observer
 
 private:
     std::string data;
     int deadline;
     int timeSpent;
-    std::vector<Observer*> observers;   //Observer, concrete Subjects hold its observers
+
 };
 
 #endif
