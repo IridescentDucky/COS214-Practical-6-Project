@@ -145,7 +145,7 @@ void WorkItem::setMemento(WorkItemMemento* m)
     }
 }
 
-void WorkItem::operation(){
+void AbstractWorkItem::operation(){
 
     std::cout << "Execute WorkItem operation..." << std::endl;  //Decorator 
 }
@@ -155,7 +155,7 @@ void WorkItem::attach(Observer* observer){
     observers.push_back(observer);
 }
 
-void WorkItem::detach(Observer* observer){
+void AbstractWorkItem::detach(Observer* observer){
 
     for (std::vector<Observer*>::iterator it = observers.begin(); it != observers.end(); ++it){
 
@@ -167,7 +167,7 @@ void WorkItem::detach(Observer* observer){
     }
 }
 
-void WorkItem::notify(){
+void AbstractWorkItem::notify(){
 
     for (Observer* observer : observers) {
         
