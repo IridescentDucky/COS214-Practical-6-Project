@@ -2,6 +2,7 @@
 #define WORKITEM_H
 
 #include "Component.h"
+#include "WorkItemMemento.h"
 
 #include <string>
 
@@ -34,6 +35,8 @@ public:
     virtual WorkItemMemento* createMemento() = 0;
     virtual void setMemento(WorkItemMemento* m) = 0;
 
+    virtual AbstractWorkItem* clone() = 0;
+
 protected:
     int id;
     std::string name;
@@ -41,7 +44,7 @@ protected:
     WorkflowMediator* mediator;
 };
 
-class WorkItem : public AbstractWorkItem, Component
+class WorkItem : public AbstractWorkItem, public Component
 {
 public:
     WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator);
@@ -70,6 +73,11 @@ public:
     void notifyWorkflow();
 
     void operation();
+    void add(Component* c);
+    void remove(Component* c);
+    Component* getChild(int n);
+
+    AbstractWorkItem* clone();
 private:
     std::string data;
     int deadline;
