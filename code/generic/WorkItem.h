@@ -1,8 +1,14 @@
 #ifndef WORKITEM_H
 #define WORKITEM_H
 
-#include <string>
+#include "Subject.h"
+#include "Component.h"
 
+#include <string>
+#include <vector>
+#include <iostream>
+
+class Observer;
 class WorkItemState;
 class WorkflowMediator;
 
@@ -39,7 +45,7 @@ protected:
     WorkflowMediator* mediator;
 };
 
-class WorkItem : public AbstractWorkItem
+class WorkItem : public AbstractWorkItem, public Component, public Subject
 {
 public:
     WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator);
@@ -67,10 +73,17 @@ public:
     bool hasValidData() const;
     void notifyWorkflow();
 
+    void operation();//Decorator
+
+    void attach(Observer* observer);        //Observer
+    void detach(Observer* observer);        //Observer
+    void notify();                          //Observer
+
 private:
     std::string data;
     int deadline;
     int timeSpent;
+    std::vector<Observer*> observers;   //Observer, concrete Subjects hold its observers
 };
 
 #endif
