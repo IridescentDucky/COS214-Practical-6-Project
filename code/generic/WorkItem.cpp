@@ -141,3 +141,7 @@ void WorkItem::setMemento(WorkItemMemento* m)
         this->setState(savedState);
     }
 }
+
+void WorkItem::operation() {
+    cout << "(Leaf) " << name << ": did something" << endl;
+}

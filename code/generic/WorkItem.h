@@ -1,6 +1,8 @@
 #ifndef WORKITEM_H
 #define WORKITEM_H
 
+#include "Component.h"
+
 #include <string>
 
 class WorkItemState;
@@ -39,7 +41,7 @@ protected:
     WorkflowMediator* mediator;
 };
 
-class WorkItem : public AbstractWorkItem
+class WorkItem : public AbstractWorkItem, Component
 {
 public:
     WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator);
@@ -67,6 +69,7 @@ public:
     bool hasValidData() const;
     void notifyWorkflow();
 
+    void operation();
 private:
     std::string data;
     int deadline;
