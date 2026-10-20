@@ -1,6 +1,7 @@
 #include "WorkItem.h"
 #include "State.h"
 #include "WorkflowMediator.h"
+#include "WorkItemMemento.h"
 
 #include <iostream>
 
@@ -143,5 +144,5 @@ void WorkItem::setMemento(WorkItemMemento* m)
 }
 
 void WorkItem::operation() {
-    cout << "(Leaf) " << name << ": did something" << endl;
+    std::cout << "(Leaf) " << name << ": did something" << std::endl;
 }
