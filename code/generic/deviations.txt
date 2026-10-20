@@ -53,11 +53,10 @@ Deviations from generic UML diagram (Decorator + Abstract Factory + Observer)
 
 Decorator:
 - Added in a component class and kept WorkItem as a concreteComponent. Also Decorator itself should inherit from Component and WorkItem should also inherit from Component. 
-ISSUE WITH ABSTRACTWORKITEM, some functions are inevitably pure virtual in certain patterns, however since we declare these pure virtual functions in AbstractWorkItem that means that all subclasses MUST implement these functions. So, patterns will have to implement other pattern functions even though its not that responsibility.
-Example. Observer pattern, the subject has a notify function thats pure virtual. But that means that patterns that inherit from AbstractWorkItem will have to implement the notify function even though its not their responsibility.
+
 
 Observer:
-- Added in a Subject class with attach, detach, notify. Thus AbstractWorkItem is not the Subject anymore and Subject is now the Subject partipant that WorkItem also inherits from.
+- Removed attach/detach/notify from Mediator. Subject is AbstractWorkItem, concreteSubject is WOrkItem
 
 Abstract Factory:
 - Removed relationship with Mediator cause its forcing a relationship. What is mediator coordinating here? Added a relationship with TIVIDY(Facade) so the Facade can use runWorkflow to create an instance of a workflow from either Factory 1 or Factory 2. The Mediator already has a responsibility and thats to coordinate the AbstractWorkItem objects. So giving Factory to Facade provides a simple interface for the Client to use.
