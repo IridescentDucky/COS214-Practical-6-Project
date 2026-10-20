@@ -32,6 +32,12 @@ std::string AbstractWorkItem::getStateName() const
 WorkItem::WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator)
     : AbstractWorkItem(id, name, mediator), deadline(deadline), timeSpent(0)
 {
+
+}
+
+WorkItem::WorkItem(const WorkItem& c) : AbstractWorkItem(c.id, c.name, c.mediator), data(c.data), deadline(c.deadline), timeSpent(c.timeSpent)
+{
+    state = c.state;
 }
 
 void WorkItem::handleState()
@@ -140,4 +146,26 @@ void WorkItem::setMemento(WorkItemMemento* m)
                   << savedState->getName() << std::endl;
         this->setState(savedState);
     }
+}
+
+void WorkItem::operation() {
+    std::cout << "(Leaf) " << name << ": did something" << std::endl;
+}
+
+void WorkItem::add(Component* c) {
+    std::cout << "(Leaf) Cannot add child" << std::endl;
+}
+
+void WorkItem::remove(Component* c) {
+    std::cout << "(Leaf) Cannot remove child" << std::endl;
+}
+
+Component* WorkItem::getChild(int n) {
+    std::cout << "(Leaff) No children" << std::endl;
+
+    return nullptr;
+}
+
+AbstractWorkItem* WorkItem::clone() {
+    return new WorkItem(*this);
 }
