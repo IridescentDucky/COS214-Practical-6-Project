@@ -76,3 +76,17 @@ void TIVIDY::printStatus() const
         std::cout << "    " << item->getId() << " " << item->getName() << ": " << item->getStateName() << std::endl;
     }
 }
+
+void TIVIDY::runWorkflow(AbstractWorkflowFactory* factory){
+    //basically using same factory create products A and B...
+
+    AbstractWorkflowInstanceA* instanceA = factory->createWorkflowInstanceA();
+
+    AbstractWorkflowInstanceB* instanceB = factory->createWorkflowInstanceB();
+
+    instanceA->create();
+    instanceB->create();
+
+    delete instanceA;
+    delete instanceB;
+}
