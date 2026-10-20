@@ -13,9 +13,9 @@ public:
 	void operation();
 	void add(Component*);
     void remove(Component*);
-    void getChild(int n);
+    Component* getChild(int n);
 
-    ~Component();	
+    ~Composite();
 private:
 	list<Component*> children;
 };

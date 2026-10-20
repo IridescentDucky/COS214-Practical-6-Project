@@ -2,34 +2,31 @@
 
 using namespace std;
 
-void operation() {
-    cout << "(Composite) Did something"
+void Composite::operation() {
+    cout << "(Composite) Did something" << endl;
 }
 
-void add(Component* c) {
+void Composite::add(Component* c) {
     children.push_back(c);
 }
 
-void remove(Component*) {
-    l.remove(g);
+void Composite::remove(Component* c) {
+    children.remove(c);
 }
 
-void getChild(int n) {
-    if (n < 0 || n > children.size()) {
+Component* Composite::getChild(int n) {
+    if (n < 0 || n > (int) children.size()) {
         cout << "(Composite) out of bounds" << endl;
 
-        return;
-        //return null; // if we want to return a *
+        return nullptr;
     }
 
-    list<Graphic*>::iterator it = next(children.begin(), index);
-    
-    cout << "(Composite) Child: " << it->operation() << endl;    
-    // return *it; 
+    list<Component*>::iterator it = next(children.begin(), n);
+    return *it; 
 }
 
-~Component() {
-    for (list<Graphic*>::iterator it = children.begin(); it != children.end(); ++it) {
+Composite::~Composite() {
+    for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
         delete *it;
     }
 };	
