@@ -1,6 +1,7 @@
 #include "WorkItem.h"
 #include "State.h"
 #include "WorkflowMediator.h"
+#include "Observer.h"
 
 #include <iostream>
 
@@ -100,6 +101,8 @@ void WorkItem::setState(WorkItemState* newState)
     WorkItemState* old = state;
     state = newState;
     delete old;
+
+    notify();  //For Observer, if the state changes then notify the observers
 }
 
 bool WorkItem::isWithinDeadline() const
@@ -139,5 +142,37 @@ void WorkItem::setMemento(WorkItemMemento* m)
         std::cout << "[WorkItem] " << name << " restoring state from memento: "
                   << savedState->getName() << std::endl;
         this->setState(savedState);
+    }
+}
+
+void WorkItem::operation(){
+
+    std::cout << "Execute WorkItem operation..." << std::endl;  //Decorator 
+}
+
+void WorkItem::attach(Observer* observer){
+
+    observers.push_back(observer);
+}
+
+void WorkItem::detach(Observer* observer){
+
+    for (std::vector<Observer*>::iterator it = observers.begin(); it != observers.end(); ++it){
+
+        if (*it == observer){
+
+            observers.erase(it);        //stole algo from Iterator slides hehe
+            break;
+        }
+    }
+}
+
+void WorkItem::notify(){
+
+    for (Observer* observer : observers) {
+        
+        if (observer != nullptr) {
+            observer->update();
+        }
     }
 }

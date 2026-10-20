@@ -3,6 +3,12 @@
 
 #include <string>
 
+#include "AbstractWorkflowFactory.h"    //Abstract Fac
+#include "ConcreteWorkflowFactory1.h"   //Factory
+#include "ConcreteWorkflowFactory2.h"   //Factory
+#include "AbstractWorkflowInstanceA.h"  //AbstractProduct
+#include "AbstractWorkflowInstanceB.h"  //Abstract pRoduct
+
 class AbstractWorkItem;
 class WorkflowMediator;
 
@@ -20,6 +26,8 @@ public:
     void pauseWork(int id);
     void resumeWork(int id);
     void printStatus() const;
+
+    void runWorkflow(AbstractWorkflowFactory* factory);//Abtract factory
 
 private:
     AbstractWorkItem* find(int id) const;
