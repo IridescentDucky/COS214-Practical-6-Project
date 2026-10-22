@@ -89,6 +89,12 @@ void TIVIDY::printStatus() const
 }
 
 void TIVIDY::runWorkflow(AbstractWorkflowFactory* factory){
+    if (factory == nullptr)
+    {
+        std::cout << "  [TIVIDY] Cannot run a null workflow factory." << std::endl;
+        return;
+    }
+
     //basically using same factory create products A and B...
 
     AbstractWorkflowInstanceA* instanceA = factory->createWorkflowInstanceA();

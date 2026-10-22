@@ -158,6 +158,12 @@ TEST(AbstractFactoryTest, EachFactoryCreatesItsOwnProductFamily)
     delete secondB;
 }
 
+TEST(AbstractFactoryTest, NullFactoryIsIgnoredSafely)
+{
+    TIVIDY tividy;
+    EXPECT_NO_THROW(tividy.runWorkflow(nullptr));
+}
+
 TEST(WorkflowEndToEndTest, FacadeCompletesPredecessorAndActivatesDependent)
 {
     TIVIDY tividy;
