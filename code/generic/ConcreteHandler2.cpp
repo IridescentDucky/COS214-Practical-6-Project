@@ -5,9 +5,7 @@ void ConcreteHandler2::handleRequest(){
     
     bool canHandle = false;
     
-    if (/* condition*/){
-        canHandle = true;
-    }
+    // Placeholder demo handler: it deliberately passes the request onward.
     
     if(canHandle){
         std::cout << "[ConcreteHandler2] Can handle." << std::endl;

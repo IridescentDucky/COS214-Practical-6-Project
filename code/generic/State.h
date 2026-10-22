@@ -13,6 +13,7 @@ public:
     {
     }
     virtual std::string getName() const = 0;
+    virtual WorkItemState* clone() const = 0;
 
     virtual void nextState(WorkItem* item);
     virtual void paused(WorkItem* item);
@@ -32,6 +33,7 @@ class Created : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
 };
 
@@ -40,6 +42,7 @@ class Delivered : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
     void failedDelivery(WorkItem* item) override;
     void retry(WorkItem* item) override;
@@ -50,6 +53,7 @@ class InProgress : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
     void paused(WorkItem* item) override;
     void failed(WorkItem* item) override;
@@ -61,6 +65,7 @@ class Paused : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
     void resume(WorkItem* item) override;
 };
@@ -70,6 +75,7 @@ class Completed : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
 };
 
@@ -78,6 +84,7 @@ class Validation : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
     void retry(WorkItem* item) override;
     void failed(WorkItem* item) override;
@@ -88,6 +95,7 @@ class Failed : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
 };
 
@@ -96,6 +104,7 @@ class Archived : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
 };
 
@@ -104,6 +113,7 @@ class Exception : public WorkItemState
 {
 public:
     std::string getName() const override;
+    WorkItemState* clone() const override;
     void nextState(WorkItem* item) override;
     void validate(WorkItem* item) override;
 };

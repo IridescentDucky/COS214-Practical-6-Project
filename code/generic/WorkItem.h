@@ -11,6 +11,7 @@
 class Observer;
 class WorkItemState;
 class WorkflowMediator;
+class WorkItemMemento;
 
 class AbstractWorkItem
 {
@@ -73,11 +74,11 @@ public:
     bool hasValidData() const;
     void notifyWorkflow();
 
-    void operation();//Decorator
+    void operation() override;//Decorator
 
-    void attach(Observer* observer);        //Observer
-    void detach(Observer* observer);        //Observer
-    void notify();                          //Observer
+    void attach(Observer* observer) override;        //Observer
+    void detach(Observer* observer) override;        //Observer
+    void notify() override;                          //Observer
 
 private:
     std::string data;

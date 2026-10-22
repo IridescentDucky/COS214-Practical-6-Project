@@ -26,6 +26,8 @@ public:
     void pauseWork(int id);
     void resumeWork(int id);
     void printStatus() const;
+    bool addDependency(int predecessorId, int successorId);
+    std::string getWorkItemState(int id) const;
 
     void runWorkflow(AbstractWorkflowFactory* factory);//Abtract factory
 
