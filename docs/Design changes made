@@ -1,0 +1,43 @@
+REVISION 1: Composite Pattern Structure Alignment
+Problem / Question Considered:
+    The UML diagram modeled WorkItemComponent as an independent base class, causing CompositeWorkItem to inherit from WorkItemComponent rather than
+    AbstractWorkItem. Additionally, CompositeWorkItem stored a child list typed strictly to CompositeWorkItem.
+Original Design / Assumption:
+    CompositeWorkItem relied on a separate WorkItemComponent hierarchy, and its internal container could only hold other composite nodes.
+Change Made:
+    Removed WorkItemComponent. Made CompositeWorkItem inherit directly from AbstractWorkItem. Updated child list storage in CompositeWorkItem to
+    List<AbstractWorkItem*>.
+Why Change Was Made:
+    To strictly comply with the GoF Composite Pattern. Inheriting from AbstractWorkItem allows CompositeWorkItem to act as a standard Component.
+    Typing the child list to AbstractWorkItem* enables recursive composition of leaf nodes (WorkItem), sub-composites, and decorated items.
+Updates to Relevant Diagrams:
+    UML Class Diagram: Removed WorkItemComponent block. Rerouted CompositeWorkItem generalization arrow to AbstractWorkItem.
+    
+
+REVISION 2: Open/Closed Principle (OCP) in WorkItemState
+Problem / Question Considered:
+    Concrete states declared transition action methods (such as paused(), retry(), failedDelivery(), exception()) that were missing from the abstract base class WorkItemState.
+Original Design / Assumption:
+    WorkItemState declared only nextState(), forcing callers or WorkItem to know concrete state types or rely on non-polymorphic routing.
+Change Made:
+    Added virtual method signatures for all state transition actions (paused(), resume(), retry(), failed(), exception(), validate(), operation()) to the base
+    WorkItemState class.
+Why Change Was Made:
+    To eliminate Open/Closed Principle (OCP) violations and prevent the need for type checks, dynamic casting, or switch/if-else chains when invoking
+    state transitions polymorphically through a WorkItemState* pointer.
+Updates to Relevant Diagrams:
+    UML Class Diagram: Updated WorkItemState base class block to display all transition action virtual methods.
+    
+
+REVISION 3: Observer Responsibility Decoupling from Mediator
+Problem / Question Considered:
+    WorkflowMediator contained observer list management functionality (-observerList: Observer*, attach(), detach(), notify()).
+Original Design / Assumption:
+    The mediator acted as both a colleague coordinator and an observer subscriber registry.
+Change Made:
+    Removed observer list attributes and attach()/detach() methods from WorkflowMediator.
+    AbstractWorkItem remains the sole Subject base class managing subscriber lists (-observers: List<Observer*>).
+Why Change Was Made:
+    To preserve single-responsibility separation between the Mediator pattern (multi-colleague orchestration) and the Observer pattern (state-change notifications).
+Updates to Relevant Diagrams:
+    UML Class Diagram: Removed -observerList, attach(), detach(), and notify() from WorkflowMediator.

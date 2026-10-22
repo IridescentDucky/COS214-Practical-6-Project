@@ -68,6 +68,17 @@ void TIVIDY::resumeWork(int id)
     }
 }
 
+bool TIVIDY::addDependency(int predecessorId, int successorId)
+{
+    return mediator->addDependency(predecessorId, successorId);
+}
+
+std::string TIVIDY::getWorkItemState(int id) const
+{
+    AbstractWorkItem* item = find(id);
+    return item != nullptr ? item->getStateName() : "";
+}
+
 void TIVIDY::printStatus() const
 {
     std::cout << "  [TIVIDY] Work items:" << std::endl;

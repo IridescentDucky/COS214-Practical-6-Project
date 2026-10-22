@@ -10,7 +10,8 @@ private:
     
 public:
     WorkItemMemento(WorkItemState* s);
-    ~WorkItemMemento() = default;
+    ~WorkItemMemento();
+    // Returns a newly allocated copy. The caller owns the returned state.
     WorkItemState* getState() const;
     void setState(WorkItemState* s);
 };

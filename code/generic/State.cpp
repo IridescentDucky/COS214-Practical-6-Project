@@ -55,6 +55,11 @@ std::string Created::getName() const
     return "Created";
 }
 
+WorkItemState* Created::clone() const
+{
+    return new Created();
+}
+
 void Created::nextState(WorkItem* item)
 {
     item->setState(new Delivered());
@@ -64,6 +69,11 @@ void Created::nextState(WorkItem* item)
 std::string Delivered::getName() const
 {
     return "Delivered";
+}
+
+WorkItemState* Delivered::clone() const
+{
+    return new Delivered();
 }
 
 void Delivered::nextState(WorkItem* item)
@@ -85,6 +95,11 @@ void Delivered::retry(WorkItem* item)
 std::string InProgress::getName() const
 {
     return "InProgress";
+}
+
+WorkItemState* InProgress::clone() const
+{
+    return new InProgress();
 }
 
 void InProgress::nextState(WorkItem* item)
@@ -120,6 +135,11 @@ std::string Paused::getName() const
     return "Paused";
 }
 
+WorkItemState* Paused::clone() const
+{
+    return new Paused();
+}
+
 void Paused::nextState(WorkItem* item)
 {
     resume(item);
@@ -136,6 +156,11 @@ std::string Completed::getName() const
     return "Completed";
 }
 
+WorkItemState* Completed::clone() const
+{
+    return new Completed();
+}
+
 void Completed::nextState(WorkItem* item)
 {
     item->setState(new Archived());
@@ -145,6 +170,11 @@ void Completed::nextState(WorkItem* item)
 std::string Validation::getName() const
 {
     return "Validation";
+}
+
+WorkItemState* Validation::clone() const
+{
+    return new Validation();
 }
 
 void Validation::nextState(WorkItem* item)
@@ -176,6 +206,11 @@ std::string Failed::getName() const
     return "Failed";
 }
 
+WorkItemState* Failed::clone() const
+{
+    return new Failed();
+}
+
 void Failed::nextState(WorkItem* item)
 {
     item->setState(new Archived());
@@ -187,6 +222,11 @@ std::string Archived::getName() const
     return "Archived";
 }
 
+WorkItemState* Archived::clone() const
+{
+    return new Archived();
+}
+
 void Archived::nextState(WorkItem*)
 {
     reject("nextState");
@@ -196,6 +236,11 @@ void Archived::nextState(WorkItem*)
 std::string Exception::getName() const
 {
     return "Exception";
+}
+
+WorkItemState* Exception::clone() const
+{
+    return new Exception();
 }
 
 void Exception::nextState(WorkItem* item)

@@ -2,6 +2,7 @@
 #include "State.h"
 #include "WorkflowMediator.h"
 #include "Observer.h"
+#include "WorkItemMemento.h"
 
 #include <iostream>
 
@@ -97,6 +98,11 @@ WorkItemState* WorkItem::getState() const
 
 void WorkItem::setState(WorkItemState* newState)
 {
+    if (newState == nullptr)
+    {
+        std::cout << "  [State] Cannot set a null state for " << name << std::endl;
+        return;
+    }
     std::cout << "  [State] " << name << ": " << state->getName() << " -> " << newState->getName() << std::endl;
     WorkItemState* old = state;
     state = newState;
@@ -117,7 +123,10 @@ bool WorkItem::hasValidData() const
 
 void WorkItem::notifyWorkflow()
 {
-    mediator->notify(this);
+    if (mediator != nullptr)
+    {
+        mediator->notify(this);
+    }
 }
 
 WorkItemMemento* WorkItem::createMemento()
