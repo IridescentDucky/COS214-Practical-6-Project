@@ -41,3 +41,15 @@ Why Change Was Made:
     To preserve single-responsibility separation between the Mediator pattern (multi-colleague orchestration) and the Observer pattern (state-change notifications).
 Updates to Relevant Diagrams:
     UML Class Diagram: Removed -observerList, attach(), detach(), and notify() from WorkflowMediator.
+
+REVISION 4: Removing the Strategy Design Pattern from TIVIDY
+Problem / Question Considered: 
+    Identifying algorithms applicable across various industries. 
+Original Design / Assumption: 
+    Assumed algorithm classes could simply output a function call trace without concrete functionality. 
+Change Made: 
+    Removed the Strategy design pattern from the architecture. 
+Why Change Was Made: 
+    The pattern could not provide generic functionality useful across diverse industry workflows. 
+Updates to Relevant Diagrams: 
+    UML Class Diagram: Removed the Strategy pattern.
