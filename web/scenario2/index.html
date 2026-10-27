@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --void: #0b0320;
+    --deep: #1b0640;
+    --pink: #ff2fd6;
+    --cyan: #22e7ff;
+    --yellow: #ffe14d;
+    --text: #f4e9ff;
+    --muted: #b9a6d9;
+    --pixel: "Press Start 2P", "Courier New", monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(ellipse at 50% 120%, rgba(255, 47, 214, 0.4), transparent 60%),
+        linear-gradient(180deg, var(--void), var(--deep));
+    background-attachment: fixed;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(rgba(0, 0, 0, 0.16) 0 2px, transparent 2px 4px);
+    pointer-events: none;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.2rem clamp(1rem, 4vw, 3rem);
+    border-bottom: 2px solid var(--pink);
+    box-shadow: 0 0 20px rgba(255, 47, 214, 0.4);
+}
+
+.logo {
+    font-family: var(--pixel);
+    font-size: 0.85rem;
+    color: var(--yellow);
+}
+
+.back {
+    font-family: var(--pixel);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    text-decoration: none;
+}
+
+.back:hover,
+.back:focus-visible {
+    color: #fff;
+    text-shadow: 0 0 10px var(--cyan);
+}
+
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 4vw, 3rem);
+}
+
+.level {
+    font-family: var(--pixel);
+    font-size: 0.65rem;
+    color: var(--yellow);
+}
+
+h1 {
+    margin: 1rem 0 1.2rem;
+    font-family: var(--pixel);
+    font-size: clamp(1.2rem, 3.4vw, 2.2rem);
+    line-height: 1.5;
+    color: #fff;
+    text-shadow: 4px 4px 0 var(--pink), -2px -2px 0 var(--cyan);
+}
+
+.lead {
+    max-width: 38rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--muted);
+}
+
+.board {
+    margin-top: 3rem;
+    padding: clamp(1.2rem, 3vw, 2rem);
+    background: rgba(11, 3, 32, 0.75);
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 0 4px var(--void), 0 0 0 6px var(--pink), 0 0 30px rgba(34, 231, 255, 0.3);
+}
+
+.board h2 {
+    margin: 0 0 1.4rem;
+    font-family: var(--pixel);
+    font-size: 0.8rem;
+    color: var(--cyan);
+}
+
+.quests {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.quests li {
+    padding: 1rem;
+    border: 2px solid var(--deep);
+    background: var(--deep);
+    font-weight: 500;
+}
+
+.quests li span {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--pixel);
+    font-size: 0.55rem;
+    color: var(--muted);
+}
+
+.quests li.done {
+    border-color: var(--cyan);
+}
+
+.quests li.done span {
+    color: var(--cyan);
+}
+
+.quests li.now {
+    border-color: var(--yellow);
+    box-shadow: 0 0 18px rgba(255, 225, 77, 0.5);
+}
+
+.quests li.now span {
+    color: var(--yellow);
+}
+
+.soon {
+    margin: 1.6rem 0 0;
+    font-family: var(--pixel);
+    font-size: 0.6rem;
+    color: var(--pink);
+    animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .soon {
+        animation: none;
+    }
+}
+</style>
+</head>
+<body>
+<header>
+    <div class="logo">GAME STUDIO</div>
+    <a class="back" href="/">&lt; ALL WORLDS</a>
+</header>
+<main>
+    <div class="level">SCENARIO 2</div>
+    <h1>Game Studio Pipeline</h1>
+    <p class="lead">Every feature is a quest: pitch it, build it, playtest it and ship it, with the whole studio levelling up together.</p>
+    <section class="board">
+        <h2>QUEST LOG</h2>
+        <ol class="quests">
+            <li class="done"><span>LVL 1</span>Pitch</li>
+            <li class="done"><span>LVL 2</span>Prototype</li>
+            <li class="now"><span>LVL 3</span>Build</li>
+            <li><span>LVL 4</span>Playtest</li>
+            <li><span>LVL 5</span>Bug fix</li>
+            <li><span>BOSS</span>Launch</li>
+        </ol>
+        <p class="soon">LIVE STUDIO DASHBOARD COMING SOON</p>
+    </section>
+</main>
+</body>
+</html>

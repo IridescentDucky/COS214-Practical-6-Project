@@ -20,7 +20,7 @@ set(WORKFLOW_SOURCES
     code/generic/ConcreteStrategyB.cpp
     code/generic/ConcreteStrategyC.cpp
     code/generic/ConcreteWorkflowFactory1.cpp
-    code/generic/ConcreteWorkflowFactory2.cpp
+    code/generic/ConcreteWorkflowFactor`y2.cpp
     code/generic/Decorator.cpp
     code/generic/Observer.cpp
     code/generic/State.cpp
