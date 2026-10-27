@@ -16,7 +16,6 @@ public:
     virtual ~AbstractExamPaper() = default;
     AbstractExamPaper(std::string code, int duration, double initialMarks): state(NULL), moduleCode(code), examDuration(duration), marks(initialMarks) {}
     
-    virtual double getMarks() = 0;
     virtual AbstractExamPaper* clonePaper() = 0;
     virtual PaperState* getState() = 0;
     virtual void setState(PaperState* state) = 0;

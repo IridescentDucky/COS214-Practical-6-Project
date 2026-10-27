@@ -3,12 +3,13 @@
 
 ExamPaper::ExamPaper(std::string code, int duration, double initialMarks): AbstractExamPaper(code, duration, initialMarks) {}
 
-ExamPaper* ExamPaper::clonePaper(){
-    
+AbstractExamPaper* ExamPaper::clonePaper(){
+    return new ExamPaper(*this);
 }
 
 void ExamPaper::mark(){
     
+    return;
 }
 
 PaperState* ExamPaper::getState(){
@@ -25,5 +26,5 @@ void ExamPaper::setState(PaperState* state) {
     }
     
     std::cout << "[ExamPaper] Changing state for " << this->moduleCode << std::endl;
-    this->state = newState;
+    this->state = state;
 }
