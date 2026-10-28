@@ -128,12 +128,13 @@ std::string snapshotJson(const GenericSession& current, const std::string& actio
 {
     std::ostringstream json;
     json << "{\"items\":[";
-    const std::vector<AbstractWorkItem*>& items = current.tividy.getWorkItems();
-    for (std::vector<AbstractWorkItem*>::size_type i = 0; i < items.size(); ++i)
+    std::unique_ptr<Iterator> it(current.tividy.createIterator());
+    bool first = true;
+    while (it->hasNext())
     {
-        AbstractWorkItem* item = items[i];
+        AbstractWorkItem* item = it->next();
         ItemExtras extra = current.extras.at(item->getId());
-        json << (i > 0 ? "," : "")
+        json << (first ? "" : ",")
              << "{\"id\":" << item->getId()
              << ",\"name\":" << quote(item->getName())
              << ",\"state\":" << quote(item->getStateName())
@@ -141,6 +142,7 @@ std::string snapshotJson(const GenericSession& current, const std::string& actio
              << ",\"deadline\":" << extra.deadline
              << ",\"timeSpent\":" << extra.timeSpent
              << ",\"snapshots\":" << extra.snapshots << "}";
+        first = false;
     }
     json << "],\"dependencies\":[";
     for (std::vector<std::pair<int, int> >::size_type i = 0; i < current.dependencies.size(); ++i)
@@ -181,12 +183,13 @@ int intParam(const httplib::Request& req, const std::string& key, int low, int h
 
 AbstractWorkItem* findItem(GenericSession& current, int id)
 {
-    const std::vector<AbstractWorkItem*>& items = current.tividy.getWorkItems();
-    for (std::vector<AbstractWorkItem*>::size_type i = 0; i < items.size(); ++i)
+    std::unique_ptr<Iterator> it(current.tividy.createIterator());
+    while (it->hasNext())
     {
-        if (items[i]->getId() == id)
+        AbstractWorkItem* item = it->next();
+        if (item->getId() == id)
         {
-            return items[i];
+            return item;
         }
     }
     throw RequestError("No work item with id " + std::to_string(id));

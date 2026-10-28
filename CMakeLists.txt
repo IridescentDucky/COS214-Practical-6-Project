@@ -23,6 +23,7 @@ set(WORKFLOW_SOURCES
     code/generic/State.cpp
     code/generic/TIVIDY.cpp
     code/generic/WorkItem.cpp
+    code/generic/WorkItemIterator.cpp
     code/generic/WorkItemMemento.cpp
     code/generic/WorkflowInstanceA1.cpp
     code/generic/WorkflowInstanceA2.cpp

@@ -1,6 +1,7 @@
 #include "Caretaker.h"
 #include "ConcreteWorkflowFactory1.h"
 #include "ConcreteWorkflowFactory2.h"
+#include "Iterator.h"
 #include "Observer.h"
 #include "TIVIDY.h"
 #include "WorkItem.h"
@@ -9,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <typeinfo>
+#include <vector>
 
 namespace
 {
@@ -178,4 +180,37 @@ TEST(WorkflowEndToEndTest, FacadeCompletesPredecessorAndActivatesDependent)
 
     EXPECT_EQ("Completed", tividy.getWorkItemState(predecessor));
     EXPECT_EQ("Delivered", tividy.getWorkItemState(dependent));
+}
+
+TEST(IteratorTest, VisitsEveryWorkItemInOrderThenStops)
+{
+    WorkflowMediator mediator;
+    mediator.addWorkItem(new WorkItem(1, "First", 5, &mediator));
+    mediator.addWorkItem(new WorkItem(2, "Second", 5, &mediator));
+    mediator.addWorkItem(new WorkItem(3, "Third", 5, &mediator));
+
+    Iterator* it = mediator.createIterator();
+    std::vector<int> ids;
+    while (it->hasNext())
+    {
+        ids.push_back(it->next()->getId());
+    }
+
+    std::vector<int> expected;
+    expected.push_back(1);
+    expected.push_back(2);
+    expected.push_back(3);
+    EXPECT_EQ(expected, ids);
+    EXPECT_TRUE(it->next() == nullptr);
+    delete it;
+}
+
+TEST(IteratorTest, EmptyMediatorHasNothingToVisit)
+{
+    WorkflowMediator mediator;
+    Iterator* it = mediator.createIterator();
+
+    EXPECT_FALSE(it->hasNext());
+    EXPECT_TRUE(it->next() == nullptr);
+    delete it;
 }

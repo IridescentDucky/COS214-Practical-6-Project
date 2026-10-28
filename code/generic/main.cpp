@@ -50,6 +50,17 @@ int main()
     tividy.runWorkflow(&factory1);
     tividy.runWorkflow(&factory2);
 
+    std::cout << "--- Iterator ---" << std::endl;
+    tividy.createWorkItem("Plan", 5);
+    tividy.createWorkItem("Review", 5);
+    Iterator* it = tividy.createIterator();
+    while (it->hasNext())
+    {
+        AbstractWorkItem* item = it->next();
+        std::cout << "  " << item->getId() << " " << item->getName() << ": " << item->getStateName() << std::endl;
+    }
+    delete it;
+
     std::cout << "--- Chain of Responsibility ---" << std::endl;
     ConcreteHandler1 firstHandler;
     ConcreteHandler2 secondHandler;

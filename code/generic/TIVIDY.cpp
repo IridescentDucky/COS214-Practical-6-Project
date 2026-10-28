@@ -79,18 +79,21 @@ std::string TIVIDY::getWorkItemState(int id) const
     return item != nullptr ? item->getStateName() : "";
 }
 
-const std::vector<AbstractWorkItem*>& TIVIDY::getWorkItems() const
+Iterator* TIVIDY::createIterator() const
 {
-    return mediator->getWorkItems();
+    return mediator->createIterator();
 }
 
 void TIVIDY::printStatus() const
 {
     std::cout << "  [TIVIDY] Work items:" << std::endl;
-    for (AbstractWorkItem* item : mediator->getWorkItems())
+    Iterator* it = mediator->createIterator();
+    while (it->hasNext())
     {
+        AbstractWorkItem* item = it->next();
         std::cout << "    " << item->getId() << " " << item->getName() << ": " << item->getStateName() << std::endl;
     }
+    delete it;
 }
 
 void TIVIDY::runWorkflow(AbstractWorkflowFactory* factory){

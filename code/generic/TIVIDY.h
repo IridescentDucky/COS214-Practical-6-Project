@@ -2,8 +2,8 @@
 #define TIVIDY_H
 
 #include <string>
-#include <vector>
 
+#include "Iterator.h"
 #include "AbstractWorkflowFactory.h"    //Abstract Fac
 #include "ConcreteWorkflowFactory1.h"   //Factory
 #include "ConcreteWorkflowFactory2.h"   //Factory
@@ -29,7 +29,7 @@ public:
     void printStatus() const;
     bool addDependency(int predecessorId, int successorId);
     std::string getWorkItemState(int id) const;
-    const std::vector<AbstractWorkItem*>& getWorkItems() const;
+    Iterator* createIterator() const;
 
     void runWorkflow(AbstractWorkflowFactory* factory);//Abtract factory
 

@@ -1,5 +1,6 @@
 #include "WorkflowMediator.h"
 #include "WorkItem.h"
+#include "WorkItemIterator.h"
 
 WorkflowMediator::WorkflowMediator()
 {
@@ -33,9 +34,9 @@ AbstractWorkItem* WorkflowMediator::getWorkItem(int id) const
     return nullptr;
 }
 
-const std::vector<AbstractWorkItem*>& WorkflowMediator::getWorkItems() const
+Iterator* WorkflowMediator::createIterator() const
 {
-    return workItems;
+    return new WorkItemIterator(this);
 }
 
 bool WorkflowMediator::addDependency(int predecessorId, int successorId)
