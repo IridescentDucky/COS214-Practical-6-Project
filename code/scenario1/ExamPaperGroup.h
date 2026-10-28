@@ -1,23 +1,23 @@
 #ifndef EXAMPAPERGROUP_H
-#define EXAM PAPERGROUP_H
+#define EXAMPAPERGROUP_H
 
 #include "ExamComponent.h"
 
-#include <vector>
 #include <iostream>
+#include <list>
 
 using namespace std;
 
 class ExamPaperGroup : ExamComponent {
 private:
-    vector<ExamComponent*> elements;
+    list<ExamComponent*> elements;
 
 public:
     void mark();
-    double getMarks();
-
     void add(ExamComponent* e);
     void remove(ExamComponent* e);
+
+    // getchild?
 };
 
 #endif

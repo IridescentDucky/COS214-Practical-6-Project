@@ -9,3 +9,8 @@ https://docs.google.com/document/d/18jkW9gRDppPR8AhWRa4KiVEVAtO7DtYo8ME8rW1wpag/
 Task 5 - Fix final class diagram (add multiplicities, ownership relations)
 Task 7: Document changes & decisions 
 
+### Fixes to make:
+Scenario 2 UML:
+- AbstractExamPaper inherits from component (must be other way around)
+- variables in AbstractExamPaper must be protected
+- Component: vector -> list
