@@ -13,3 +13,11 @@ void Decorator::operation(){
     
     component->operation();
 }
+
+int Decorator::getScore() {
+    return component->getScore();
+}
+
+int Decorator::getTime() {
+    return component->getTime();
+}
