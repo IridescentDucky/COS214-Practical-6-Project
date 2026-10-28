@@ -11,6 +11,9 @@ public:
     virtual Component* getChild(int n);
 
     virtual ~Component();
+
+    virtual int getScore() = 0;
+    virtual int getTime() = 0;
 };
 
 
