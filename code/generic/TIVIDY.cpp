@@ -79,6 +79,11 @@ std::string TIVIDY::getWorkItemState(int id) const
     return item != nullptr ? item->getStateName() : "";
 }
 
+const std::vector<AbstractWorkItem*>& TIVIDY::getWorkItems() const
+{
+    return mediator->getWorkItems();
+}
+
 void TIVIDY::printStatus() const
 {
     std::cout << "  [TIVIDY] Work items:" << std::endl;

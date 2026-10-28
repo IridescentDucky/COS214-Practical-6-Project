@@ -16,11 +16,8 @@ set(WORKFLOW_SOURCES
     code/generic/ConcreteHandler1.cpp
     code/generic/ConcreteHandler2.cpp
     code/generic/ConcreteObserver.cpp
-    code/generic/ConcreteStrategyA.cpp
-    code/generic/ConcreteStrategyB.cpp
-    code/generic/ConcreteStrategyC.cpp
     code/generic/ConcreteWorkflowFactory1.cpp
-    code/generic/ConcreteWorkflowFactor`y2.cpp
+    code/generic/ConcreteWorkflowFactory2.cpp
     code/generic/Decorator.cpp
     code/generic/Observer.cpp
     code/generic/State.cpp

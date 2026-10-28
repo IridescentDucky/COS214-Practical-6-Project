@@ -32,6 +32,7 @@ TIVIDY only has what a user does: createWorkItem, advanceWork, submitWork,
 pauseWork, resumeWork, printStatus.
 Fail, exception, retry and validate are triggered by the engine (Mediator / escalation),
 not the user, so they are left out of the facade.
+getWorkItems() is a read-only query so the web UI can list the items.
 
   ============================================
 
