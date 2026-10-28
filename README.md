@@ -14,3 +14,5 @@ Scenario 2 UML:
 - AbstractExamPaper inherits from component (must be other way around)
 - variables in AbstractExamPaper must be protected
 - Component: vector -> list
+
+Abstract Factory -> Factory Method (Generic)
