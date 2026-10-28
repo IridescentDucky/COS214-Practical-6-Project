@@ -2,20 +2,33 @@
 
 using namespace std;
 
-void Composite::operation() {
-    cout << "(Composite) Did something" << endl;
+template <typename T>
+void Composite<T>::display(int indent = 0) {
+    for (int i = 0; i < indent; i++)
+    {
+        cout << "  ";
+    }       
+
+    cout << this->name << endl;
+
+    for (auto child : children) {
+        child->display(++indent);
+    }
 }
 
-void Composite::add(Component* c) {
+template <typename T>
+void Composite<T>::add(Component<T>* c) {
     children.push_back(c);
 }
 
-void Composite::remove(Component* c) {
+template <typename T>
+void Composite<T>::remove(Component<T>* c) {
     children.remove(c);
 }
 
-Component* Composite::getChild(int n) {
-    if (n < 0 || n > (int) children.size()) {
+template <typename T>
+Component<T>* Composite<T>::getChild(int n) {
+    if (n < 0 || n >= (int) children.size()) {
         cout << "(Composite) out of bounds" << endl;
 
         return nullptr;
@@ -25,7 +38,8 @@ Component* Composite::getChild(int n) {
     return *it; 
 }
 
-Composite::~Composite() {
+template <typename T>
+Composite<T>::~Composite() {
     for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
         delete *it;
     }

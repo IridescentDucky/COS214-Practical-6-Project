@@ -1,10 +1,12 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-class Component{
-
+template <typename T>
+class Component {
+private:
+    T info;
 public:
-    virtual void operation() = 0;
+    virtual void display(int indent = 0) = 0;
 
     virtual void add(Component*);
     virtual void remove(Component*);
