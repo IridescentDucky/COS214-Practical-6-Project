@@ -13,7 +13,9 @@ class WorkItemState;
 class WorkflowMediator;
 class WorkItemMemento;
 
-class AbstractWorkItem
+
+template <typename T>
+class AbstractWorkItem : Component<T>
 {
 public:
     AbstractWorkItem(int id, const std::string& name, WorkflowMediator* mediator);
@@ -39,6 +41,12 @@ public:
     virtual WorkItemMemento* createMemento() = 0;
     virtual void setMemento(WorkItemMemento* m) = 0;
 
+    // Composite
+    virtual void display(int indent = 0) = 0;
+    virtual void add(Component*);
+    virtual void remove(Component*);
+    virtual Component* getChild(int n);
+
 protected:
     int id;
     std::string name;
@@ -46,7 +54,8 @@ protected:
     WorkflowMediator* mediator;
 };
 
-class WorkItem : public AbstractWorkItem, public Component, public Subject
+template <typename T>
+class WorkItem : public AbstractWorkItem, public Subject
 {
 public:
     WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator);
@@ -74,12 +83,15 @@ public:
     bool hasValidData() const;
     void notifyWorkflow();
 
-    void operation() override;//Decorator
-
     void attach(Observer* observer) override;        //Observer
     void detach(Observer* observer) override;        //Observer
     void notify() override;                          //Observer
 
+    // Composite
+    void display(int indent = 0); 
+	void add(Component<T>*);
+    void remove(Component<T>*);
+    Component<T>* getChild(int n);
 private:
     std::string data;
     int deadline;

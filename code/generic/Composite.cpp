@@ -9,6 +9,12 @@ void Composite<T>::display(int indent = 0) {
         cout << "  ";
     }       
 
+    // if we need better terminal output
+    // └
+    // ├
+    // ─
+    // │
+
     cout << this->name << endl;
 
     for (auto child : children) {

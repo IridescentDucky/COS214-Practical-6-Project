@@ -5,6 +5,9 @@
 #include "WorkItemMemento.h"
 
 #include <iostream>
+#include <string>
+
+using namespace std;
 
 AbstractWorkItem::AbstractWorkItem(int id, const std::string& name, WorkflowMediator* mediator)
     : id(id), name(name), state(new Created()), mediator(mediator)
@@ -184,4 +187,24 @@ void WorkItem::notify(){
             observer->update();
         }
     }
+}
+
+
+// add template stuff (to entire .cpp file)
+void WorkItem::display(int indent = 0) {
+    this->name;
+}
+	
+void add(Component<T>* a) {
+    cout << "Cannot add to leaf/WorkItem" << endl;
+}
+
+void remove(Component<T>*) {
+    cout << "Cannot remove from leaf/WorkItem" << endl;
+}
+
+Component<T>* getChild(int n) {
+    cout << "No children" << endl;
+
+    return null;
 }

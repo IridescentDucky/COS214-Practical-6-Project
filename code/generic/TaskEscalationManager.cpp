@@ -1,10 +1,12 @@
 #include "TaskEscalationManager.h"
 
-void TaskEscalationManager::setSuccessor(TaskEscalationManager* next){
+template <typename T>
+void TaskEscalationManager<T>::setSuccessor(TaskEscalationManager* next){
     this->successor = next;
 }
 
-TaskEscalationManager::~TaskEscalationManager() {
+template <typename T>
+TaskEscalationManager<T>::~TaskEscalationManager() {
     delete successor;
 
     successor = nullptr;
