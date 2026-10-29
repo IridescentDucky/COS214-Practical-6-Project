@@ -9,16 +9,16 @@
 #include <vector>
 #include <iostream>
 
-class Observer;
-class WorkItemState;
-class WorkflowMediator;
-class WorkItemMemento;
+// class Observer;
+// class WorkItemState;
+// class WorkflowMediator;
+// class WorkItemMemento;
 
 template <typename T>
-class WorkItem : public AbstractWorkItem, public Subject
+class WorkItem : public AbstractWorkItem<T>, public Subject
 {
 public:
-    WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator);
+    WorkItem(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator);
 
     void handleState() override;
     void paused() override;
@@ -33,8 +33,8 @@ public:
     std::string get() const override;
     void addTimeSpent(int units) override;
     
-    WorkItemMemento* createMemento() override;
-    void setMemento(WorkItemMemento* m) override;
+    WorkItemMemento<T>* createMemento() override;
+    void setMemento(WorkItemMemento<T>* m) override;
 
     WorkItemState* getState() const;
     void setState(WorkItemState* newState);

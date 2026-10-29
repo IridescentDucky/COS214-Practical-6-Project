@@ -10,7 +10,7 @@
 using namespace std;
 
 template <typename T>
-WorkItem<T>::WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator)
+WorkItem<T>::WorkItem(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator)
     : AbstractWorkItem(id, name, mediator), deadline(deadline), timeSpent(0)
 {
 }
@@ -84,7 +84,7 @@ void WorkItem<T>::addTimeSpent(int units)
 
 
 template <typename T>
-WorkItemState* WorkItem<T>::getState() const
+WorkItemState<T>* WorkItem<T>::getState() const
 {
     return state;
 }

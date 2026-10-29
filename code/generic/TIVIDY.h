@@ -9,9 +9,16 @@
 #include "AbstractWorkflowInstanceA.h"  //AbstractProduct
 #include "AbstractWorkflowInstanceB.h"  //Abstract pRoduct
 
-class AbstractWorkItem;
-class WorkflowMediator;
+#include "AbstractWorkItem.h"
+#include "WorkItem.h"
 
+template <typename T>
+class AbstractWorkItem;
+
+template <typename T>
+class WorkItem;
+
+template <typename T>
 class TIVIDY
 {
 public:
