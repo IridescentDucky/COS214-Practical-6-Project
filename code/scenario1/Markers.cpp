@@ -1,83 +1,41 @@
 #include "Markers.h"
-#include "AbstractExamPaper.h"
-#include <iostream>
-
-
-//----------- Tutor ----------------------------------------------
 
 Tutor::Tutor(std::string id, std::string name) : Marker(id, name) {}
 
-void Tutor::handle(AbstractExamPaper* paper) {
-
-    if (this->canHandle(paper) == false){
-        std::cout << "[Tutor] unable to handle examp paper: " << paper << " will pass to next handler." << std::endl;
-        this->next->handle(paper);
-    }
-    
-    paper->mark();
+void Tutor::handle(AbstractExamPaper*) {
+    // TODO: implement marking and escalation behavior.
 }
 
 void Tutor::update() {
-    
-    // needs implementation
+    // TODO: respond to delivery notifications.
 }
-
-
-//----------- AssistantLecturer ----------------------------------
 
 AssistantLecturer::AssistantLecturer(std::string id, std::string name) : Marker(id, name) {}
 
-void AssistantLecturer::handle(AbstractExamPaper* paper) {
-    
-    if (this->canHandle(paper) == false){
-        std::cout << "[AssistantLecturer] unable to handle examp paper: " << paper << " will pass to next handler." << std::endl;
-        this->next->handle(paper);
-    }
-    
-    paper->mark();
+void AssistantLecturer::handle(AbstractExamPaper*) {
+    // TODO: implement marking and escalation behavior.
 }
 
 void AssistantLecturer::update() {
-    
-    // needs implementation
+    // TODO: respond to delivery notifications.
 }
-
-//----------- Lecturer -------------------------------------------
 
 Lecturer::Lecturer(std::string id, std::string name) : Marker(id, name) {}
 
-void Lecturer::handle(AbstractExamPaper* paper) {
-    
-    if (this->canHandle(paper) == false){
-        std::cout << "[Lecturer] unable to handle examp paper: " << paper << " will pass to next handler." << std::endl;
-        this->next->handle(paper);
-    }
-    
-    paper->mark();
+void Lecturer::handle(AbstractExamPaper*) {
+    // TODO: implement marking and escalation behavior.
 }
 
 void Lecturer::update() {
-    
-    // needs implementation
+    // TODO: respond to delivery notifications.
 }
-
-//----------- ModuleCoordinator ----------------------------------
 
 ModuleCoordinator::ModuleCoordinator(std::string id, std::string name) : Marker(id, name) {}
 
-void ModuleCoordinator::handle(AbstractExamPaper* paper) {
-    
-    if (this->canHandle(paper) == false){
-        std::cout << "[ModuleCoordinator] unable to handle examp paper: " << paper << " will pass to next handler." << std::endl;
-        this->next->handle(paper);
-    }
-    
-    paper->mark();
+void ModuleCoordinator::handle(AbstractExamPaper*) {
+    // TODO: implement marking and escalation behavior.
 }
 
 void ModuleCoordinator::update() {
-    
-    // needs implementation
+    // TODO: respond to delivery notifications.
 }
-
-//----------- end. -----------------------------------------------
