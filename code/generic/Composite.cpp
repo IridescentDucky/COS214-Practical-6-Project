@@ -3,7 +3,7 @@
 using namespace std;
 
 template <typename T>
-void Composite<T>::display(int indent = 0) {
+void Composite<T>::display(int indent) {
     for (int i = 0; i < indent; i++)
     {
         cout << "  ";
@@ -17,19 +17,19 @@ void Composite<T>::display(int indent = 0) {
 
     cout << this->name << endl;
 
-    for (auto child : children) {
-        child->display(++indent);
+    for (auto child : this->children) {
+        child->display(indent + 1);
     }
 }
 
 template <typename T>
 void Composite<T>::add(Component<T>* c) {
-    children.push_back(c);
+    this->children.push_back(c);
 }
 
 template <typename T>
 void Composite<T>::remove(Component<T>* c) {
-    children.remove(c);
+    this->children.remove(c);
 }
 
 template <typename T>
@@ -40,13 +40,13 @@ Component<T>* Composite<T>::getChild(int n) {
         return nullptr;
     }
 
-    list<Component*>::iterator it = next(children.begin(), n);
+    typename list<Component<T>*>::iterator it = next(this->children.begin(), n);
     return *it; 
 }
 
 template <typename T>
 Composite<T>::~Composite() {
-    for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
+    for (typename list<Component<T>*>::iterator it = this->children.begin(); it != this->children.end(); ++it) {
         delete *it;
     }
 };	

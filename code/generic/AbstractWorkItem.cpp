@@ -1,6 +1,8 @@
 #include "AbstractWorkItem.h"
 #include "State.h"
 
+using namespace std;
+
 template <typename T>
 AbstractWorkItem<T>::AbstractWorkItem(int id, const std::string& name, WorkflowMediator<T>* mediator)
     : id(id), name(name), state(new Created<T>()), mediator(mediator)
@@ -60,7 +62,7 @@ void AbstractWorkItem<T>::notify() {
 }
 
 template <typename T>
-void AbstractWorkItem<T>::setState(State* newState) {
+void AbstractWorkItem<T>::setState(State<T>* newState) {
     if (this->state == newState) {
         return;
     }
@@ -71,12 +73,12 @@ void AbstractWorkItem<T>::setState(State* newState) {
 
 
 template <typename T>
-State* AbstractWorkItem<T>::getState(){
+State<T>* AbstractWorkItem<T>::getState(){
     return this->state;
 }
 
 template <typename T>
-void AbstractWorkItem<T>::display(int indent = 0) {
+void AbstractWorkItem<T>::display(int indent) {
     this->name;
 }
 	
@@ -94,5 +96,5 @@ template <typename T>
 Component<T>* AbstractWorkItem<T>::getChild(int n) {
     cout << "No children" << endl;
 
-    return null;
+    return nullptr;
 }

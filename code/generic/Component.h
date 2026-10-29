@@ -8,9 +8,9 @@ private:
 public:
     virtual void display(int indent = 0) = 0;
 
-    virtual void add(Component*);
-    virtual void remove(Component*);
-    virtual Component* getChild(int n);
+    virtual void add(Component<T>*);
+    virtual void remove(Component<T>*);
+    virtual Component<T>* getChild(int n);
 
     virtual ~Component();
 

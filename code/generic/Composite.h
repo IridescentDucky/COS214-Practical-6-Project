@@ -9,7 +9,7 @@
 using namespace std;
 
 template <typename T>
-class Composite: public Component {
+class Composite: public Component<T> {
 public:	
 	void display(int indent = 0);
 	void add(Component<T>*);

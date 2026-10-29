@@ -1,10 +1,12 @@
 #include "BonusTimeDecorator.h"
 
-BonusTimeDecorator::BonusTimeDecorator(Component* component, int extraTime): Decorator(component), extraTime(extraTime) {
+template <typename T>
+BonusTimeDecorator<T>::BonusTimeDecorator(Component<T>* component, int extraTime): Decorator<T>(component), extraTime(extraTime) {
 
 }
 
-int BonusTimeDecorator::getTime() {
+template <typename T>
+int BonusTimeDecorator<T>::getTime() {
 
-    return component->getTime() + extraTime;
+    return this->component->getTime() + this->extraTime;
 }

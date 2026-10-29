@@ -1,307 +1,11 @@
-In file included from AbstractWorkItem.cpp:1:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
-      |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
-AbstractWorkItem.cpp:63:6: error: variable or field ‘setState’ declared void
-   63 | void AbstractWorkItem<T>::setState(State* newState) {
-      |      ^~~~~~~~~~~~~~~~~~~
-AbstractWorkItem.cpp:63:41: error: missing template arguments before ‘*’ token
-   63 | void AbstractWorkItem<T>::setState(State* newState) {
-      |                                         ^
-AbstractWorkItem.cpp:63:43: error: ‘newState’ was not declared in this scope
-   63 | void AbstractWorkItem<T>::setState(State* newState) {
-      |                                           ^~~~~~~~
-AbstractWorkItem.cpp:74:1: error: invalid use of template-name ‘State’ without an argument list
-   74 | State* AbstractWorkItem<T>::getState(){
-      | ^~~~~
-AbstractWorkItem.cpp:74:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
-AbstractWorkItem.cpp:79:6: error: redeclaration of ‘void AbstractWorkItem<T>::display(int)’ may not have default arguments [-Wtemplate-body]
-   79 | void AbstractWorkItem<T>::display(int indent = 0) {
-      |      ^~~~~~~~~~~~~~~~~~~
-AbstractWorkItem.cpp: In member function ‘void AbstractWorkItem<T>::add(Component<T>*)’:
-AbstractWorkItem.cpp:85:5: error: ‘cout’ was not declared in this scope; did you mean ‘std::cout’? [-Wtemplate-body]
-   85 |     cout << "Cannot add to AbstractWorkItem" << endl;
-      |     ^~~~
-      |     std::cout
-In file included from Observer.h:9,
-                 from AbstractWorkItem.h:6:
-/usr/include/c++/16/iostream:65:18: note: ‘std::cout’ declared here
-   65 |   extern ostream cout;          ///< Linked to standard output
-      |                  ^~~~
-AbstractWorkItem.cpp:85:49: error: ‘endl’ was not declared in this scope; did you mean ‘std::endl’? [-Wtemplate-body]
-   85 |     cout << "Cannot add to AbstractWorkItem" << endl;
-      |                                                 ^~~~
-      |                                                 std::endl
-In file included from /usr/include/c++/16/iostream:43:
-/usr/include/c++/16/ostream:71:5: note: ‘std::endl’ declared here
-   71 |     endl(basic_ostream<_CharT, _Traits>& __os)
-      |     ^~~~
-AbstractWorkItem.cpp: In member function ‘void AbstractWorkItem<T>::remove(Component<T>*)’:
-AbstractWorkItem.cpp:90:5: error: ‘cout’ was not declared in this scope; did you mean ‘std::cout’? [-Wtemplate-body]
-   90 |     cout << "Cannot remove from AbstractWorkItem" << endl;
-      |     ^~~~
-      |     std::cout
-/usr/include/c++/16/iostream:65:18: note: ‘std::cout’ declared here
-   65 |   extern ostream cout;          ///< Linked to standard output
-      |                  ^~~~
-AbstractWorkItem.cpp:90:54: error: ‘endl’ was not declared in this scope; did you mean ‘std::endl’? [-Wtemplate-body]
-   90 |     cout << "Cannot remove from AbstractWorkItem" << endl;
-      |                                                      ^~~~
-      |                                                      std::endl
-/usr/include/c++/16/ostream:71:5: note: ‘std::endl’ declared here
-   71 |     endl(basic_ostream<_CharT, _Traits>& __os)
-      |     ^~~~
-AbstractWorkItem.cpp: In member function ‘Component<T>* AbstractWorkItem<T>::getChild(int)’:
-AbstractWorkItem.cpp:95:5: error: ‘cout’ was not declared in this scope; did you mean ‘std::cout’? [-Wtemplate-body]
-   95 |     cout << "No children" << endl;
-      |     ^~~~
-      |     std::cout
-/usr/include/c++/16/iostream:65:18: note: ‘std::cout’ declared here
-   65 |   extern ostream cout;          ///< Linked to standard output
-      |                  ^~~~
-AbstractWorkItem.cpp:95:30: error: ‘endl’ was not declared in this scope; did you mean ‘std::endl’? [-Wtemplate-body]
-   95 |     cout << "No children" << endl;
-      |                              ^~~~
-      |                              std::endl
-/usr/include/c++/16/ostream:71:5: note: ‘std::endl’ declared here
-   71 |     endl(basic_ostream<_CharT, _Traits>& __os)
-      |     ^~~~
-AbstractWorkItem.cpp:97:12: error: ‘null’ was not declared in this scope [-Wtemplate-body]
-   97 |     return null;
-      |            ^~~~
-In file included from BonusScoreDecorator.h:4,
-                 from BonusScoreDecorator.cpp:1:
-Decorator.h:8:35: error: expected class-name before ‘{’ token
-    8 | class Decorator : public Component{
-      |                                   ^
-Decorator.h:12:24: error: expected ‘)’ before ‘*’ token
-   12 |     Decorator(Component* component);
-      |              ~         ^
-      |                        )
-Decorator.h:20:5: error: invalid use of template-name ‘Component’ without an argument list
-   20 |     Component* component ;//component to deco
-      |     ^~~~~~~~~
-Decorator.h:20:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Decorator.h:4:
-Component.h:5:7: note: ‘template<class T> class Component’ declared here
-    5 | class Component {
-      |       ^~~~~~~~~
-BonusScoreDecorator.h:13:34: error: expected ‘)’ before ‘*’ token
-   13 |     BonusScoreDecorator(Component* component,int bonusScore);
-      |                        ~         ^
-      |                                  )
-BonusScoreDecorator.h:14:34: error: expected ‘)’ before ‘*’ token
-   14 |     BonusScoreDecorator(Component* component,int bonusScore, int multiplier);//overloaded
-      |                        ~         ^
-      |                                  )
-BonusScoreDecorator.cpp:3:41: error: expected constructor, destructor, or type conversion before ‘(’ token
-    3 | BonusScoreDecorator::BonusScoreDecorator(Component* component, int bonusScore) : Decorator(component), bonusScore(bonusScore), multiplier(1){
-      |                                         ^
-BonusScoreDecorator.cpp:7:41: error: expected constructor, destructor, or type conversion before ‘(’ token
-    7 | BonusScoreDecorator::BonusScoreDecorator(Component* component, int bonusScore, int multiplier): Decorator(component), bonusScore(bonusScore), multiplier(multiplier){
-      |                                         ^
-BonusScoreDecorator.cpp: In member function ‘int BonusScoreDecorator::getScore()’:
-BonusScoreDecorator.cpp:13:13: error: ‘component’ was not declared in this scope; did you mean ‘Component’?
-   13 |     return (component->getScore() + bonusScore) * multiplier;
-      |             ^~~~~~~~~
-      |             Component
-In file included from BonusTimeDecorator.h:4,
-                 from BonusTimeDecorator.cpp:1:
-Decorator.h:8:35: error: expected class-name before ‘{’ token
-    8 | class Decorator : public Component{
-      |                                   ^
-Decorator.h:12:24: error: expected ‘)’ before ‘*’ token
-   12 |     Decorator(Component* component);
-      |              ~         ^
-      |                        )
-Decorator.h:20:5: error: invalid use of template-name ‘Component’ without an argument list
-   20 |     Component* component ;//component to deco
-      |     ^~~~~~~~~
-Decorator.h:20:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Decorator.h:4:
-Component.h:5:7: note: ‘template<class T> class Component’ declared here
-    5 | class Component {
-      |       ^~~~~~~~~
-BonusTimeDecorator.h:12:33: error: expected ‘)’ before ‘*’ token
-   12 |     BonusTimeDecorator(Component* component, int extraTime);
-      |                       ~         ^
-      |                                 )
-BonusTimeDecorator.cpp:3:39: error: expected constructor, destructor, or type conversion before ‘(’ token
-    3 | BonusTimeDecorator::BonusTimeDecorator(Component* component, int extraTime): Decorator(component), extraTime(extraTime) {
-      |                                       ^
-BonusTimeDecorator.cpp: In member function ‘int BonusTimeDecorator::getTime()’:
-BonusTimeDecorator.cpp:9:12: error: ‘component’ was not declared in this scope; did you mean ‘Component’?
-    9 |     return component->getTime() + extraTime;
-      |            ^~~~~~~~~
-      |            Component
-In file included from Caretaker.cpp:1:
-Caretaker.h:9:33: error: template argument 1 is invalid
-    9 |     std::vector<WorkItemMemento*> mementoHistory;
-      |                                 ^
-Caretaker.h:9:33: error: template argument 2 is invalid
-Caretaker.h:15:21: error: ‘WorkItemMemento’ is not a type
-   15 |     void addMemento(WorkItemMemento* m);
-      |                     ^~~~~~~~~~~~~~~
-Caretaker.h:16:5: error: invalid use of template-name ‘WorkItemMemento’ without an argument list
-   16 |     WorkItemMemento* getMemento(int index) const;
-      |     ^~~~~~~~~~~~~~~
-Caretaker.h:16:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Caretaker.h:4:
-WorkItemMemento.h:8:7: note: ‘template<class T> class WorkItemMemento’ declared here
-    8 | class WorkItemMemento {
-      |       ^~~~~~~~~~~~~~~
-Caretaker.cpp: In destructor ‘Caretaker::~Caretaker()’:
-Caretaker.cpp:5:25: error: missing template arguments before ‘*’ token
-    5 |     for (WorkItemMemento* m : mementoHistory) {
-      |                         ^
-Caretaker.cpp:5:29: error: found ‘:’ in nested-name-specifier, expected ‘::’
-    5 |     for (WorkItemMemento* m : mementoHistory) {
-      |                             ^
-      |                             ::
-Caretaker.cpp:5:27: error: ‘m’ has not been declared; did you mean ‘tm’?
-    5 |     for (WorkItemMemento* m : mementoHistory) {
-      |                           ^
-      |                           tm
-Caretaker.cpp:8:20: error: request for member ‘clear’ in ‘((Caretaker*)this)->Caretaker::mementoHistory’, which is of non-class type ‘int’
-    8 |     mementoHistory.clear();
-      |                    ^~~~~
-Caretaker.cpp:9:1: error: expected primary-expression before ‘}’ token
-    9 | }
-      | ^
-Caretaker.cpp:8:28: error: expected ‘)’ before ‘}’ token
-    8 |     mementoHistory.clear();
-      |                            ^
-      |                            )
-    9 | }
-      | ~                           
-Caretaker.cpp:5:9: note: to match this ‘(’
-    5 |     for (WorkItemMemento* m : mementoHistory) {
-      |         ^
-Caretaker.cpp:9:1: error: expected primary-expression before ‘}’ token
-    9 | }
-      | ^
-Caretaker.cpp: At global scope:
-Caretaker.cpp:11:6: error: variable or field ‘addMemento’ declared void
-   11 | void Caretaker::addMemento(WorkItemMemento* m) {
-      |      ^~~~~~~~~
-Caretaker.cpp:11:43: error: missing template arguments before ‘*’ token
-   11 | void Caretaker::addMemento(WorkItemMemento* m) {
-      |                                           ^
-Caretaker.cpp:11:45: error: ‘m’ was not declared in this scope; did you mean ‘tm’?
-   11 | void Caretaker::addMemento(WorkItemMemento* m) {
-      |                                             ^
-      |                                             tm
-Caretaker.cpp:18:1: error: invalid use of template-name ‘WorkItemMemento’ without an argument list
-   18 | WorkItemMemento* Caretaker::getMemento(int index) const {
-      | ^~~~~~~~~~~~~~~
-Caretaker.cpp:18:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-WorkItemMemento.h:8:7: note: ‘template<class T> class WorkItemMemento’ declared here
-    8 | class WorkItemMemento {
-      |       ^~~~~~~~~~~~~~~
-Component.cpp:5:6: error: ‘template<class T> class Component’ used without template arguments
-    5 | void Component::add(Component*) {
-      |      ^~~~~~~~~
-Component.cpp:5:6: error: variable or field ‘add’ declared void
-Component.cpp:5:30: error: missing template arguments before ‘*’ token
-    5 | void Component::add(Component*) {
-      |                              ^
-Component.cpp:5:31: error: expected primary-expression before ‘)’ token
-    5 | void Component::add(Component*) {
-      |                               ^
-Component.cpp:9:6: error: ‘template<class T> class Component’ used without template arguments
-    9 | void Component::remove(Component*) {
-      |      ^~~~~~~~~
-Component.cpp:9:6: error: variable or field ‘remove’ declared void
-Component.cpp:9:33: error: missing template arguments before ‘*’ token
-    9 | void Component::remove(Component*) {
-      |                                 ^
-Component.cpp:9:34: error: expected primary-expression before ‘)’ token
-    9 | void Component::remove(Component*) {
-      |                                  ^
-Component.cpp:13:1: error: invalid use of template-name ‘Component’ without an argument list
-   13 | Component* Component::getChild(int n) {
-      | ^~~~~~~~~
-Component.cpp:13:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Component.cpp:1:
-Component.h:5:7: note: ‘template<class T> class Component’ declared here
-    5 | class Component {
-      |       ^~~~~~~~~
-Component.cpp:19:1: error: invalid use of template-name ‘Component’ without an argument list
-   19 | Component::~Component(){
-      | ^~~~~~~~~
-Component.cpp:19:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-Component.h:5:7: note: ‘template<class T> class Component’ declared here
-    5 | class Component {
-      |       ^~~~~~~~~
-In file included from Composite.cpp:1:
-Composite.h:12:35: error: expected class-name before ‘{’ token [-Wtemplate-body]
-   12 | class Composite: public Component {
-      |                                   ^
-Composite.cpp:6:6: error: redeclaration of ‘void Composite<T>::display(int)’ may not have default arguments [-Wtemplate-body]
-    6 | void Composite<T>::display(int indent = 0) {
-      |      ^~~~~~~~~~~~
-Composite.cpp: In member function ‘void Composite<T>::display(int)’:
-Composite.cpp:18:19: error: ‘class Composite<T>’ has no member named ‘name’ [-Wtemplate-body]
-   18 |     cout << this->name << endl;
-      |                   ^~~~
-Composite.cpp: In member function ‘Component<T>* Composite<T>::getChild(int)’:
-Composite.cpp:43:20: error: template argument 1 is invalid [-Wtemplate-body]
-   43 |     list<Component*>::iterator it = next(children.begin(), n);
-      |                    ^
-Composite.cpp:43:20: error: template argument 2 is invalid [-Wtemplate-body]
-Composite.cpp:43:32: error: qualified-id in declaration before ‘it’ [-Wtemplate-body]
-   43 |     list<Component*>::iterator it = next(children.begin(), n);
-      |                                ^~
-Composite.cpp:44:13: error: ‘it’ was not declared in this scope; did you mean ‘int’? [-Wtemplate-body]
-   44 |     return *it;
-      |             ^~
-      |             int
-Composite.cpp: In destructor ‘Composite<T>::~Composite()’:
-Composite.cpp:49:25: error: template argument 1 is invalid [-Wtemplate-body]
-   49 |     for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
-      |                         ^
-Composite.cpp:49:25: error: template argument 2 is invalid [-Wtemplate-body]
-Composite.cpp:49:37: error: qualified-id in declaration before ‘it’ [-Wtemplate-body]
-   49 |     for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
-      |                                     ^~
-Composite.cpp:49:36: error: expected ‘;’ before ‘it’ [-Wtemplate-body]
-   49 |     for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
-      |                                    ^~~
-      |                                    ;
-Composite.cpp:49:37: error: ‘it’ was not declared in this scope; did you mean ‘int’? [-Wtemplate-body]
-   49 |     for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
-      |                                     ^~
-      |                                     int
-Composite.cpp:49:80: error: expected ‘)’ before ‘;’ token [-Wtemplate-body]
-   49 |     for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
-      |         ~                                                                      ^
-      |                                                                                )
-Composite.cpp:49:84: error: ‘it’ was not declared in this scope; did you mean ‘int’? [-Wtemplate-body]
-   49 |     for (list<Component*>::iterator it = children.begin(); it != children.end(); ++it) {
-      |                                                                                    ^~
-      |                                                                                    int
-In file included from Creator.h:4,
-                 from ConcreteCreator.h:4,
+In file included from ConcreteCreator.h:4,
                  from ConcreteCreator.cpp:1:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
-      |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
 Creator.h:10:5: error: invalid use of template-name ‘AbstractWorkItem’ without an argument list
    10 |     AbstractWorkItem* createWorkItem(); //followed Chocolate example in lecture slides
       |     ^~~~~~~~~~~~~~~~
 Creator.h:10:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from AbstractWorkItem.h:4:
+In file included from AbstractWorkItem.h:4,
+                 from Creator.h:4:
 WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ declared here
    10 | class AbstractWorkItem;
       |       ^~~~~~~~~~~~~~~~
@@ -320,17 +24,20 @@ WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ de
    10 | class AbstractWorkItem;
       |       ^~~~~~~~~~~~~~~~
 In file included from ConcreteCreator.cpp:2:
-WorkItem.h:39:5: error: invalid use of template-name ‘WorkItemState’ without an argument list [-Wtemplate-body]
-   39 |     WorkItemState* getState() const;
-      |     ^~~~~~~~~~~~~
+WorkItem.h:19:1: error: expected class-name before ‘{’ token [-Wtemplate-body]
+   19 | {
+      | ^
+WorkItem.h:39:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
+   39 |     State* getState() const;
+      |     ^~~~~
 WorkItem.h:39:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
 In file included from AbstractWorkItem.h:7:
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
-WorkItem.h:40:19: error: ‘WorkItemState’ is not a type [-Wtemplate-body]
-   40 |     void setState(WorkItemState* newState);
-      |                   ^~~~~~~~~~~~~
+State.h:10:7: note: ‘template<class T> class State’ declared here
+   10 | class State {
+      |       ^~~~~
+WorkItem.h:40:19: error: ‘State’ is not a type [-Wtemplate-body]
+   40 |     void setState(State* newState);
+      |                   ^~~~~
 ConcreteCreator.cpp:6:1: error: invalid use of template-name ‘AbstractWorkItem’ without an argument list
     6 | AbstractWorkItem* ConcreteCreator::factoryMethod(){
       | ^~~~~~~~~~~~~~~~
@@ -338,64 +45,6 @@ ConcreteCreator.cpp:6:1: note: class template argument deduction is only availab
 WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ declared here
    10 | class AbstractWorkItem;
       |       ^~~~~~~~~~~~~~~~
-In file included from ConcreteDecoratorA.h:4,
-                 from ConcreteDecoratorA.cpp:1:
-Decorator.h:8:35: error: expected class-name before ‘{’ token
-    8 | class Decorator : public Component{
-      |                                   ^
-Decorator.h:12:24: error: expected ‘)’ before ‘*’ token
-   12 |     Decorator(Component* component);
-      |              ~         ^
-      |                        )
-Decorator.h:20:5: error: invalid use of template-name ‘Component’ without an argument list
-   20 |     Component* component ;//component to deco
-      |     ^~~~~~~~~
-Decorator.h:20:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Decorator.h:4:
-Component.h:5:7: note: ‘template<class T> class Component’ declared here
-    5 | class Component {
-      |       ^~~~~~~~~
-ConcreteDecoratorA.h:9:33: error: expected ‘)’ before ‘*’ token
-    9 |     ConcreteDecoratorA(Component* component);
-      |                       ~         ^
-      |                                 )
-ConcreteDecoratorA.cpp:3:39: error: expected constructor, destructor, or type conversion before ‘(’ token
-    3 | ConcreteDecoratorA::ConcreteDecoratorA(Component* component) : Decorator(component){
-      |                                       ^
-ConcreteDecoratorA.cpp: In member function ‘virtual void ConcreteDecoratorA::operation()’:
-ConcreteDecoratorA.cpp:14:5: error: ‘component’ was not declared in this scope; did you mean ‘Component’?
-   14 |     component->operation();
-      |     ^~~~~~~~~
-      |     Component
-In file included from ConcreteDecoratorB.h:4,
-                 from ConcreteDecoratorB.cpp:1:
-Decorator.h:8:35: error: expected class-name before ‘{’ token
-    8 | class Decorator : public Component{
-      |                                   ^
-Decorator.h:12:24: error: expected ‘)’ before ‘*’ token
-   12 |     Decorator(Component* component);
-      |              ~         ^
-      |                        )
-Decorator.h:20:5: error: invalid use of template-name ‘Component’ without an argument list
-   20 |     Component* component ;//component to deco
-      |     ^~~~~~~~~
-Decorator.h:20:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Decorator.h:4:
-Component.h:5:7: note: ‘template<class T> class Component’ declared here
-    5 | class Component {
-      |       ^~~~~~~~~
-ConcreteDecoratorB.h:10:33: error: expected ‘)’ before ‘*’ token
-   10 |     ConcreteDecoratorB(Component* component);
-      |                       ~         ^
-      |                                 )
-ConcreteDecoratorB.cpp:3:39: error: expected constructor, destructor, or type conversion before ‘(’ token
-    3 | ConcreteDecoratorB::ConcreteDecoratorB(Component* component) : Decorator(component){
-      |                                       ^
-ConcreteDecoratorB.cpp: In member function ‘virtual void ConcreteDecoratorB::operation()’:
-ConcreteDecoratorB.cpp:14:5: error: ‘component’ was not declared in this scope; did you mean ‘Component’?
-   14 |     component->operation();
-      |     ^~~~~~~~~
-      |     Component
 In file included from ConcreteHandler.cpp:1:
 ConcreteHandler.h:12:54: error: expected class-name before ‘{’ token [-Wtemplate-body]
    12 | class ConcreteHandler : public TaskEscalationManager {
@@ -422,20 +71,13 @@ ConcreteObserver.cpp:3:10: fatal error: Handler.h: No such file or directory
     3 | #include "Handler.h"
       |          ^~~~~~~~~~~
 compilation terminated.
-In file included from Creator.h:4,
-                 from Creator.cpp:1:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
-      |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
+In file included from Creator.cpp:1:
 Creator.h:10:5: error: invalid use of template-name ‘AbstractWorkItem’ without an argument list
    10 |     AbstractWorkItem* createWorkItem(); //followed Chocolate example in lecture slides
       |     ^~~~~~~~~~~~~~~~
 Creator.h:10:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from AbstractWorkItem.h:4:
+In file included from AbstractWorkItem.h:4,
+                 from Creator.h:4:
 WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ declared here
    10 | class AbstractWorkItem;
       |       ^~~~~~~~~~~~~~~~
@@ -453,172 +95,29 @@ Creator.cpp:8:1: note: class template argument deduction is only available with 
 WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ declared here
    10 | class AbstractWorkItem;
       |       ^~~~~~~~~~~~~~~~
-In file included from Decorator.cpp:1:
-Decorator.h:8:35: error: expected class-name before ‘{’ token
-    8 | class Decorator : public Component{
-      |                                   ^
-Decorator.h:12:24: error: expected ‘)’ before ‘*’ token
-   12 |     Decorator(Component* component);
-      |              ~         ^
-      |                        )
-Decorator.h:20:5: error: invalid use of template-name ‘Component’ without an argument list
-   20 |     Component* component ;//component to deco
-      |     ^~~~~~~~~
-Decorator.h:20:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Decorator.h:4:
-Component.h:5:7: note: ‘template<class T> class Component’ declared here
-    5 | class Component {
-      |       ^~~~~~~~~
-Decorator.cpp:3:21: error: expected constructor, destructor, or type conversion before ‘(’ token
-    3 | Decorator::Decorator(Component* component){
-      |                     ^
-Decorator.cpp: In member function ‘virtual void Decorator::operation()’:
-Decorator.cpp:14:5: error: ‘component’ was not declared in this scope; did you mean ‘Component’?
-   14 |     component->operation();
-      |     ^~~~~~~~~
-      |     Component
-Decorator.cpp: In member function ‘int Decorator::getScore()’:
-Decorator.cpp:18:12: error: ‘component’ was not declared in this scope; did you mean ‘Component’?
-   18 |     return component->getScore();
-      |            ^~~~~~~~~
-      |            Component
-Decorator.cpp: In member function ‘int Decorator::getTime()’:
-Decorator.cpp:22:12: error: ‘component’ was not declared in this scope; did you mean ‘Component’?
-   22 |     return component->getTime();
-      |            ^~~~~~~~~
-      |            Component
-In file included from main.cpp:1:
-Caretaker.h:9:33: error: template argument 1 is invalid
-    9 |     std::vector<WorkItemMemento*> mementoHistory;
-      |                                 ^
-Caretaker.h:9:33: error: template argument 2 is invalid
-Caretaker.h:15:21: error: ‘WorkItemMemento’ is not a type
-   15 |     void addMemento(WorkItemMemento* m);
-      |                     ^~~~~~~~~~~~~~~
-Caretaker.h:16:5: error: invalid use of template-name ‘WorkItemMemento’ without an argument list
-   16 |     WorkItemMemento* getMemento(int index) const;
-      |     ^~~~~~~~~~~~~~~
-Caretaker.h:16:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Caretaker.h:4:
-WorkItemMemento.h:8:7: note: ‘template<class T> class WorkItemMemento’ declared here
-    8 | class WorkItemMemento {
-      |       ^~~~~~~~~~~~~~~
-In file included from ConcreteDecoratorA.h:4,
-                 from main.cpp:2:
-Decorator.h:8:35: error: expected class-name before ‘{’ token
-    8 | class Decorator : public Component{
-      |                                   ^
-Decorator.h:12:24: error: expected ‘)’ before ‘*’ token
-   12 |     Decorator(Component* component);
-      |              ~         ^
-      |                        )
-Decorator.h:20:5: error: invalid use of template-name ‘Component’ without an argument list
-   20 |     Component* component ;//component to deco
-      |     ^~~~~~~~~
-Decorator.h:20:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from Decorator.h:4:
-Component.h:5:7: note: ‘template<class T> class Component’ declared here
-    5 | class Component {
-      |       ^~~~~~~~~
-ConcreteDecoratorA.h:9:33: error: expected ‘)’ before ‘*’ token
-    9 |     ConcreteDecoratorA(Component* component);
-      |                       ~         ^
-      |                                 )
-In file included from main.cpp:3:
-ConcreteDecoratorB.h:10:33: error: expected ‘)’ before ‘*’ token
-   10 |     ConcreteDecoratorB(Component* component);
-      |                       ~         ^
-      |                                 )
-In file included from main.cpp:4:
-ConcreteHandler.h:12:54: error: expected class-name before ‘{’ token [-Wtemplate-body]
-   12 | class ConcreteHandler : public TaskEscalationManager {
-      |                                                      ^
-In file included from Observer.h:4,
-                 from ConcreteObserver.h:4,
-                 from main.cpp:5:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
+main.cpp:2:10: fatal error: ConcreteDecoratorA.h: No such file or directory
+    2 | #include "ConcreteDecoratorA.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+In file included from State.cpp:2:
+WorkItem.h:19:1: error: expected class-name before ‘{’ token [-Wtemplate-body]
+   19 | {
+      | ^
+WorkItem.h:39:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
+   39 |     State* getState() const;
       |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
-ConcreteObserver.h:6:7: error: class template ‘AbstractWorkItem’ redeclared as non-template
-    6 | class AbstractWorkItem;
-      |       ^~~~~~~~~~~~~~~~
-In file included from AbstractWorkItem.h:4:
-WorkflowMediator.h:10:7: note: previous declaration here
-   10 | class AbstractWorkItem;
-      |       ^~~~~~~~~~~~~~~~
-ConcreteObserver.h:12:38: error: expected ‘)’ before ‘*’ token
-   12 |     ConcreteObserver(AbstractWorkItem* subject, Handler* handler);
-      |                     ~                ^
-      |                                      )
-ConcreteObserver.h:17:5: error: invalid use of template-name ‘AbstractWorkItem’ without an argument list
-   17 |     AbstractWorkItem* subject;
-      |     ^~~~~~~~~~~~~~~~
-ConcreteObserver.h:17:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ declared here
-   10 | class AbstractWorkItem;
-      |       ^~~~~~~~~~~~~~~~
-In file included from TIVIDY.h:13,
-                 from main.cpp:8:
-WorkItem.h:39:5: error: invalid use of template-name ‘WorkItemState’ without an argument list [-Wtemplate-body]
-   39 |     WorkItemState* getState() const;
-      |     ^~~~~~~~~~~~~
-WorkItem.h:39:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-WorkItemMemento.h:5:7: note: ‘template<class T> class WorkItemState’ declared here
-    5 | class WorkItemState;
-      |       ^~~~~~~~~~~~~
-WorkItem.h:40:19: error: ‘WorkItemState’ is not a type [-Wtemplate-body]
-   40 |     void setState(WorkItemState* newState);
-      |                   ^~~~~~~~~~~~~
-TIVIDY.h:42:5: error: invalid use of template-name ‘AbstractWorkItem’ without an argument list [-Wtemplate-body]
-   42 |     AbstractWorkItem* find(int id) const;
-      |     ^~~~~~~~~~~~~~~~
-TIVIDY.h:42:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ declared here
-   10 | class AbstractWorkItem;
-      |       ^~~~~~~~~~~~~~~~
-TIVIDY.h:44:5: error: invalid use of template-name ‘WorkflowMediator’ without an argument list [-Wtemplate-body]
-   44 |     WorkflowMediator* mediator;
-      |     ^~~~~~~~~~~~~~~~
-TIVIDY.h:44:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-WorkflowMediator.h:13:7: note: ‘template<class T> class WorkflowMediator’ declared here
-   13 | class WorkflowMediator
-      |       ^~~~~~~~~~~~~~~~
-In file included from Observer.h:4,
-                 from Observer.cpp:1:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
-      |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
-In file included from WorkItem.h:5,
-                 from State.cpp:2:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
-      |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
-WorkItem.h:39:5: error: invalid use of template-name ‘WorkItemState’ without an argument list [-Wtemplate-body]
-   39 |     WorkItemState* getState() const;
-      |     ^~~~~~~~~~~~~
 WorkItem.h:39:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
 In file included from State.cpp:1:
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
-WorkItem.h:40:19: error: ‘WorkItemState’ is not a type [-Wtemplate-body]
-   40 |     void setState(WorkItemState* newState);
-      |                   ^~~~~~~~~~~~~
-State.cpp:7:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.h:10:7: note: ‘template<class T> class State’ declared here
+   10 | class State {
+      |       ^~~~~
+WorkItem.h:40:19: error: ‘State’ is not a type [-Wtemplate-body]
+   40 |     void setState(State* newState);
+      |                   ^~~~~
+State.cpp:7:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
     7 | void WorkItemState::reject(const std::string& operation) const
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:7:58: error: non-member function ‘void reject(const std::string&)’ cannot have cv-qualifier
     7 | void WorkItemState::reject(const std::string& operation) const
       |                                                          ^~~~~
@@ -628,9 +127,10 @@ State.cpp:9:77: error: ‘getName’ was not declared in this scope; did you mea
       |                                                                             ^~~~~~~
       |                                                                             getdate
 State.cpp: At global scope:
-State.cpp:12:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.cpp:12:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
    12 | void WorkItemState::nextState(WorkItem*)
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:12:6: error: variable or field ‘nextState’ declared void
 State.cpp:12:39: error: missing template arguments before ‘*’ token
    12 | void WorkItemState::nextState(WorkItem*)
@@ -638,9 +138,10 @@ State.cpp:12:39: error: missing template arguments before ‘*’ token
 State.cpp:12:40: error: expected primary-expression before ‘)’ token
    12 | void WorkItemState::nextState(WorkItem*)
       |                                        ^
-State.cpp:17:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.cpp:17:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
    17 | void WorkItemState::paused(WorkItem*)
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:17:6: error: variable or field ‘paused’ declared void
 State.cpp:17:36: error: missing template arguments before ‘*’ token
    17 | void WorkItemState::paused(WorkItem*)
@@ -648,9 +149,10 @@ State.cpp:17:36: error: missing template arguments before ‘*’ token
 State.cpp:17:37: error: expected primary-expression before ‘)’ token
    17 | void WorkItemState::paused(WorkItem*)
       |                                     ^
-State.cpp:22:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.cpp:22:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
    22 | void WorkItemState::resume(WorkItem*)
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:22:6: error: variable or field ‘resume’ declared void
 State.cpp:22:36: error: missing template arguments before ‘*’ token
    22 | void WorkItemState::resume(WorkItem*)
@@ -658,9 +160,10 @@ State.cpp:22:36: error: missing template arguments before ‘*’ token
 State.cpp:22:37: error: expected primary-expression before ‘)’ token
    22 | void WorkItemState::resume(WorkItem*)
       |                                     ^
-State.cpp:27:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.cpp:27:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
    27 | void WorkItemState::retry(WorkItem*)
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:27:6: error: variable or field ‘retry’ declared void
 State.cpp:27:35: error: missing template arguments before ‘*’ token
    27 | void WorkItemState::retry(WorkItem*)
@@ -668,9 +171,10 @@ State.cpp:27:35: error: missing template arguments before ‘*’ token
 State.cpp:27:36: error: expected primary-expression before ‘)’ token
    27 | void WorkItemState::retry(WorkItem*)
       |                                    ^
-State.cpp:32:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.cpp:32:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
    32 | void WorkItemState::failed(WorkItem*)
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:32:6: error: variable or field ‘failed’ declared void
 State.cpp:32:36: error: missing template arguments before ‘*’ token
    32 | void WorkItemState::failed(WorkItem*)
@@ -678,9 +182,10 @@ State.cpp:32:36: error: missing template arguments before ‘*’ token
 State.cpp:32:37: error: expected primary-expression before ‘)’ token
    32 | void WorkItemState::failed(WorkItem*)
       |                                     ^
-State.cpp:37:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.cpp:37:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
    37 | void WorkItemState::failedDelivery(WorkItem*)
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:37:6: error: variable or field ‘failedDelivery’ declared void
 State.cpp:37:44: error: missing template arguments before ‘*’ token
    37 | void WorkItemState::failedDelivery(WorkItem*)
@@ -688,9 +193,10 @@ State.cpp:37:44: error: missing template arguments before ‘*’ token
 State.cpp:37:45: error: expected primary-expression before ‘)’ token
    37 | void WorkItemState::failedDelivery(WorkItem*)
       |                                             ^
-State.cpp:42:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.cpp:42:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
    42 | void WorkItemState::exception(WorkItem*)
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:42:6: error: variable or field ‘exception’ declared void
 State.cpp:42:39: error: missing template arguments before ‘*’ token
    42 | void WorkItemState::exception(WorkItem*)
@@ -698,9 +204,10 @@ State.cpp:42:39: error: missing template arguments before ‘*’ token
 State.cpp:42:40: error: expected primary-expression before ‘)’ token
    42 | void WorkItemState::exception(WorkItem*)
       |                                        ^
-State.cpp:47:6: error: ‘template<class T> class WorkItemState’ used without template arguments
+State.cpp:47:6: error: ‘WorkItemState’ has not been declared; did you mean ‘WorkItem’?
    47 | void WorkItemState::validate(WorkItem*)
       |      ^~~~~~~~~~~~~
+      |      WorkItem
 State.cpp:47:6: error: variable or field ‘validate’ declared void
 State.cpp:47:38: error: missing template arguments before ‘*’ token
    47 | void WorkItemState::validate(WorkItem*)
@@ -714,13 +221,10 @@ State.cpp:53:13: error: ‘template<class T> class Created’ used without templ
 State.cpp:53:32: error: non-member function ‘std::string getName()’ cannot have cv-qualifier
    53 | std::string Created::getName() const
       |                                ^~~~~
-State.cpp:58:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:58:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
    58 | WorkItemState* Created::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:58:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:63:6: error: ‘template<class T> class Created’ used without template arguments
    63 | void Created::nextState(WorkItem* item)
       |      ^~~~~~~
@@ -744,13 +248,10 @@ State.cpp:69:13: error: redefinition of ‘std::string getName()’
 State.cpp:53:13: note: ‘std::string getName()’ previously defined here
    53 | std::string Created::getName() const
       |             ^~~~~~~
-State.cpp:74:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:74:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
    74 | WorkItemState* Delivered::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:74:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:79:6: error: ‘template<class T> class Delivered’ used without template arguments
    79 | void Delivered::nextState(WorkItem* item)
       |      ^~~~~~~~~
@@ -796,13 +297,10 @@ State.cpp:95:13: error: redefinition of ‘std::string getName()’
 State.cpp:53:13: note: ‘std::string getName()’ previously defined here
    53 | std::string Created::getName() const
       |             ^~~~~~~
-State.cpp:100:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:100:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
   100 | WorkItemState* InProgress::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:100:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:105:6: error: ‘template<class T> class InProgress’ used without template arguments
   105 | void InProgress::nextState(WorkItem* item)
       |      ^~~~~~~~~~
@@ -859,13 +357,10 @@ State.cpp:133:13: error: redefinition of ‘std::string getName()’
 State.cpp:53:13: note: ‘std::string getName()’ previously defined here
    53 | std::string Created::getName() const
       |             ^~~~~~~
-State.cpp:138:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:138:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
   138 | WorkItemState* Paused::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:138:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:143:6: error: ‘template<class T> class Paused’ used without template arguments
   143 | void Paused::nextState(WorkItem* item)
       |      ^~~~~~
@@ -900,13 +395,10 @@ State.cpp:154:13: error: redefinition of ‘std::string getName()’
 State.cpp:53:13: note: ‘std::string getName()’ previously defined here
    53 | std::string Created::getName() const
       |             ^~~~~~~
-State.cpp:159:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:159:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
   159 | WorkItemState* Completed::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:159:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:164:6: error: ‘template<class T> class Completed’ used without template arguments
   164 | void Completed::nextState(WorkItem* item)
       |      ^~~~~~~~~
@@ -930,13 +422,10 @@ State.cpp:170:13: error: redefinition of ‘std::string getName()’
 State.cpp:53:13: note: ‘std::string getName()’ previously defined here
    53 | std::string Created::getName() const
       |             ^~~~~~~
-State.cpp:175:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:175:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
   175 | WorkItemState* Validation::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:175:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:180:6: error: ‘template<class T> class Validation’ used without template arguments
   180 | void Validation::nextState(WorkItem* item)
       |      ^~~~~~~~~~
@@ -982,13 +471,10 @@ State.cpp:204:13: error: redefinition of ‘std::string getName()’
 State.cpp:53:13: note: ‘std::string getName()’ previously defined here
    53 | std::string Created::getName() const
       |             ^~~~~~~
-State.cpp:209:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:209:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
   209 | WorkItemState* Failed::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:209:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:214:6: error: ‘template<class T> class Failed’ used without template arguments
   214 | void Failed::nextState(WorkItem* item)
       |      ^~~~~~
@@ -1012,13 +498,10 @@ State.cpp:220:13: error: redefinition of ‘std::string getName()’
 State.cpp:53:13: note: ‘std::string getName()’ previously defined here
    53 | std::string Created::getName() const
       |             ^~~~~~~
-State.cpp:225:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:225:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
   225 | WorkItemState* Archived::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:225:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:230:6: error: ‘template<class T> class Archived’ used without template arguments
   230 | void Archived::nextState(WorkItem*)
       |      ^~~~~~~~
@@ -1041,13 +524,10 @@ State.cpp:236:13: error: redefinition of ‘std::string getName()’
 State.cpp:53:13: note: ‘std::string getName()’ previously defined here
    53 | std::string Created::getName() const
       |             ^~~~~~~
-State.cpp:241:1: error: invalid use of template-name ‘WorkItemState’ without an argument list
+State.cpp:241:1: error: ‘WorkItemState’ does not name a type; did you mean ‘WorkItem’?
   241 | WorkItemState* Exception::clone() const
       | ^~~~~~~~~~~~~
-State.cpp:241:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
+      | WorkItem
 State.cpp:246:6: error: ‘template<class T> class Exception’ used without template arguments
   246 | void Exception::nextState(WorkItem* item)
       |      ^~~~~~~~~
@@ -1070,283 +550,44 @@ State.cpp:251:36: error: ‘item’ was not declared in this scope; did you mean
   251 | void Exception::validate(WorkItem* item)
       |                                    ^~~~
       |                                    tm
-In file included from TIVIDY.h:12,
-                 from TIVIDY.cpp:1:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
-      |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
-In file included from TIVIDY.h:13:
-WorkItem.h:39:5: error: invalid use of template-name ‘WorkItemState’ without an argument list [-Wtemplate-body]
-   39 |     WorkItemState* getState() const;
-      |     ^~~~~~~~~~~~~
-WorkItem.h:39:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from AbstractWorkItem.h:7:
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
-WorkItem.h:40:19: error: ‘WorkItemState’ is not a type [-Wtemplate-body]
-   40 |     void setState(WorkItemState* newState);
-      |                   ^~~~~~~~~~~~~
-TIVIDY.h:42:5: error: invalid use of template-name ‘AbstractWorkItem’ without an argument list [-Wtemplate-body]
-   42 |     AbstractWorkItem* find(int id) const;
-      |     ^~~~~~~~~~~~~~~~
-TIVIDY.h:42:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from AbstractWorkItem.h:4:
-WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ declared here
-   10 | class AbstractWorkItem;
-      |       ^~~~~~~~~~~~~~~~
-TIVIDY.h:44:5: error: invalid use of template-name ‘WorkflowMediator’ without an argument list [-Wtemplate-body]
-   44 |     WorkflowMediator* mediator;
-      |     ^~~~~~~~~~~~~~~~
-TIVIDY.h:44:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-WorkflowMediator.h:13:7: note: ‘template<class T> class WorkflowMediator’ declared here
-   13 | class WorkflowMediator
-      |       ^~~~~~~~~~~~~~~~
-TIVIDY.cpp:7:1: error: invalid use of template-name ‘TIVIDY’ without an argument list
-    7 | TIVIDY::TIVIDY() : mediator(new WorkflowMediator()), nextId(1)
-      | ^~~~~~
-TIVIDY.cpp:7:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-TIVIDY.h:22:7: note: ‘template<class T> class TIVIDY’ declared here
-   22 | class TIVIDY
-      |       ^~~~~~
-TIVIDY.cpp:11:1: error: invalid use of template-name ‘TIVIDY’ without an argument list
-   11 | TIVIDY::~TIVIDY()
-      | ^~~~~~
-TIVIDY.cpp:11:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-TIVIDY.h:22:7: note: ‘template<class T> class TIVIDY’ declared here
-   22 | class TIVIDY
-      |       ^~~~~~
-TIVIDY.cpp:16:1: error: invalid use of template-name ‘AbstractWorkItem’ without an argument list
-   16 | AbstractWorkItem* TIVIDY::find(int id) const
-      | ^~~~~~~~~~~~~~~~
-TIVIDY.cpp:16:1: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-WorkflowMediator.h:10:7: note: ‘template<class T> class AbstractWorkItem’ declared here
-   10 | class AbstractWorkItem;
-      |       ^~~~~~~~~~~~~~~~
-TIVIDY.cpp:26:5: error: ‘template<class T> class TIVIDY’ used without template arguments
-   26 | int TIVIDY::createWorkItem(const std::string& name, int deadline)
-      |     ^~~~~~
-TIVIDY.cpp: In function ‘int createWorkItem(const std::string&, int)’:
-TIVIDY.cpp:28:21: error: missing template arguments before ‘*’ token
-   28 |     AbstractWorkItem* item = new WorkItem(nextId++, name, deadline, mediator);
-      |                     ^
-TIVIDY.cpp:28:23: error: ‘item’ was not declared in this scope; did you mean ‘tm’?
-   28 |     AbstractWorkItem* item = new WorkItem(nextId++, name, deadline, mediator);
-      |                       ^~~~
-      |                       tm
-TIVIDY.cpp:28:34: error: expected type-specifier before ‘WorkItem’
-   28 |     AbstractWorkItem* item = new WorkItem(nextId++, name, deadline, mediator);
-      |                                  ^~~~~~~~
-TIVIDY.cpp:29:5: error: ‘mediator’ was not declared in this scope
-   29 |     mediator->addWorkItem(item);
-      |     ^~~~~~~~
-TIVIDY.cpp: At global scope:
-TIVIDY.cpp:34:6: error: ‘template<class T> class TIVIDY’ used without template arguments
-   34 | void TIVIDY::advanceWork(int id)
-      |      ^~~~~~
-TIVIDY.cpp: In function ‘void advanceWork(int)’:
-TIVIDY.cpp:36:21: error: missing template arguments before ‘*’ token
-   36 |     AbstractWorkItem* item = find(id);
-      |                     ^
-TIVIDY.cpp:36:23: error: ‘item’ was not declared in this scope; did you mean ‘tm’?
-   36 |     AbstractWorkItem* item = find(id);
-      |                       ^~~~
-      |                       tm
-TIVIDY.cpp:36:30: error: ‘find’ was not declared in this scope; did you mean ‘std::find’?
-   36 |     AbstractWorkItem* item = find(id);
-      |                              ^~~~
-      |                              std::find
-In file included from /usr/include/c++/16/bits/locale_facets.h:50,
-                 from /usr/include/c++/16/bits/basic_ios.h:40,
-                 from /usr/include/c++/16/ios:48,
-                 from /usr/include/c++/16/bits/ostream.h:43,
-                 from /usr/include/c++/16/ostream:42,
-                 from /usr/include/c++/16/iostream:43,
-                 from AbstractWorkflowInstanceA.h:4,
-                 from AbstractWorkflowFactory.h:4,
-                 from TIVIDY.h:6:
-/usr/include/c++/16/bits/streambuf_iterator.h:437:5: note: ‘std::find’ declared here
-  437 |     find(istreambuf_iterator<_CharT> __first,
-      |     ^~~~
-TIVIDY.cpp: At global scope:
-TIVIDY.cpp:43:6: error: ‘template<class T> class TIVIDY’ used without template arguments
-   43 | void TIVIDY::submitWork(int id, const std::string& data)
-      |      ^~~~~~
-TIVIDY.cpp: In function ‘void submitWork(int, const std::string&)’:
-TIVIDY.cpp:45:21: error: missing template arguments before ‘*’ token
-   45 |     AbstractWorkItem* item = find(id);
-      |                     ^
-TIVIDY.cpp:45:23: error: ‘item’ was not declared in this scope; did you mean ‘tm’?
-   45 |     AbstractWorkItem* item = find(id);
-      |                       ^~~~
-      |                       tm
-TIVIDY.cpp:45:30: error: ‘find’ was not declared in this scope; did you mean ‘std::find’?
-   45 |     AbstractWorkItem* item = find(id);
-      |                              ^~~~
-      |                              std::find
-/usr/include/c++/16/bits/streambuf_iterator.h:437:5: note: ‘std::find’ declared here
-  437 |     find(istreambuf_iterator<_CharT> __first,
-      |     ^~~~
-TIVIDY.cpp: At global scope:
-TIVIDY.cpp:53:6: error: ‘template<class T> class TIVIDY’ used without template arguments
-   53 | void TIVIDY::pauseWork(int id)
-      |      ^~~~~~
-TIVIDY.cpp: In function ‘void pauseWork(int)’:
-TIVIDY.cpp:55:21: error: missing template arguments before ‘*’ token
-   55 |     AbstractWorkItem* item = find(id);
-      |                     ^
-TIVIDY.cpp:55:23: error: ‘item’ was not declared in this scope; did you mean ‘tm’?
-   55 |     AbstractWorkItem* item = find(id);
-      |                       ^~~~
-      |                       tm
-TIVIDY.cpp:55:30: error: ‘find’ was not declared in this scope; did you mean ‘std::find’?
-   55 |     AbstractWorkItem* item = find(id);
-      |                              ^~~~
-      |                              std::find
-/usr/include/c++/16/bits/streambuf_iterator.h:437:5: note: ‘std::find’ declared here
-  437 |     find(istreambuf_iterator<_CharT> __first,
-      |     ^~~~
-TIVIDY.cpp: At global scope:
-TIVIDY.cpp:62:6: error: ‘template<class T> class TIVIDY’ used without template arguments
-   62 | void TIVIDY::resumeWork(int id)
-      |      ^~~~~~
-TIVIDY.cpp: In function ‘void resumeWork(int)’:
-TIVIDY.cpp:64:21: error: missing template arguments before ‘*’ token
-   64 |     AbstractWorkItem* item = find(id);
-      |                     ^
-TIVIDY.cpp:64:23: error: ‘item’ was not declared in this scope; did you mean ‘tm’?
-   64 |     AbstractWorkItem* item = find(id);
-      |                       ^~~~
-      |                       tm
-TIVIDY.cpp:64:30: error: ‘find’ was not declared in this scope; did you mean ‘std::find’?
-   64 |     AbstractWorkItem* item = find(id);
-      |                              ^~~~
-      |                              std::find
-/usr/include/c++/16/bits/streambuf_iterator.h:437:5: note: ‘std::find’ declared here
-  437 |     find(istreambuf_iterator<_CharT> __first,
-      |     ^~~~
-TIVIDY.cpp: At global scope:
-TIVIDY.cpp:71:6: error: ‘template<class T> class TIVIDY’ used without template arguments
-   71 | bool TIVIDY::addDependency(int predecessorId, int successorId)
-      |      ^~~~~~
-TIVIDY.cpp: In function ‘bool addDependency(int, int)’:
-TIVIDY.cpp:73:12: error: ‘mediator’ was not declared in this scope
-   73 |     return mediator->addDependency(predecessorId, successorId);
-      |            ^~~~~~~~
-TIVIDY.cpp: At global scope:
-TIVIDY.cpp:76:13: error: ‘template<class T> class TIVIDY’ used without template arguments
-   76 | std::string TIVIDY::getWorkItemState(int id) const
-      |             ^~~~~~
-TIVIDY.cpp:76:46: error: non-member function ‘std::string getWorkItemState(int)’ cannot have cv-qualifier
-   76 | std::string TIVIDY::getWorkItemState(int id) const
-      |                                              ^~~~~
-TIVIDY.cpp: In function ‘std::string getWorkItemState(int)’:
-TIVIDY.cpp:78:21: error: missing template arguments before ‘*’ token
-   78 |     AbstractWorkItem* item = find(id);
-      |                     ^
-TIVIDY.cpp:78:23: error: ‘item’ was not declared in this scope; did you mean ‘tm’?
-   78 |     AbstractWorkItem* item = find(id);
-      |                       ^~~~
-      |                       tm
-TIVIDY.cpp:78:30: error: ‘find’ was not declared in this scope; did you mean ‘std::find’?
-   78 |     AbstractWorkItem* item = find(id);
-      |                              ^~~~
-      |                              std::find
-/usr/include/c++/16/bits/streambuf_iterator.h:437:5: note: ‘std::find’ declared here
-  437 |     find(istreambuf_iterator<_CharT> __first,
-      |     ^~~~
-TIVIDY.cpp: At global scope:
-TIVIDY.cpp:82:6: error: ‘template<class T> class TIVIDY’ used without template arguments
-   82 | void TIVIDY::printStatus() const
-      |      ^~~~~~
-TIVIDY.cpp:82:28: error: non-member function ‘void printStatus()’ cannot have cv-qualifier
-   82 | void TIVIDY::printStatus() const
-      |                            ^~~~~
-TIVIDY.cpp: In function ‘void printStatus()’:
-TIVIDY.cpp:85:26: error: missing template arguments before ‘*’ token
-   85 |     for (AbstractWorkItem* item : mediator->getWorkItems())
-      |                          ^
-TIVIDY.cpp:85:33: error: found ‘:’ in nested-name-specifier, expected ‘::’
-   85 |     for (AbstractWorkItem* item : mediator->getWorkItems())
-      |                                 ^
-      |                                 ::
-TIVIDY.cpp:85:28: error: ‘item’ has not been declared; did you mean ‘tm’?
-   85 |     for (AbstractWorkItem* item : mediator->getWorkItems())
-      |                            ^~~~
-      |                            tm
-TIVIDY.cpp:89:1: error: expected primary-expression before ‘}’ token
-   89 | }
-      | ^
-TIVIDY.cpp:88:6: error: expected ‘;’ before ‘}’ token
-   88 |     }
-      |      ^
-      |      ;
-   89 | }
-      | ~     
-TIVIDY.cpp:89:1: error: expected primary-expression before ‘}’ token
-   89 | }
-      | ^
-TIVIDY.cpp:88:6: error: expected ‘)’ before ‘}’ token
-   88 |     }
-      |      ^
-      |      )
-   89 | }
-      | ~     
-TIVIDY.cpp:85:9: note: to match this ‘(’
-   85 |     for (AbstractWorkItem* item : mediator->getWorkItems())
-      |         ^
-TIVIDY.cpp:89:1: error: expected primary-expression before ‘}’ token
-   89 | }
-      | ^
-TIVIDY.cpp: At global scope:
-TIVIDY.cpp:91:6: error: ‘template<class T> class TIVIDY’ used without template arguments
-   91 | void TIVIDY::runWorkflow(AbstractWorkflowFactory* factory){
-      |      ^~~~~~
-In file included from WorkflowMediator.h:4,
-                 from WorkflowMediator.cpp:1:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
-      |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
+In file included from TIVIDY.cpp:1:
+TIVIDY.h:6:10: fatal error: AbstractWorkflowFactory.h: No such file or directory
+    6 | #include "AbstractWorkflowFactory.h"    //Abstract Fac
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
 In file included from WorkflowMediator.cpp:2:
-WorkItem.h:39:5: error: invalid use of template-name ‘WorkItemState’ without an argument list [-Wtemplate-body]
-   39 |     WorkItemState* getState() const;
-      |     ^~~~~~~~~~~~~
-WorkItem.h:39:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from AbstractWorkItem.h:7:
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
-WorkItem.h:40:19: error: ‘WorkItemState’ is not a type [-Wtemplate-body]
-   40 |     void setState(WorkItemState* newState);
-      |                   ^~~~~~~~~~~~~
-In file included from WorkItem.h:5,
-                 from WorkItem.cpp:1:
-AbstractWorkItem.h:62:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
-   62 |     State* getState();
+WorkItem.h:19:1: error: expected class-name before ‘{’ token [-Wtemplate-body]
+   19 | {
+      | ^
+WorkItem.h:39:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
+   39 |     State* getState() const;
       |     ^~~~~
-AbstractWorkItem.h:62:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-AbstractWorkItem.h:16:7: note: ‘template<class T> class State’ declared here
-   16 | class State;
-      |       ^~~~~
-WorkItem.h:39:5: error: invalid use of template-name ‘WorkItemState’ without an argument list [-Wtemplate-body]
-   39 |     WorkItemState* getState() const;
-      |     ^~~~~~~~~~~~~
 WorkItem.h:39:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
-In file included from AbstractWorkItem.h:7:
-State.h:11:7: note: ‘template<class T> class WorkItemState’ declared here
-   11 | class WorkItemState
-      |       ^~~~~~~~~~~~~
-WorkItem.h:40:19: error: ‘WorkItemState’ is not a type [-Wtemplate-body]
-   40 |     void setState(WorkItemState* newState);
-      |                   ^~~~~~~~~~~~~
+In file included from AbstractWorkItem.h:7,
+                 from WorkflowMediator.h:4,
+                 from WorkflowMediator.cpp:1:
+State.h:10:7: note: ‘template<class T> class State’ declared here
+   10 | class State {
+      |       ^~~~~
+WorkItem.h:40:19: error: ‘State’ is not a type [-Wtemplate-body]
+   40 |     void setState(State* newState);
+      |                   ^~~~~
+In file included from WorkItem.cpp:1:
+WorkItem.h:19:1: error: expected class-name before ‘{’ token [-Wtemplate-body]
+   19 | {
+      | ^
+WorkItem.h:39:5: error: invalid use of template-name ‘State’ without an argument list [-Wtemplate-body]
+   39 |     State* getState() const;
+      |     ^~~~~
+WorkItem.h:39:5: note: class template argument deduction is only available with ‘-std=c++17’ or ‘-std=gnu++17’
+In file included from AbstractWorkItem.h:7,
+                 from WorkItem.h:5:
+State.h:10:7: note: ‘template<class T> class State’ declared here
+   10 | class State {
+      |       ^~~~~
+WorkItem.h:40:19: error: ‘State’ is not a type [-Wtemplate-body]
+   40 |     void setState(State* newState);
+      |                   ^~~~~
 WorkItem.cpp: In constructor ‘WorkItem<T>::WorkItem(int, const std::string&, int, WorkflowMediator<T>*)’:
 WorkItem.cpp:14:7: error: class ‘WorkItem<T>’ does not have any field named ‘AbstractWorkItem’ [-Wtemplate-body]
    14 |     : AbstractWorkItem(id, name, mediator), deadline(deadline), timeSpent(0)

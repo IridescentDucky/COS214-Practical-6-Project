@@ -7,8 +7,7 @@ template <typename T>
 class WorkItem;
 
 template <typename T>
-class State
-{
+class State {
 public:
     virtual ~State()
     {

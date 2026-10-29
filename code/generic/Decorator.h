@@ -5,11 +5,11 @@
 #include <iostream>
 
 
-class Decorator : public Component{
-
+template <typename T>
+class Decorator : public Component<T> {
 public:
 
-    Decorator(Component* component);
+    Decorator(Component<T>* component);
     virtual void operation() = 0;
     virtual ~Decorator();
 
@@ -17,7 +17,7 @@ public:
     int getTime();
 
 protected:
-    Component* component ;//component to deco
+    Component<T>* component ;//component to deco
 };
 
 #endif
