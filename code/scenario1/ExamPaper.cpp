@@ -1,4 +1,6 @@
 #include "ExamPaper.h"
+#include "Marker.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,14 +10,30 @@ double AbstractExamPaper::getMarks() {
 }
 
 ExamPaper::ExamPaper(std::string code, int duration, double initialMarks)
-    : AbstractExamPaper(code, duration, initialMarks) {}
+    : AbstractExamPaper(code, duration, initialMarks), marker(nullptr) {}
 
 AbstractExamPaper* ExamPaper::clonePaper() {
     return new ExamPaper(*this);
 }
 
 void ExamPaper::mark() {
-    // TODO: implement paper marking through its state.
+    if (marker == nullptr) {
+        std::cout << "[ExamPaper] Cannot mark " << moduleCode
+                  << ": no marker has been assigned." << std::endl;
+        return;
+    }
+
+    marker->handle(this);
+}
+
+void ExamPaper::setMarker(Marker* marker) {
+    if (marker == nullptr) {
+        std::cout << "[ExamPaper] Cannot assign a null marker to "
+                  << moduleCode << "." << std::endl;
+        return;
+    }
+
+    this->marker = marker;
 }
 
 PaperState* ExamPaper::getState() {
