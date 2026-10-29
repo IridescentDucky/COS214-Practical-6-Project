@@ -38,17 +38,6 @@ public:
     void update() override;
 };
 
-//----------- ModuleCoordinator ----------------------------------
-
-class ModuleCoordinator :public Marker{
-    
-public:
-    ModuleCoordinator(std::string id, std::string name);
-    
-    void handle(AbstractExamPaper* paper) override;
-    void update() override;
-};
-
 //----------- end. -----------------------------------------------
 
 #endif

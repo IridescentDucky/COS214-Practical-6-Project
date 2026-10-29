@@ -20,6 +20,14 @@ public:
         next = marker;
     }
 
+    bool forwardToNext(AbstractExamPaper* paper) const {
+        if (next == nullptr) {
+            return false;
+        }
+        next->handle(paper);
+        return true;
+    }
+
     virtual void handle(AbstractExamPaper* paper) = 0;
     virtual void update() = 0;
 };

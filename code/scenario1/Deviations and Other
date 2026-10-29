@@ -9,10 +9,11 @@
     
 -> AbstractExamPaper and ExamPaper:
     - added a vector containing strings for questions
-    
+    - ExamPaper tracks each question's available marks for splitting marking work
+
 ----- I'm not fully sure if we want these here or in the Factory pattern tbh but I added them just in case if we wanted them here then we'd have them ready:
-    - added functions addQuestion(), getQuestions(), getQuestion(), and getQuestionCount() to help manage the vector
-    
+    - added functions addQuestion(), getQuestions(), getQuestion(), and getQuestionCount() to help manage the questions
+
 -> StatisticsMemento:
     - added getters for all variables 
 
@@ -20,14 +21,18 @@
 
 I will later also make sure that all of these follow along with the generic.
 
-Things left to be implemented so far:
+Current marking workflow:
 
 -> ExamPaper:
-        - mark() : not exactly sure what it is meant to do
-        
--> Tutor, AssistantLecturer, Lecturer and ModuleCoordinator:
-        -update()
-        
+        - marking is delegated to the configured Tutor, then the AssistantLecturer
+        - questions are split at the boundary closest to half the available marks; ties favor the AssistantLecturer
+
+-> Tutor, AssistantLecturer and Lecturer:
+        - Tutor and AssistantLecturer enter subtotals and can raise escalation flags
+        - Lecturer regrades papers with pending escalation flags
+
+Remaining to be implemented:
+
 -> State Pattern:
         - all the functions: not really sure how the marking process will work yet.
         - also not sure how the function names will be changed so I did not want to do anything there just yet.
