@@ -13,38 +13,7 @@ class WorkItemState;
 class WorkflowMediator;
 class WorkItemMemento;
 
-class AbstractWorkItem
-{
-public:
-    AbstractWorkItem(int id, const std::string& name, WorkflowMediator* mediator);
-    virtual ~AbstractWorkItem();
-
-    int getId() const;
-    std::string getName() const;
-    std::string getStateName() const;
-
-    virtual void handleState() = 0;
-    virtual void paused() = 0;
-    virtual void resume() = 0;
-    virtual void retry() = 0;
-    virtual void failed() = 0;
-    virtual void failedDelivery() = 0;
-    virtual void exception() = 0;
-    virtual void validate() = 0;
-
-    virtual void set(const std::string& data) = 0;
-    virtual std::string get() const = 0;
-    virtual void addTimeSpent(int units) = 0;
-    
-    virtual WorkItemMemento* createMemento() = 0;
-    virtual void setMemento(WorkItemMemento* m) = 0;
-
-protected:
-    int id;
-    std::string name;
-    WorkItemState* state;
-    WorkflowMediator* mediator;
-};
+//Even though im moving the entire AbstractWorkItem class, i will keep all the includes here, just in case
 
 class WorkItem : public AbstractWorkItem, public Component, public Subject
 {

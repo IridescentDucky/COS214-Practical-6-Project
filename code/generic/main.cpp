@@ -4,6 +4,7 @@
 #include "ConcreteHandler1.h"
 #include "ConcreteHandler2.h"
 #include "ConcreteObserver.h"
+#include "ConcreteStrategyA.h"
 #include "ConcreteWorkflowFactory1.h"
 #include "ConcreteWorkflowFactory2.h"
 #include "TIVIDY.h"
@@ -49,6 +50,10 @@ int main()
     ConcreteWorkflowFactory2 factory2;
     tividy.runWorkflow(&factory1);
     tividy.runWorkflow(&factory2);
+    
+    std::cout << "--- Strategy ---" << std::endl;
+    ConcreteStrategyA strategy;
+    strategy.algorithm();
 
     std::cout << "--- Iterator ---" << std::endl;
     tividy.createWorkItem("Plan", 5);

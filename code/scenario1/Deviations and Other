@@ -1,0 +1,21 @@
+-- Deviations --------------------
+
+-> AbstractExamPaper:
+    -added a state variable to contain the state of the object
+    -made the varaibles protected so that ExamPaper has direct access to them.
+    
+-> Marker:
+    -made the variables protected so that the handlers have direct access to them.
+
+-- Other -------------------------
+
+Things left to be implemented so far:
+
+-> ExamPaper:
+        - mark() : not exactly sure what it is meant to do
+        
+-> Tutor, AssistantLecturer, Lecturer and ModuleCoordinator:
+        -update()
+        
+-> State Pattern:
+        - all the functions: not really sure how the marking process will work yet.
