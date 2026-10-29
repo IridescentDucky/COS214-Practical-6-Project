@@ -3,7 +3,7 @@
 
 #include "Component.h"
 #include "AbstractWorkItem.h"
-#include "Subject.h"
+// #include "Subject.h"
 
 #include <string>
 #include <vector>
@@ -36,8 +36,8 @@ public:
     WorkItemMemento<T>* createMemento() override;
     void setMemento(WorkItemMemento<T>* m) override;
 
-    WorkItemState* getState() const;
-    void setState(WorkItemState* newState);
+    State* getState() const;
+    void setState(State* newState);
 
     bool isWithinDeadline() const;
     bool hasValidData() const;

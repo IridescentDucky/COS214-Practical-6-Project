@@ -6,16 +6,15 @@
 template <typename T>
 class WorkItem;
 
-//workitemstate
 template <typename T>
-class WorkItemState
+class State
 {
 public:
-    virtual ~WorkItemState()
+    virtual ~State()
     {
     }
     virtual std::string getName() const = 0;
-    virtual WorkItemState<T>* clone() const = 0;
+    virtual State<T>* clone() const = 0;
 
     virtual void nextState(WorkItem<T>* item);
     virtual void paused(WorkItem<T>* item);
@@ -32,21 +31,21 @@ protected:
 
 //created
 template <typename T>
-class Created : public WorkItemState<T>
+class Created : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
 };
 
 //delivered
 template <typename T>
-class Delivered : public WorkItemState<T>
+class Delivered : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
     void failedDelivery(WorkItem<T>* item) override;
     void retry(WorkItem<T>* item) override;
@@ -54,11 +53,11 @@ public:
 
 //inprogress
 template <typename T>
-class InProgress : public WorkItemState<T>
+class InProgress : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
     void paused(WorkItem<T>* item) override;
     void failed(WorkItem<T>* item) override;
@@ -67,32 +66,32 @@ public:
 
 //paused
 template <typename T>
-class Paused : public WorkItemState<T>
+class Paused : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
     void resume(WorkItem<T>* item) override;
 };
 
 //completed
 template <typename T>
-class Completed : public WorkItemState<T>
+class Completed : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
 };
 
 //validation
 template <typename T>
-class Validation : public WorkItemState<T>
+class Validation : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
     void retry(WorkItem<T>* item) override;
     void failed(WorkItem<T>* item) override;
@@ -100,31 +99,31 @@ public:
 
 //failed
 template <typename T>
-class Failed : public WorkItemState<T>
+class Failed : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
 };
 
 //archived
 template <typename T>
-class Archived : public WorkItemState<T>
+class Archived : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
 };
 
 //exception
 template <typename T>
-class Exception : public WorkItemState<T>
+class Exception : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState<T>* clone() const override;
+    State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
     void validate(WorkItem<T>* item) override;
 };
