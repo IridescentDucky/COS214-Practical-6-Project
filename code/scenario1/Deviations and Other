@@ -6,8 +6,19 @@
     
 -> Marker:
     -made the variables protected so that the handlers have direct access to them.
+    
+-> AbstractExamPaper and ExamPaper:
+    - added a vector containing strings for questions
+    
+----- I'm not fully sure if we want these here or in the Factory pattern tbh but I added them just in case if we wanted them here then we'd have them ready:
+    - added functions addQuestion(), getQuestions(), getQuestion(), and getQuestionCount() to help manage the vector
+    
+-> StatisticsMemento:
+    - added getters for all variables 
 
 -- Other -------------------------
+
+I will later also make sure that all of these follow along with the generic.
 
 Things left to be implemented so far:
 
@@ -19,3 +30,7 @@ Things left to be implemented so far:
         
 -> State Pattern:
         - all the functions: not really sure how the marking process will work yet.
+        - also not sure how the function names will be changed so I did not want to do anything there just yet.
+
+-> Memento:
+        - will leave for when updated UML with strategy added gets added to git

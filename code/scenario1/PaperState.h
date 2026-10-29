@@ -6,18 +6,18 @@ class PaperState{
 public:
     virtual ~PaperState() = default;
     
-    virtual void write();
-    virtual void deliver();
-    virtual void startMarking();
-    virtual void pause();
-    virtual void completeMarking();
-    virtual void captureMarks();
-    virtual void archive();
-    virtual void marked();
-    virtual void createException();
-    virtual void fail();
-    virtual void validate();
-    virtual void resumeMarking();
+    virtual void write() = 0;
+    virtual void deliver() = 0;
+    virtual void startMarking() = 0;
+    virtual void pause() = 0;
+    virtual void completeMarking() = 0;
+    virtual void captureMarks() = 0;
+    virtual void archive() = 0;
+    virtual void marked() = 0;
+    virtual void createException() = 0;
+    virtual void fail() = 0;
+    virtual void validate() = 0;
+    virtual void resumeMarking() = 0;
 };
 
 #endif

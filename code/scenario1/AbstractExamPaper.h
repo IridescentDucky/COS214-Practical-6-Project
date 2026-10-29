@@ -13,7 +13,6 @@ protected:
     std::string moduleCode;
     int examDuration;
     double marks;
-
 public:
     virtual ~AbstractExamPaper() = default;
     AbstractExamPaper(std::string code, int duration, double initialMarks)
