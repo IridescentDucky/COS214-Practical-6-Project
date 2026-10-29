@@ -3,20 +3,18 @@
 
 #include "AbstractWorkItem.h"
 
-class Creator{
-
+template <typename T>
+class Creator {
 public:
     virtual ~Creator();
-    AbstractWorkItem* createWorkItem(); //followed Chocolate example in lecture slides
+    AbstractWorkItem<T>* createWorkItem(); //followed Chocolate example in lecture slides
 
 protected:
-    virtual AbstractWorkItem* factoryMethod() = 0;
+    virtual AbstractWorkItem<T>* factoryMethod() = 0;
 
 // private:
 //     AbstractWorkItem* item; //note we dont really need this, we arent using it anywhere
 
 };
-
-
 
 #endif

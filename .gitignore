@@ -1,0 +1,16 @@
+*.o
+*.obj
+*.exe
+*.out
+build/
+bin/
+
+code/generic/errors.txt
+errors.txt
+*.log
+
+.vscode/
+.idea/
+*.suo
+*.user
+.DS_Store

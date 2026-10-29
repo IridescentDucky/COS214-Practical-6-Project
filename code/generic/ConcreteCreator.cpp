@@ -3,8 +3,10 @@
 
 #include <iostream>
 
-AbstractWorkItem* ConcreteCreator::factoryMethod(){
 
+template <typename T>
+AbstractWorkItem<T>* ConcreteCreator<T>::factoryMethod(){
     std::cout << "Creating a WorkItem" << std::endl;
-    return new WorkItem();
+
+    return new WorkItem<T>();
 }

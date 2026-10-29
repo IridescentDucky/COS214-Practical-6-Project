@@ -3,119 +3,127 @@
 
 #include <string>
 
+template <typename T>
 class WorkItem;
 
-//workitemstate
-class WorkItemState
-{
+template <typename T>
+class State {
 public:
-    virtual ~WorkItemState()
-    {
-    }
+    virtual ~State() {}
+    
     virtual std::string getName() const = 0;
-    virtual WorkItemState* clone() const = 0;
+    virtual State<T>* clone() const = 0;
 
-    virtual void nextState(WorkItem* item);
-    virtual void paused(WorkItem* item);
-    virtual void resume(WorkItem* item);
-    virtual void retry(WorkItem* item);
-    virtual void failed(WorkItem* item);
-    virtual void failedDelivery(WorkItem* item);
-    virtual void exception(WorkItem* item);
-    virtual void validate(WorkItem* item);
+    virtual void nextState(WorkItem<T>* item);
+    virtual void paused(WorkItem<T>* item);
+    virtual void resume(WorkItem<T>* item);
+    virtual void retry(WorkItem<T>* item);
+    virtual void failed(WorkItem<T>* item);
+    virtual void failedDelivery(WorkItem<T>* item);
+    virtual void exception(WorkItem<T>* item);
+    virtual void validate(WorkItem<T>* item);
 
 protected:
     void reject(const std::string& operation) const;
 };
 
 //created
-class Created : public WorkItemState
+template <typename T>
+class Created : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
 };
 
 //delivered
-class Delivered : public WorkItemState
+template <typename T>
+class Delivered : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
-    void failedDelivery(WorkItem* item) override;
-    void retry(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
+    void failedDelivery(WorkItem<T>* item) override;
+    void retry(WorkItem<T>* item) override;
 };
 
 //inprogress
-class InProgress : public WorkItemState
+template <typename T>
+class InProgress : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
-    void paused(WorkItem* item) override;
-    void failed(WorkItem* item) override;
-    void exception(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
+    void paused(WorkItem<T>* item) override;
+    void failed(WorkItem<T>* item) override;
+    void exception(WorkItem<T>* item) override;
 };
 
 //paused
-class Paused : public WorkItemState
+template <typename T>
+class Paused : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
-    void resume(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
+    void resume(WorkItem<T>* item) override;
 };
 
 //completed
-class Completed : public WorkItemState
+template <typename T>
+class Completed : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
 };
 
 //validation
-class Validation : public WorkItemState
+template <typename T>
+class Validation : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
-    void retry(WorkItem* item) override;
-    void failed(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
+    void retry(WorkItem<T>* item) override;
+    void failed(WorkItem<T>* item) override;
 };
 
 //failed
-class Failed : public WorkItemState
+template <typename T>
+class Failed : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
 };
 
 //archived
-class Archived : public WorkItemState
+template <typename T>
+class Archived : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
 };
 
 //exception
-class Exception : public WorkItemState
+template <typename T>
+class Exception : public State<T>
 {
 public:
     std::string getName() const override;
-    WorkItemState* clone() const override;
-    void nextState(WorkItem* item) override;
-    void validate(WorkItem* item) override;
+    State<T>* clone() const override;
+    void nextState(WorkItem<T>* item) override;
+    void validate(WorkItem<T>* item) override;
 };
 
 #endif

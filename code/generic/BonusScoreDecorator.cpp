@@ -1,14 +1,16 @@
 #include "BonusScoreDecorator.h"
 
-BonusScoreDecorator::BonusScoreDecorator(Component* component, int bonusScore) : Decorator(component), bonusScore(bonusScore), multiplier(1){
+template <typename T>
+BonusScoreDecorator<T>::BonusScoreDecorator(Component<T>* component, int bonusScore) : Decorator<T>(component), bonusScore(bonusScore), multiplier(1){
 
 }
 
-BonusScoreDecorator::BonusScoreDecorator(Component* component, int bonusScore, int multiplier): Decorator(component), bonusScore(bonusScore), multiplier(multiplier){
+template <typename T>
+BonusScoreDecorator<T>::BonusScoreDecorator(Component<T>* component, int bonusScore, int multiplier): Decorator<T>(component), bonusScore(bonusScore), multiplier(multiplier){
 
 }
 
-int BonusScoreDecorator::getScore(){
-
-    return (component->getScore() + bonusScore) * multiplier;
+template <typename T>
+int BonusScoreDecorator<T>::getScore(){
+    return (this->component->getScore() + this->bonusScore) * multiplier;
 }

@@ -2,21 +2,22 @@
 #define CONCRETEOBSERVER_H
 
 #include "Observer.h"
+#include "AbstractWorkItem.h"
+#include "TaskEscalationManager.h"
 
-class AbstractWorkItem;
-class Handler;
+// class AbstractWorkItem;
+// class Handler;
 
-class ConcreteObserver : public Observer{
-
+template <typename T>
+class ConcreteObserver : public Observer {
 public:
-    ConcreteObserver(AbstractWorkItem* subject, Handler* handler);
+    ConcreteObserver(AbstractWorkItem<T>* subject, TaskEscalationManager<T>* handler);
     void update();
     ~ConcreteObserver();
 
 private:
-    AbstractWorkItem* subject;
-    Handler* handler;
-
+    AbstractWorkItem<T>* subject;
+    TaskEscalationManager<T>* handler;
 };
 
 

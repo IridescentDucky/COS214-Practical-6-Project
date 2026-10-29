@@ -1,21 +1,24 @@
 #include "Caretaker.h"
 #include <iostream>
 
-Caretaker::~Caretaker() {
-    for (WorkItemMemento* m : mementoHistory) {
+template <typename T>
+Caretaker<T>::~Caretaker() {
+    for (WorkItemMemento<T>* m : mementoHistory) {
         delete m;
     }
     mementoHistory.clear();
 }
 
-void Caretaker::addMemento(WorkItemMemento* m) {
+template <typename T>
+void Caretaker<T>::addMemento(WorkItemMemento<T>* m) {
     if (m != nullptr) {
         mementoHistory.push_back(m);
         std::cout << "[Caretaker] Saved new WorkItemMemento snapshot." << std::endl;
     }
 }
 
-WorkItemMemento* Caretaker::getMemento(int index) const {
+template <typename T>
+WorkItemMemento<T>* Caretaker<T>::getMemento(int index) const {
     if (index >= 0 && index < static_cast<int>(mementoHistory.size())) {
         std::cout << "[Caretaker] Retrieving memento snapshot at index " << index << std::endl;
         return mementoHistory[index];

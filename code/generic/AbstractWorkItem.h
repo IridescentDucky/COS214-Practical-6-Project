@@ -1,32 +1,39 @@
 #ifndef ABSTRACTWORKITEM_H
 #define ABSTRACTWORKITEM_H
 
+#include "WorkflowMediator.h"
+#include "WorkItemMemento.h"
 #include "Component.h"
 #include "Observer.h"
+#include "State.h"
 
 #include <string>
 #include <vector>
 #include <iostream>
 
 class Observer;
-class State;
+
+// template <typename T>
+// class State;
+
+template <typename T>
 class WorkflowMediator;
-class WorkItemMemento;
 
-class AbstractWorkItem : public Component {
+// template <typename T>
+// class WorkItemMemento;
 
+template <typename T>
+class AbstractWorkItem : public Component<T> {
 protected: 
-    State* state;
-    std::vector<Observer*> observers;
     int id;
+    State<T>* state;
     std::string name;
     WorkflowMediator* mediator;
-    int score; //for decorator - we can increase/multiply the score
-    int time; //for decorator - we can add extraTime 
+    int score;
+    int time;
     
 public:
-
-    AbstractWorkItem(int id, const std::string& name, WorkflowMediator* mediator);
+    AbstractWorkItem(int id, const std::string& name, WorkflowMediator<T>* mediator);
     virtual ~AbstractWorkItem();
 
     int getId() const;
@@ -46,16 +53,21 @@ public:
     virtual std::string get() const = 0;
     virtual void addTimeSpent(int units) = 0;
     
-    virtual WorkItemMemento* createMemento() = 0;   //MEMENTO
-    virtual void setMemento(WorkItemMemento* m) = 0;
+    virtual WorkItemMemento<T>* createMemento() = 0;   //MEMENTO
+    virtual void setMemento(WorkItemMemento<T>* m) = 0;
 
     void attach(Observer* observer);    //FOR OBSERVER
     void detach(Observer* observer);    ///OBSERVER
     void notify();            //OBSERVER
 
-    void setState(State* newState);
-    State* getState();
+    void setState(State<T>* newState);
+    State<T>* getState();
 
+    // Composite
+    void display(int indent = 0); 
+	void add(Component<T>*);
+    void remove(Component<T>*);
+    Component<T>* getChild(int n);
 };
 
 #endif 

@@ -1,23 +1,28 @@
 #include "Decorator.h"
 
-Decorator::Decorator(Component* component){
+template <typename T>
+Decorator<T>::Decorator(Component<T>* component){
     
     this->component = component;
 }
 
-Decorator::~Decorator(){
+template <typename T>
+Decorator<T>::~Decorator(){
 
 }
 
-void Decorator::operation(){
+template <typename T>
+void Decorator<T>::operation(){
     
     component->operation();
 }
 
-int Decorator::getScore() {
+template <typename T>
+int Decorator<T>::getScore() {
     return component->getScore();
 }
 
-int Decorator::getTime() {
+template <typename T>
+int Decorator<T>::getTime() {
     return component->getTime();
 }

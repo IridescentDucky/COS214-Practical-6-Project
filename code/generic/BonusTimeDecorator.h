@@ -3,13 +3,13 @@
 
 #include "Decorator.h"
 
-class BonusTimeDecorator : public Decorator {
-
+template <typename T>
+class BonusTimeDecorator : public Decorator<T> {
 private:
     int extraTime;
 
 public:
-    BonusTimeDecorator(Component* component, int extraTime);
+    BonusTimeDecorator(Component<T>* component, int extraTime);
 
     int getTime();
 };

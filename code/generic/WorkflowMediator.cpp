@@ -1,19 +1,22 @@
 #include "WorkflowMediator.h"
 #include "WorkItem.h"
 
-WorkflowMediator::WorkflowMediator()
+template <typename T>
+WorkflowMediator<T>::WorkflowMediator()
 {
 }
 
-WorkflowMediator::~WorkflowMediator()
+template <typename T>
+WorkflowMediator<T>::~WorkflowMediator()
 {
-    for (AbstractWorkItem* item : workItems)
+    for (AbstractWorkItem<T>* item : workItems)
     {
         delete item;
     }
 }
 
-void WorkflowMediator::addWorkItem(AbstractWorkItem* item)
+template <typename T>
+void WorkflowMediator<T>::addWorkItem(AbstractWorkItem<T>* item)
 {
     if (item != nullptr && getWorkItem(item->getId()) == nullptr)
     {
@@ -21,9 +24,10 @@ void WorkflowMediator::addWorkItem(AbstractWorkItem* item)
     }
 }
 
-AbstractWorkItem* WorkflowMediator::getWorkItem(int id) const
+template <typename T>
+AbstractWorkItem<T>* WorkflowMediator<T>::getWorkItem(int id) const
 {
-    for (AbstractWorkItem* item : workItems)
+    for (AbstractWorkItem<T>* item : workItems)
     {
         if (item->getId() == id)
         {
@@ -33,12 +37,14 @@ AbstractWorkItem* WorkflowMediator::getWorkItem(int id) const
     return nullptr;
 }
 
-const std::vector<AbstractWorkItem*>& WorkflowMediator::getWorkItems() const
+template <typename T>
+const std::vector<AbstractWorkItem<T>*>& WorkflowMediator<T>::getWorkItems() const
 {
     return workItems;
 }
 
-bool WorkflowMediator::addDependency(int predecessorId, int successorId)
+template <typename T>
+bool WorkflowMediator<T>::addDependency(int predecessorId, int successorId)
 {
     if (predecessorId == successorId || getWorkItem(predecessorId) == nullptr ||
         getWorkItem(successorId) == nullptr)
@@ -59,7 +65,8 @@ bool WorkflowMediator::addDependency(int predecessorId, int successorId)
     return true;
 }
 
-void WorkflowMediator::notify(AbstractWorkItem* colleague)
+template <typename T>
+void WorkflowMediator<T>::notify(AbstractWorkItem<T>* colleague)
 {
     if (colleague == nullptr || colleague->getStateName() != "Completed")
     {
@@ -74,7 +81,7 @@ void WorkflowMediator::notify(AbstractWorkItem* colleague)
 
     for (std::vector<int>::const_iterator it = dependency->second.begin(); it != dependency->second.end(); ++it)
     {
-        AbstractWorkItem* successor = getWorkItem(*it);
+        AbstractWorkItem<T>* successor = getWorkItem(*it);
         if (successor != nullptr && successor->getStateName() == "Created")
         {
             successor->handleState();

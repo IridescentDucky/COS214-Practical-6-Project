@@ -1,19 +1,22 @@
 #ifndef WORKITEMMEMENTO_H
 #define WORKITEMMEMENTO_H
 
-class WorkItemState;
+#include "State.h"
 
-class WorkItemMemento{
-    
+// template <typename T>
+// class WorkItemState;
+
+template <typename T>
+class WorkItemMemento {
 private:
-    WorkItemState* state;
+    State<T>* state;
     
 public:
-    WorkItemMemento(WorkItemState* s);
+    WorkItemMemento(State<T>* s);
     ~WorkItemMemento();
     // Returns a newly allocated copy. The caller owns the returned state.
-    WorkItemState* getState() const;
-    void setState(WorkItemState* s);
+    State<T>* getState() const;
+    void setState(State<T>* s);
 };
 
 #endif

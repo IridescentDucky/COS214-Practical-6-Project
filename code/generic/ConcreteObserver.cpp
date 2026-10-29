@@ -1,23 +1,26 @@
 #include "ConcreteObserver.h"
 #include "AbstractWorkItem.h"
-#include "Handler.h"
+#include "TaskEscalationManager.h"
 
-ConcreteObserver::ConcreteObserver(AbstractWorkItem* subject, Handler* handler) : subject(subject), handler(handler) {
+#include "Observer.h"
+
+template <typename T>
+ConcreteObserver<T>::ConcreteObserver(AbstractWorkItem<T>* subject, TaskEscalationManager<T>* handler) : subject(subject), handler(handler) {
 
 }
 
-ConcreteObserver::~ConcreteObserver(){
-
-    if (item != nullptr) {
-
-        item->detach(this);
+template <typename T>
+ConcreteObserver<T>::~ConcreteObserver(){
+    if (this->subject != nullptr) {
+        this->subject->detach(this);
     }
 
 }
 
-void ConcreteObserver::update() {
-    State* currentState = subject->getState();  //get current state 
+template <typename T>
+void ConcreteObserver<T>::update() {
+    State<T>* currentState = this->subject->getState();  //get current state 
 
-    
-    handler->handleRequest(subject, currentState);  //send request through chain
+    // this->handler->handleRequest(this->subject, currentState);  //send request through chain
+    // Handler only has one parameter handleRequest(T a);
 }
