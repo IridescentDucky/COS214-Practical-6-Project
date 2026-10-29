@@ -1,13 +1,9 @@
 #include "ConcreteObserver.h"
-#include "WorkItem.h"
-#include "State.h"
+#include "AbstractWorkItem.h"
+#include "Handler.h"
 
-ConcreteObserver::ConcreteObserver(WorkItem* item): item(item){
+ConcreteObserver::ConcreteObserver(AbstractWorkItem* subject, Handler* handler) : subject(subject), handler(handler) {
 
-    if (this->item != nullptr) {
-
-        this->item->attach(this);
-    }
 }
 
 ConcreteObserver::~ConcreteObserver(){
@@ -19,10 +15,9 @@ ConcreteObserver::~ConcreteObserver(){
 
 }
 
-void ConcreteObserver::update(){    //pull observer baby
+void ConcreteObserver::update() {
+    State* currentState = subject->getState();  //get current state 
 
-    WorkItemState* currentState = item->getState();
-
-    std::cout << "Observer notified" << std::endl;
-    std::cout << "Current state: " << currentState->getName() << std::endl;
+    
+    handler->handleRequest(subject, currentState);  //send request through chain
 }

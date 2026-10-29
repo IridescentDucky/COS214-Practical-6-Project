@@ -3,17 +3,19 @@
 
 #include "Observer.h"
 
-class WorkItem;
+class AbstractWorkItem;
+class Handler;
 
 class ConcreteObserver : public Observer{
 
 public:
-    ConcreteObserver(WorkItem* item);
+    ConcreteObserver(AbstractWorkItem* subject, Handler* handler);
     void update();
     ~ConcreteObserver();
 
 private:
-    WorkItem* item; //holds the concreteSubject
+    AbstractWorkItem* subject;
+    Handler* handler;
 
 };
 

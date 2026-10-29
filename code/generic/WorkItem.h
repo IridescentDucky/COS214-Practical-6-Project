@@ -13,9 +13,7 @@ class WorkItemState;
 class WorkflowMediator;
 class WorkItemMemento;
 
-
-template <typename T>
-class AbstractWorkItem : Component<T>
+class AbstractWorkItem
 {
 public:
     AbstractWorkItem(int id, const std::string& name, WorkflowMediator* mediator);
@@ -40,12 +38,6 @@ public:
     
     virtual WorkItemMemento* createMemento() = 0;
     virtual void setMemento(WorkItemMemento* m) = 0;
-
-    // Composite
-    virtual void display(int indent = 0) = 0;
-    virtual void add(Component*);
-    virtual void remove(Component*);
-    virtual Component* getChild(int n);
 
 protected:
     int id;

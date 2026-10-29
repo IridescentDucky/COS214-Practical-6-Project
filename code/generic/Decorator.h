@@ -13,6 +13,9 @@ public:
     virtual void operation() = 0;
     virtual ~Decorator();
 
+    int getScore();
+    int getTime();
+
 protected:
     Component* component ;//component to deco
 };
