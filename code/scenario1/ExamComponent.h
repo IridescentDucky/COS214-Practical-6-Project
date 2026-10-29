@@ -8,8 +8,8 @@ public:
     virtual void mark();
     virtual double getMarks();
 
-    virtual void add(ExamComponent* e);
-    virtual void remove(ExamComponent* e);
+    //virtual void add(ExamComponent* e);
+    //virtual void remove(ExamComponent* e);
 };
 
 #endif

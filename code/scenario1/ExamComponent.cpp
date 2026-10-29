@@ -2,6 +2,7 @@
 
 void ExamComponent::mark() {
     // mark?
+    return;
 }
 
 double ExamComponent::getMarks() {
