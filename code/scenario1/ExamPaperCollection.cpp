@@ -1,6 +1,8 @@
 #include "ExamPaperCollection.h"
 #include "ExamPaperIterator.h"
 #include "AbstractExamPaper.h"
+
+#include <algorithm>
 #include <iostream>
 
 ExamPaperCollection::~ExamPaperCollection() {
