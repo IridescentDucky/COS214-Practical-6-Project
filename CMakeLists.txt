@@ -37,6 +37,11 @@ target_include_directories(workflow_core PUBLIC code/generic)
 add_executable(workflow_demo code/generic/main.cpp)
 target_link_libraries(workflow_demo PRIVATE workflow_core)
 
+add_library(game_core
+    code/scenario2/Game.cpp
+    code/scenario2/GameState.cpp)
+target_include_directories(game_core PUBLIC code/scenario2)
+
 include(FetchContent)
 FetchContent_Declare(
     googletest
