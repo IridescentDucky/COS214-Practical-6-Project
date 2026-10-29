@@ -13,13 +13,13 @@ class State;
 class WorkflowMediator;
 class WorkItemMemento;
 
+template <typename T>
 class AbstractWorkItem : public Component {
-
 protected: 
-    State* state;
-    std::vector<Observer*> observers;
     int id;
+    State* state;
     std::string name;
+    std::vector<Observer*> observers;
     WorkflowMediator* mediator;
     
 public:
@@ -54,6 +54,11 @@ public:
     void setState(State* newState);
     State* getState();
 
+    // Composite
+    void display(int indent = 0); 
+	void add(Component<T>*);
+    void remove(Component<T>*);
+    Component<T>* getChild(int n);
 };
 
 #endif 
