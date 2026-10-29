@@ -9,9 +9,8 @@ class WorkItem;
 template <typename T>
 class State {
 public:
-    virtual ~State()
-    {
-    }
+    virtual ~State() {}
+    
     virtual std::string getName() const = 0;
     virtual State<T>* clone() const = 0;
 

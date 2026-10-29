@@ -1,11 +1,13 @@
 #include "Creator.h"
 
-Creator::~Creator(){
+template <typename T>
+Creator<T>::~Creator(){
 
     //im not delting AbstractWorkItem here, its def causing mem leaks, might default it
 }
 
-AbstractWorkItem* Creator::createWorkItem(){
+template <typename T>
+AbstractWorkItem<T>* Creator<T>::createWorkItem(){
 
     return factoryMethod(); //followed Chocolate example in lecture slides
 }

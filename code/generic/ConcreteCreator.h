@@ -3,14 +3,10 @@
 
 #include "Creator.h"
 
-
-class ConcreteCreator : public Creator{
-
+template <typename T>
+class ConcreteCreator : public Creator<T> {
 protected:
-    AbstractWorkItem* factoryMethod();
-
+    AbstractWorkItem<T>* factoryMethod();
 };
-
-
 
 #endif

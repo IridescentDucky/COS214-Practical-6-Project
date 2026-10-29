@@ -9,7 +9,7 @@
 using namespace std;
 
 template <typename T>
-class ConcreteHandler : public TaskEscalationManager {
+class ConcreteHandler : public TaskEscalationManager<T> {
 private:
     string name;
 public:

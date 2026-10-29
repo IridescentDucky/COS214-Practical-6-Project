@@ -4,14 +4,14 @@
 template <typename T>
 class TaskEscalationManager {
 protected:
-    TaskEscalationManager* successor = nullptr;
+    TaskEscalationManager<T>* successor = nullptr;
     T condition;
     
 public:
     TaskEscalationManager(T condition) : condition(condition) {}
 
     virtual void handleRequest(T a) = 0;
-    void setSuccessor(TaskEscalationManager* next);
+    void setSuccessor(TaskEscalationManager<T>* next);
 
     virtual ~TaskEscalationManager();
 };

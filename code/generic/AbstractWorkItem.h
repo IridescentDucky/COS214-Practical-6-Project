@@ -2,6 +2,7 @@
 #define ABSTRACTWORKITEM_H
 
 #include "WorkflowMediator.h"
+#include "WorkItemMemento.h"
 #include "Component.h"
 #include "Observer.h"
 #include "State.h"
@@ -12,14 +13,14 @@
 
 class Observer;
 
-template <typename T>
-class State;
+// template <typename T>
+// class State;
 
-template <typename T>
-class WorkflowMediator;
+// template <typename T>
+// class WorkflowMediator;
 
-template <typename T>
-class WorkItemMemento;
+// template <typename T>
+// class WorkItemMemento;
 
 template <typename T>
 class AbstractWorkItem : public Component<T> {

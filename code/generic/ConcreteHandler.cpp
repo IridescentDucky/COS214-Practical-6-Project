@@ -1,7 +1,7 @@
 #include "ConcreteHandler.h"
 
 template <typename T>
-ConcreteHandler<T>::ConcreteHandler(string name, T condition) : TaskEscalationManager(condition), name(name) {}
+ConcreteHandler<T>::ConcreteHandler(string name, T condition) : TaskEscalationManager<T>(condition), name(name) {}
 
 template <typename T>
 void ConcreteHandler<T>::handleRequest(T a){    
@@ -21,7 +21,7 @@ void ConcreteHandler<T>::handleRequest(T a){
 
 template <typename T>
 ConcreteHandler<T>::~ConcreteHandler() {
-    delete successor;
+    delete this->successor;
 
-    successor = nullptr;
+    this->successor = nullptr;
 }

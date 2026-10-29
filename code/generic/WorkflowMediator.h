@@ -10,8 +10,7 @@ template <typename T>
 class AbstractWorkItem;
 
 template <typename T>
-class WorkflowMediator
-{
+class WorkflowMediator {
 public:
     WorkflowMediator();
     ~WorkflowMediator();

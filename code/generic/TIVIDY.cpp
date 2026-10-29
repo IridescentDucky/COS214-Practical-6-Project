@@ -4,18 +4,21 @@
 
 #include <iostream>
 
-TIVIDY::TIVIDY() : mediator(new WorkflowMediator()), nextId(1)
+template <typename T>
+TIVIDY<T>::TIVIDY() : mediator(new WorkflowMediator<T>()), nextId(1)
 {
 }
 
-TIVIDY::~TIVIDY()
+template <typename T>
+TIVIDY<T>::~TIVIDY()
 {
     delete mediator;
 }
 
-AbstractWorkItem* TIVIDY::find(int id) const
+template <typename T>
+AbstractWorkItem<T>* TIVIDY<T>::find(int id) const
 {
-    AbstractWorkItem* item = mediator->getWorkItem(id);
+    AbstractWorkItem<T>* item = mediator->getWorkItem(id);
     if (item == nullptr)
     {
         std::cout << "  [TIVIDY] No work item with id " << id << std::endl;
@@ -23,26 +26,29 @@ AbstractWorkItem* TIVIDY::find(int id) const
     return item;
 }
 
-int TIVIDY::createWorkItem(const std::string& name, int deadline)
+template <typename T>
+int TIVIDY<T>::createWorkItem(const std::string& name, int deadline)
 {
-    AbstractWorkItem* item = new WorkItem(nextId++, name, deadline, mediator);
+    AbstractWorkItem<T>* item = new WorkItem(nextId++, name, deadline, mediator);
     mediator->addWorkItem(item);
     std::cout << "  [TIVIDY] Created '" << name << "' (id " << item->getId() << ")" << std::endl;
     return item->getId();
 }
 
-void TIVIDY::advanceWork(int id)
+template <typename T>
+void TIVIDY<T>::advanceWork(int id)
 {
-    AbstractWorkItem* item = find(id);
+    AbstractWorkItem<T>* item = find(id);
     if (item != nullptr)
     {
         item->handleState();
     }
 }
 
-void TIVIDY::submitWork(int id, const std::string& data)
+template <typename T>
+void TIVIDY<T>::submitWork(int id, const std::string& data)
 {
-    AbstractWorkItem* item = find(id);
+    AbstractWorkItem<T>* item = find(id);
     if (item != nullptr)
     {
         item->set(data);
@@ -50,60 +56,68 @@ void TIVIDY::submitWork(int id, const std::string& data)
     }
 }
 
-void TIVIDY::pauseWork(int id)
+template <typename T>
+void TIVIDY<T>::pauseWork(int id)
 {
-    AbstractWorkItem* item = find(id);
+    AbstractWorkItem<T>* item = find(id);
     if (item != nullptr)
     {
         item->paused();
     }
 }
 
-void TIVIDY::resumeWork(int id)
+template <typename T>
+void TIVIDY<T>::resumeWork(int id)
 {
-    AbstractWorkItem* item = find(id);
+    AbstractWorkItem<T>* item = find(id);
     if (item != nullptr)
     {
         item->resume();
     }
 }
 
-bool TIVIDY::addDependency(int predecessorId, int successorId)
+template <typename T>
+bool TIVIDY<T>::addDependency(int predecessorId, int successorId)
 {
     return mediator->addDependency(predecessorId, successorId);
 }
 
-std::string TIVIDY::getWorkItemState(int id) const
+template <typename T>
+std::string TIVIDY<T>::getWorkItemState(int id) const
 {
-    AbstractWorkItem* item = find(id);
+    AbstractWorkItem<T>* item = find(id);
     return item != nullptr ? item->getStateName() : "";
 }
 
-void TIVIDY::printStatus() const
+template <typename T>
+void TIVIDY<T>::printStatus() const
 {
     std::cout << "  [TIVIDY] Work items:" << std::endl;
-    for (AbstractWorkItem* item : mediator->getWorkItems())
+    for (AbstractWorkItem<T>* item : mediator->getWorkItems())
     {
         std::cout << "    " << item->getId() << " " << item->getName() << ": " << item->getStateName() << std::endl;
     }
 }
 
-void TIVIDY::runWorkflow(AbstractWorkflowFactory* factory){
-    if (factory == nullptr)
-    {
-        std::cout << "  [TIVIDY] Cannot run a null workflow factory." << std::endl;
-        return;
-    }
+// AbstractWorkflowFactory was removed
 
-    //basically using same factory create products A and B...
+// template <typename T>
+// void TIVIDY<T>::runWorkflow(AbstractWorkflowFactory<T>* factory){
+//     if (factory == nullptr)
+//     {
+//         std::cout << "  [TIVIDY] Cannot run a null workflow factory." << std::endl;
+//         return;
+//     }
 
-    AbstractWorkflowInstanceA* instanceA = factory->createWorkflowInstanceA();
+//     //basically using same factory create products A and B...
 
-    AbstractWorkflowInstanceB* instanceB = factory->createWorkflowInstanceB();
+//     AbstractWorkflowInstanceA* instanceA = factory->createWorkflowInstanceA();
 
-    instanceA->create();
-    instanceB->create();
+//     AbstractWorkflowInstanceB* instanceB = factory->createWorkflowInstanceB();
 
-    delete instanceA;
-    delete instanceB;
-}
+//     instanceA->create();
+//     instanceB->create();
+
+//     delete instanceA;
+//     delete instanceB;
+// }

@@ -1,13 +1,9 @@
-#include "Caretaker.h"
-#include "ConcreteDecoratorA.h"
-#include "ConcreteDecoratorB.h"
-#include "ConcreteHandler.h"
-#include "ConcreteObserver.h"
-#include "ConcreteWorkflowFactory1.h"
-#include "ConcreteWorkflowFactory2.h"
-#include "TIVIDY.h"
-#include "WorkItem.h"
-#include "WorkflowMediator.h"
+// #include "Caretaker.h"
+// #include "ConcreteHandler.h"
+// #include "ConcreteObserver.h"
+// #include "TIVIDY.h"
+// #include "WorkItem.h"
+// #include "WorkflowMediator.h"
 
 #include <iostream>
 

@@ -15,8 +15,7 @@
 // class WorkItemMemento;
 
 template <typename T>
-class WorkItem : public AbstractWorkItem<T>, public Subject
-{
+class WorkItem : public AbstractWorkItem<T> {
 public:
     WorkItem(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator);
 
@@ -36,8 +35,8 @@ public:
     WorkItemMemento<T>* createMemento() override;
     void setMemento(WorkItemMemento<T>* m) override;
 
-    State* getState() const;
-    void setState(State* newState);
+    State<T>* getState() const;
+    void setState(State<T>* newState);
 
     bool isWithinDeadline() const;
     bool hasValidData() const;

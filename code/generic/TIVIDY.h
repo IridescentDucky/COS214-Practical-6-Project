@@ -3,11 +3,11 @@
 
 #include <string>
 
-#include "AbstractWorkflowFactory.h"    //Abstract Fac
-#include "ConcreteWorkflowFactory1.h"   //Factory
-#include "ConcreteWorkflowFactory2.h"   //Factory
-#include "AbstractWorkflowInstanceA.h"  //AbstractProduct
-#include "AbstractWorkflowInstanceB.h"  //Abstract pRoduct
+// #include "AbstractWorkflowFactory.h"    //Abstract Fac
+// #include "ConcreteWorkflowFactory1.h"   //Factory
+// #include "ConcreteWorkflowFactory2.h"   //Factory
+// #include "AbstractWorkflowInstanceA.h"  //AbstractProduct
+// #include "AbstractWorkflowInstanceB.h"  //Abstract pRoduct
 
 #include "AbstractWorkItem.h"
 #include "WorkItem.h"
@@ -19,8 +19,7 @@ template <typename T>
 class WorkItem;
 
 template <typename T>
-class TIVIDY
-{
+class TIVIDY {
 public:
     TIVIDY();
     ~TIVIDY();
@@ -36,12 +35,12 @@ public:
     bool addDependency(int predecessorId, int successorId);
     std::string getWorkItemState(int id) const;
 
-    void runWorkflow(AbstractWorkflowFactory* factory);//Abtract factory
+    // void runWorkflow(AbstractWorkflowFactory<T>* factory);//Abtract factory
 
 private:
-    AbstractWorkItem* find(int id) const;
+    AbstractWorkItem<T>* find(int id) const;
 
-    WorkflowMediator* mediator;
+    WorkflowMediator<T>* mediator;
     int nextId;
 };
 
