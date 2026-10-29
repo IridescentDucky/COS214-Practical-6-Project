@@ -1,9 +1,10 @@
 #include "ExamComponent.h"
 
 void ExamComponent::mark() {
-    // mark?
+    // TODO: implement component-specific marking.
 }
 
 double ExamComponent::getMarks() {
-    return marks;
+    // TODO: return the component's mark total.
+    return 0.0;
 }
