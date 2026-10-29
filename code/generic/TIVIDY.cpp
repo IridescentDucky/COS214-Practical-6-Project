@@ -29,7 +29,7 @@ AbstractWorkItem<T>* TIVIDY<T>::find(int id) const
 template <typename T>
 int TIVIDY<T>::createWorkItem(const std::string& name, int deadline)
 {
-    AbstractWorkItem<T>* item = new WorkItem(nextId++, name, deadline, mediator);
+    AbstractWorkItem<T>* item = new WorkItem<T>(nextId++, name, deadline, mediator);
     mediator->addWorkItem(item);
     std::cout << "  [TIVIDY] Created '" << name << "' (id " << item->getId() << ")" << std::endl;
     return item->getId();

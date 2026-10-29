@@ -16,8 +16,8 @@ class Observer;
 // template <typename T>
 // class State;
 
-// template <typename T>
-// class WorkflowMediator;
+template <typename T>
+class WorkflowMediator;
 
 // template <typename T>
 // class WorkItemMemento;
