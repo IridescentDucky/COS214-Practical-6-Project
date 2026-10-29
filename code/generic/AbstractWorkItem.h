@@ -21,6 +21,8 @@ protected:
     int id;
     std::string name;
     WorkflowMediator* mediator;
+    int score; //for decorator - we can increase/multiply the score
+    int time; //for decorator - we can add extraTime 
     
 public:
 
