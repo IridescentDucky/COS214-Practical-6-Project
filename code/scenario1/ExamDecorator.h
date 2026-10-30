@@ -5,13 +5,12 @@
 
 class ExamDecorator : public ExamComponent {
 protected:
-    explicit ExamDecorator(ExamComponent* component);
-
     ExamComponent* component;
 
 public:
-    void mark() override = 0;
-    double getMarks() override;
+     ExamDecorator(ExamComponent* component);
+     virtual int getBonusMarks();
+     virtual int getExtraTime();
     ~ExamDecorator() override = default;
 };
 
