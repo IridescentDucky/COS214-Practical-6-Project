@@ -4,11 +4,10 @@ ExamDecorator::ExamDecorator(ExamComponent* component)
     : component(component) {
 }
 
-void ExamDecorator::mark() {
-    // TODO: delegate marking to the wrapped component.
+int ExamDecorator::getBonusMarks() {
+    return component->getBonusMarks();
 }
 
-double ExamDecorator::getMarks() {
-    // TODO: delegate mark retrieval to the wrapped component.
-    return 0.0;
+int ExamDecorator::getExtraTime() {
+    return component->getExtraTime();
 }
