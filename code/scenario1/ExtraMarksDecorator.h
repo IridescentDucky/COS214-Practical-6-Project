@@ -9,8 +9,7 @@ private:
 
 public:
     ExtraMarksDecorator(ExamComponent* component, double extraMarks);
-    void mark() override;
-    double getMarks() override;
+    double getBonusMarks();
 };
 
 #endif
