@@ -13,16 +13,22 @@ protected:
     std::string moduleCode;
     int examDuration;
     double marks;
+    int year;    //THIS HAS A YEAR PARAMETER NOW
 public:
     virtual ~AbstractExamPaper() = default;
-    AbstractExamPaper(std::string code, int duration, double initialMarks)
-        : state(nullptr), moduleCode(code), examDuration(duration), marks(initialMarks) {}
+    AbstractExamPaper(std::string code, int duration, double initialMarks, int year)
+        : state(nullptr), moduleCode(code), examDuration(duration), marks(initialMarks), year(year){}
 
     virtual AbstractExamPaper* clonePaper() = 0;
     virtual PaperState* getState() = 0;
     virtual void setState(PaperState* state) = 0;
     void mark() override = 0;
     double getMarks() override;
+
+    void attach(Marker* observer);
+    void detach(Marker* observer);    //OBSERVER FUNCTIONS
+    void notify();
+
 };
 
 #endif
