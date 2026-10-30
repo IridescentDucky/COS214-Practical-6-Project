@@ -26,3 +26,5 @@ WorkItemMemento<T>* Caretaker<T>::getMemento(int index) const {
     std::cout << "[Caretaker] Invalid memento index requested." << std::endl;
     return nullptr;
 }
+
+template class Caretaker<int>;

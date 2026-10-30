@@ -90,13 +90,22 @@ std::string TIVIDY<T>::getWorkItemState(int id) const
 }
 
 template <typename T>
+Iterator<T>* TIVIDY<T>::createIterator() const
+{
+    return mediator->createIterator();
+}
+
+template <typename T>
 void TIVIDY<T>::printStatus() const
 {
     std::cout << "  [TIVIDY] Work items:" << std::endl;
-    for (AbstractWorkItem<T>* item : mediator->getWorkItems())
+    Iterator<T>* it = mediator->createIterator();
+    while (it->hasNext())
     {
+        AbstractWorkItem<T>* item = it->next();
         std::cout << "    " << item->getId() << " " << item->getName() << ": " << item->getStateName() << std::endl;
     }
+    delete it;
 }
 
 // AbstractWorkflowFactory was removed
@@ -121,3 +130,5 @@ void TIVIDY<T>::printStatus() const
 //     delete instanceA;
 //     delete instanceB;
 // }
+
+template class TIVIDY<int>;

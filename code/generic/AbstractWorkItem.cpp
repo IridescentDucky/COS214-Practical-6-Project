@@ -5,7 +5,7 @@ using namespace std;
 
 template <typename T>
 AbstractWorkItem<T>::AbstractWorkItem(int id, const std::string& name, WorkflowMediator<T>* mediator)
-    : id(id), name(name), state(new Created<T>()), mediator(mediator)
+    : id(id), state(new Created<T>()), name(name), mediator(mediator), score(0), time(0)
 {
 }
 
@@ -57,29 +57,46 @@ void AbstractWorkItem<T>::detach(Observer* observer) {
 template <typename T>
 void AbstractWorkItem<T>::notify() {
     for (Observer* observer : observers) {
-        this->observer->update();
+        observer->update();
     }
 }
 
 template <typename T>
 void AbstractWorkItem<T>::setState(State<T>* newState) {
-    if (this->state == newState) {
+    if (newState == nullptr || this->state == newState) {
         return;
     }
 
+    std::cout << "  [State] " << this->name << ": " << this->state->getName() << " -> " << newState->getName() << std::endl;
+    State<T>* old = this->state;
     this->state = newState;
+    delete old;
     notify();
 }
 
 
 template <typename T>
-State<T>* AbstractWorkItem<T>::getState(){
+State<T>* AbstractWorkItem<T>::getState() const {
     return this->state;
 }
 
 template <typename T>
+int AbstractWorkItem<T>::getScore() {
+    return this->score;
+}
+
+template <typename T>
+int AbstractWorkItem<T>::getTime() {
+    return this->time;
+}
+
+template <typename T>
 void AbstractWorkItem<T>::display(int indent) {
-    this->name;
+    for (int i = 0; i < indent; i++) {
+        cout << "  ";
+    }
+
+    cout << this->name << " (" << this->getStateName() << ")" << endl;
 }
 	
 template <typename T>
@@ -98,3 +115,5 @@ Component<T>* AbstractWorkItem<T>::getChild(int n) {
 
     return nullptr;
 }
+
+template class AbstractWorkItem<int>;

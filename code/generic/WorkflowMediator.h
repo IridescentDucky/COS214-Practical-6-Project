@@ -2,6 +2,7 @@
 #define WORKFLOWMEDIATOR_H
 
 #include "AbstractWorkItem.h"
+#include "Aggregate.h"
 
 #include <vector>
 #include <map>
@@ -10,7 +11,10 @@ template <typename T>
 class AbstractWorkItem;
 
 template <typename T>
-class WorkflowMediator {
+class WorkItemIterator;
+
+template <typename T>
+class WorkflowMediator : public Aggregate<T> {
 public:
     WorkflowMediator();
     ~WorkflowMediator();
@@ -22,7 +26,11 @@ public:
 
     void notify(AbstractWorkItem<T>* colleague);
 
+    Iterator<T>* createIterator() const override;
+
 private:
+    friend class WorkItemIterator<T>;
+
     std::vector<AbstractWorkItem<T>*> workItems;
     std::map<int, std::vector<int> > dependencies;
 };

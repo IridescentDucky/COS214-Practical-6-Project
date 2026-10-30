@@ -25,3 +25,5 @@ ConcreteHandler<T>::~ConcreteHandler() {
 
     this->successor = nullptr;
 }
+
+template class ConcreteHandler<int>;

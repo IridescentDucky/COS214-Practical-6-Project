@@ -28,3 +28,5 @@ void WorkItemMemento<T>::setState(State<T>* s){
 
     this->state = s != nullptr ? s->clone() : nullptr;
 }
+
+template class WorkItemMemento<int>;

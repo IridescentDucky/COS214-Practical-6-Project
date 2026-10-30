@@ -6,31 +6,29 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(WORKFLOW_SOURCES
-    code/generic/AbstractWorkflowFactory.cpp
-    code/generic/AbstractWorkflowInstanceA.cpp
-    code/generic/AbstractWorkflowInstanceB.cpp
+    code/generic/AbstractWorkItem.cpp
+    code/generic/Adaptee.cpp
+    code/generic/Adapter.cpp
+    code/generic/BonusScoreDecorator.cpp
+    code/generic/BonusTimeDecorator.cpp
     code/generic/Caretaker.cpp
     code/generic/Component.cpp
-    code/generic/ConcreteDecoratorA.cpp
-    code/generic/ConcreteDecoratorB.cpp
-    code/generic/ConcreteHandler1.cpp
-    code/generic/ConcreteHandler2.cpp
+    code/generic/Composite.cpp
+    code/generic/ConcreteCreator.cpp
+    code/generic/ConcreteHandler.cpp
     code/generic/ConcreteObserver.cpp
     code/generic/ConcreteStrategyA.cpp
     code/generic/ConcreteStrategyB.cpp
     code/generic/ConcreteStrategyC.cpp
-    code/generic/ConcreteWorkflowFactory1.cpp
-    code/generic/ConcreteWorkflowFactory2.cpp
+    code/generic/Creator.cpp
     code/generic/Decorator.cpp
     code/generic/Observer.cpp
     code/generic/State.cpp
     code/generic/TIVIDY.cpp
+    code/generic/TaskEscalationManager.cpp
     code/generic/WorkItem.cpp
+    code/generic/WorkItemIterator.cpp
     code/generic/WorkItemMemento.cpp
-    code/generic/WorkflowInstanceA1.cpp
-    code/generic/WorkflowInstanceA2.cpp
-    code/generic/WorkflowInstanceB1.cpp
-    code/generic/WorkflowInstanceB2.cpp
     code/generic/WorkflowMediator.cpp)
 
 add_library(workflow_core ${WORKFLOW_SOURCES})
@@ -38,6 +36,11 @@ target_include_directories(workflow_core PUBLIC code/generic)
 
 add_executable(workflow_demo code/generic/main.cpp)
 target_link_libraries(workflow_demo PRIVATE workflow_core)
+
+add_library(game_core
+    code/scenario2/Game.cpp
+    code/scenario2/GameState.cpp)
+target_include_directories(game_core PUBLIC code/scenario2)
 
 include(FetchContent)
 FetchContent_Declare(

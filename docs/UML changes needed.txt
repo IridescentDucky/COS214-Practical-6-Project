@@ -1,0 +1,154 @@
+UML CHANGES NEEDED
+Things the diagrams must change so they match the code and each other.
+[DO NOW] = ready to change   [WAITING] = needs a decision first
+
+
+=== 1. GENERIC CLASS DIAGRAM ===
+
+[DO NOW] Remove operation() from WorkItemState.
+   Keep operation() on WorkItem, Component and the decorators (that is the Decorator pattern).
+
+[DO NOW] Add the Iterator pattern:
+   Aggregate (abstract)    +createIterator() : Iterator*
+   Iterator (abstract)     +hasNext() : bool
+                           +next() : AbstractWorkItem*
+   WorkItemIterator        -currentIndex : int
+                           -collection : WorkflowMediator*
+                           +hasNext() : bool
+                           +next() : AbstractWorkItem*
+   Arrows:
+   - WorkflowMediator inherits from Aggregate
+   - WorkItemIterator inherits from Iterator
+   - WorkflowMediator - - <<instantiate>> - -> WorkItemIterator (dashed)
+   - WorkItemIterator --> WorkflowMediator (association, its "collection")
+
+[DO NOW] Remove the Strategy pattern if it is still shown (Revision 4):
+   Strategy, ConcreteStrategyA/B/C, and -strategy / +algorithm() on WorkflowMediator.
+
+[DO NOW] Fill in WorkflowMediator to match the code:
+   -dependencies : map<int, vector<int>>
+   +addWorkItem(item : AbstractWorkItem*)
+   +getWorkItem(id : int) : AbstractWorkItem*
+   +addDependency(predecessorId : int, successorId : int) : bool
+   +notify(colleague : AbstractWorkItem*)
+   +createIterator() : Iterator*
+
+[DO NOW] Fill in TIVIDY (the facade box is empty):
+   +createWorkItem(name : string, deadline : int) : int
+   +advanceWork(id : int)
+   +submitWork(id : int, data : string)
+   +pauseWork(id : int)
+   +resumeWork(id : int)
+   +printStatus()
+   +addDependency(predecessorId : int, successorId : int) : bool
+   +getWorkItemState(id : int) : string
+   +createIterator() : Iterator*
+   +runWorkflow(factory : AbstractWorkflowFactory*)
+
+[DO NOW] WorkItemState: add +getName() : string and +clone() : WorkItemState*
+   (clone is used by the Memento).
+
+[DO NOW] WorkItem: add the helpers the states use:
+   +isWithinDeadline() : bool, +hasValidData() : bool, +notifyWorkflow(), +addTimeSpent(units : int)
+
+[DO NOW] AbstractWorkItem: show state and mediator as protected (#), not private (-).
+
+[DO NOW] AbstractWorkItem to WorkItemState: change the hollow diamond (aggregation) to a
+   filled diamond (composition). The work item deletes its old state on every change.
+
+[WAITING - Yoshua & Jonno] Rename generic state methods (list coming on Discord).
+
+
+=== 2. GENERIC STATE DIAGRAM ===
+
+[DO NOW] Match the Class Diagram's 9 states. Add Delivered, Validation, Failed and Exception.
+   Transitions in the code:
+   Created    --nextState-->                        Delivered
+   Delivered  --nextState-->                        InProgress
+   Delivered  --failedDelivery-->                   Failed
+   Delivered  --retry-->                            Delivered
+   InProgress --nextState [withinDeadline]-->       Validation
+   InProgress --paused-->                           Paused
+   InProgress --failed-->                           Failed
+   InProgress --exception-->                        Exception
+   Paused     --resume / nextState-->               InProgress
+   Validation --nextState [valid] / notifyWorkflow--> Completed
+   Validation --nextState [invalid] / retry-->      InProgress
+   Validation --failed-->                           Failed
+   Completed  --nextState-->                        Archived
+   Failed     --nextState-->                        Archived
+   Exception  --nextState-->                        InProgress
+   Exception  --validate-->                         Validation
+   Archived   = final state
+
+[WAITING - Yoshua & Jonno] Redo once the generic state set is final.
+
+
+=== 3. GENERIC SEQUENCE DIAGRAM 1 ===
+
+[DO NOW] Use the Class Diagram's names:
+   TividyEngineFacade -> TIVIDY
+   AtomicWorkItem     -> WorkItem
+   CompletedState     -> Completed
+   setObject()        -> set()
+   handleSubmission() -> nextState()
+   notifyWorkItemCompleted() -> notify()
+[DO NOW] Add the Validation step: submit moves InProgress -> Validation, then nextState
+   moves Validation -> Completed.
+[DO NOW] submitWork takes (id, data), not (instanceID, workItemID, data).
+
+
+=== 4. EXAM SCENARIO CLASS DIAGRAM ===
+
+Rule from Bella: a state with one method calls it nextState. A state with several
+methods uses the same names as the generic (paused, resume, retry, failed, exception, validate).
+
+[DO NOW] Renames:
+   WrittenState    deliver()        -> nextState()
+   DeliveredState  startMarking()   -> nextState()
+   MarkingState    pause()          -> paused()
+                   completeMarking()-> nextState()
+                   createException()-> exception()
+                   validate()       -> validate()   (no change)
+                   fail()           -> failed()
+   PausedState     resumeMarking()  -> nextState() and resume() (both, like the generic)
+   ValidatedState  marked()         -> nextState()
+   MarkedState     captureMarks()   -> nextState()
+   CapturedState   archive()        -> nextState()
+   PaperState      update the abstract class to declare the new names.
+
+[WAITING - Bella to confirm] Problems compared with the Exam Paper Lifecycle diagram.
+The code (code/scenario1) already does the "Code does" column, so the UML should match it
+unless Bella decides otherwise:
+   - No PrintedState class, but the lifecycle starts at Printed.
+       Code does: added PrintedState (nextState -> Written). Papers start Printed.
+   - ExceptionState has pause(), but the lifecycle leaves Exception by resume() or fail().
+       Code does: ExceptionState has nextState() -> Marking and failed() -> Failed.
+   - FailedState has pause(), but Failed is a final state.
+       Code does: FailedState has no methods (final).
+   - ValidatedState gets exception() -> Exception (lifecycle: NeedsValidation -> Exception).
+   - State names differ: the lifecycle says NeedsValidation and Completed,
+     the class diagram says Validated and Marked. Code uses Validated and Marked.
+   - Still stubs (print [TODO]): MarkingState::validate() and CapturedState::nextState() (archive),
+     because it is unclear what they should do.
+
+
+=== 5. GAME SCENARIO CLASS DIAGRAM ===
+
+[DO NOW] Renames:
+   Concepting     startWriting()  -> nextState()
+   Writing        startAssets()   -> nextState()
+   AssetBuilding  startCode()     -> nextState()
+   Coding         validate()      -> nextState()
+   Review         validate()      -> nextState()
+   GameState      update the abstract class to declare nextState().
+
+[WAITING - Bella to confirm] Validate. The code (code/scenario2) currently does:
+   test()          -> nextState()  Validate -> Review   (the default path)
+   fixBugs()       -> retry()      Validate -> Coding   (matches the generic name)
+   reviewWriting()                 Validate -> Writing
+   reviewAsset()                   Validate -> AssetBuilding
+   release()                       Validate -> Release  (skips Review: is that intended?)
+   Review: nextState() -> Release. Release is the final state.
+
+[WAITING - Sudud?] Game and Exam state diagrams once the class diagrams are final.

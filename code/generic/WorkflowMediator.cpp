@@ -1,5 +1,6 @@
 #include "WorkflowMediator.h"
 #include "WorkItem.h"
+#include "WorkItemIterator.h"
 
 template <typename T>
 WorkflowMediator<T>::WorkflowMediator()
@@ -41,6 +42,12 @@ template <typename T>
 const std::vector<AbstractWorkItem<T>*>& WorkflowMediator<T>::getWorkItems() const
 {
     return workItems;
+}
+
+template <typename T>
+Iterator<T>* WorkflowMediator<T>::createIterator() const
+{
+    return new WorkItemIterator<T>(this);
 }
 
 template <typename T>
@@ -88,3 +95,5 @@ void WorkflowMediator<T>::notify(AbstractWorkItem<T>* colleague)
         }
     }
 }
+
+template class WorkflowMediator<int>;

@@ -12,9 +12,9 @@ Decorator<T>::~Decorator(){
 }
 
 template <typename T>
-void Decorator<T>::operation(){
+void Decorator<T>::display(int indent){
     
-    component->operation();
+    this->component->display(indent);
 }
 
 template <typename T>
@@ -26,3 +26,5 @@ template <typename T>
 int Decorator<T>::getTime() {
     return component->getTime();
 }
+
+template class Decorator<int>;

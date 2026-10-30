@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exam Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    --paper: #f5efe2;
+    --sheet: #fffdf8;
+    --ink: #1d2742;
+    --muted: #5a6275;
+    --red: #8e1f2f;
+    --rule: #ddd4c2;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Source Serif 4", Georgia, serif;
+    color: var(--ink);
+    background: var(--paper);
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.2rem clamp(1rem, 4vw, 3rem);
+    border-bottom: 3px double var(--ink);
+}
+
+.crest {
+    font-family: "Playfair Display", Georgia, serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+}
+
+.crest small {
+    display: block;
+    font-family: "Source Serif 4", Georgia, serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+}
+
+.back {
+    color: var(--ink);
+    font-weight: 600;
+    text-underline-offset: 4px;
+}
+
+.back:hover,
+.back:focus-visible {
+    color: var(--red);
+}
+
+main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 4vw, 3rem);
+}
+
+.ref {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+}
+
+h1 {
+    margin: 0.5rem 0 1rem;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.1;
+}
+
+.lead {
+    max-width: 38rem;
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--muted);
+}
+
+.document {
+    position: relative;
+    margin-top: 3rem;
+    padding: clamp(1.4rem, 4vw, 2.6rem);
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    box-shadow: 0 16px 40px rgba(29, 39, 66, 0.12);
+}
+
+.document h2 {
+    margin: 0 0 1.2rem;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.3rem;
+}
+
+.stages {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: stage;
+}
+
+.stages li {
+    counter-increment: stage;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.stages li::before {
+    content: counter(stage, upper-roman) ".";
+    min-width: 2.6rem;
+    color: var(--red);
+    font-weight: 600;
+}
+
+.stages li.signed::after {
+    content: "\2713  signed";
+    margin-left: auto;
+    color: var(--red);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.stamp {
+    position: absolute;
+    top: 1.4rem;
+    right: 1.4rem;
+    padding: 0.35rem 0.8rem;
+    border: 3px double var(--red);
+    color: var(--red);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    transform: rotate(-10deg);
+}
+
+.soon {
+    margin: 1.6rem 0 0;
+    font-style: italic;
+    color: var(--muted);
+}
+</style>
+</head>
+<body>
+<header>
+    <div class="crest">Examinations Office<small>Scenario 1</small></div>
+    <a class="back" href="/">&larr; All worlds</a>
+</header>
+<main>
+    <div class="ref">Ref. EMS / Exam paper lifecycle</div>
+    <h1>Exam Paper Lifecycle</h1>
+    <p class="lead">Every paper is tracked from the printer to the final mark sheet, with each stage recorded and signed off.</p>
+    <section class="document">
+        <div class="stamp" aria-hidden="true">DRAFT</div>
+        <h2>Stages of an exam paper</h2>
+        <ol class="stages">
+            <li class="signed">Printed</li>
+            <li class="signed">Written</li>
+            <li class="signed">Delivered</li>
+            <li>Marking</li>
+            <li>Needs validation</li>
+            <li>Completed</li>
+            <li>Marks captured</li>
+        </ol>
+        <p class="soon">Live exam dashboard coming soon.</p>
+    </section>
+</main>
+</body>
+</html>

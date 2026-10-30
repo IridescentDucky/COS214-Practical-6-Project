@@ -11,6 +11,7 @@
 
 #include "AbstractWorkItem.h"
 #include "WorkItem.h"
+#include "Iterator.h"
 
 template <typename T>
 class AbstractWorkItem;
@@ -34,6 +35,7 @@ public:
     void printStatus() const;
     bool addDependency(int predecessorId, int successorId);
     std::string getWorkItemState(int id) const;
+    Iterator<T>* createIterator() const;
 
     // void runWorkflow(AbstractWorkflowFactory<T>* factory);//Abtract factory
 
