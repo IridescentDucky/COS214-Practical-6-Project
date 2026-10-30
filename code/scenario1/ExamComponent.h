@@ -4,8 +4,8 @@
 class ExamComponent {
 public:
     virtual ~ExamComponent() = default;
-    virtual void mark();
-    virtual double getMarks();
+    virtual double getBonusMarks() = 0;
+    virtual int getExtraTime() = 0;
 
 };
 
