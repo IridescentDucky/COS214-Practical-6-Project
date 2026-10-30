@@ -5,12 +5,11 @@
 
 class ConcessionDecorator : public ExamDecorator {
 private:
-    int additionalTime;
+    int extraTime;
 
 public:
-    ConcessionDecorator(ExamComponent* component, int additionalTime);
-    void mark() override;
-    int getAdjustedDuration();
+    ConcessionDecorator(ExamComponent* component, int extraTime);
+    int getExtraTime();
 };
 
 #endif
