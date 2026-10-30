@@ -1,9 +1,6 @@
 #include "ExamComponent.h"
 
-void ExamComponent::mark() {
-    // mark?
+ExamComponent::~ExamComponent() {
+    
 }
 
-double ExamComponent::getMarks() {
-    return marks;
-}

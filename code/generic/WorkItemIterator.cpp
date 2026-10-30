@@ -1,17 +1,20 @@
 #include "WorkItemIterator.h"
 #include "WorkflowMediator.h"
 
-WorkItemIterator::WorkItemIterator(const WorkflowMediator* collection)
+template <typename T>
+WorkItemIterator<T>::WorkItemIterator(const WorkflowMediator<T>* collection)
     : currentIndex(0), collection(collection)
 {
 }
 
-bool WorkItemIterator::hasNext() const
+template <typename T>
+bool WorkItemIterator<T>::hasNext() const
 {
     return collection != nullptr && currentIndex < static_cast<int>(collection->workItems.size());
 }
 
-AbstractWorkItem* WorkItemIterator::next()
+template <typename T>
+AbstractWorkItem<T>* WorkItemIterator<T>::next()
 {
     if (!hasNext())
     {

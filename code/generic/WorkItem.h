@@ -2,23 +2,22 @@
 #define WORKITEM_H
 
 #include "Component.h"
-#include "Subject.h"
+#include "AbstractWorkItem.h"
+// #include "Subject.h"
 
 #include <string>
 #include <vector>
 #include <iostream>
 
-class Observer;
-class WorkItemState;
-class WorkflowMediator;
-class WorkItemMemento;
+// class Observer;
+// class WorkItemState;
+// class WorkflowMediator;
+// class WorkItemMemento;
 
-//Even though im moving the entire AbstractWorkItem class, i will keep all the includes here, just in case
-
-class WorkItem : public AbstractWorkItem, public Component, public Subject
-{
+template <typename T>
+class WorkItem : public AbstractWorkItem<T> {
 public:
-    WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator);
+    WorkItem(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator);
 
     void handleState() override;
     void paused() override;
@@ -33,26 +32,23 @@ public:
     std::string get() const override;
     void addTimeSpent(int units) override;
     
-    WorkItemMemento* createMemento() override;
-    void setMemento(WorkItemMemento* m) override;
+    WorkItemMemento<T>* createMemento() override;
+    void setMemento(WorkItemMemento<T>* m) override;
 
-    WorkItemState* getState() const;
-    void setState(WorkItemState* newState);
+    State<T>* getState() const;
+    void setState(State<T>* newState);
 
     bool isWithinDeadline() const;
     bool hasValidData() const;
     void notifyWorkflow();
 
-    void operation() override;//Decorator
-
     void attach(Observer* observer) override;        //Observer
     void detach(Observer* observer) override;        //Observer
     void notify() override;                          //Observer
-
 private:
-    std::string data;
     int deadline;
     int timeSpent;
+    std::string data;
     std::vector<Observer*> observers; // Subject holds its observers.
 
 };

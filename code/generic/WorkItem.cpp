@@ -5,166 +5,168 @@
 #include "WorkItemMemento.h"
 
 #include <iostream>
+#include <string>
 
-AbstractWorkItem::AbstractWorkItem(int id, const std::string& name, WorkflowMediator* mediator)
-    : id(id), name(name), state(new Created()), mediator(mediator)
+using namespace std;
+
+template <typename T>
+WorkItem<T>::WorkItem(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator)
+    : AbstractWorkItem<T>(id, name, mediator), deadline(deadline), timeSpent(0)
 {
 }
 
-AbstractWorkItem::~AbstractWorkItem()
+template <typename T>
+void WorkItem<T>::handleState()
 {
-    delete state;
+    this->state->nextState(this);
 }
 
-int AbstractWorkItem::getId() const
+template <typename T>
+void WorkItem<T>::paused()
 {
-    return id;
+    this->state->paused(this);
 }
 
-std::string AbstractWorkItem::getName() const
+template <typename T>
+void WorkItem<T>::resume()
 {
-    return name;
+    this->state->resume(this);
 }
 
-std::string AbstractWorkItem::getStateName() const
+template <typename T>
+void WorkItem<T>::retry()
 {
-    return state->getName();
+    this->state->retry(this);
 }
 
-WorkItem::WorkItem(int id, const std::string& name, int deadline, WorkflowMediator* mediator)
-    : AbstractWorkItem(id, name, mediator), deadline(deadline), timeSpent(0)
+
+template <typename T>
+void WorkItem<T>::failed()
 {
+    this->state->failed(this);
 }
 
-void WorkItem::handleState()
+template <typename T>
+void WorkItem<T>::failedDelivery()
 {
-    state->nextState(this);
+    this->state->failedDelivery(this);
 }
 
-void WorkItem::paused()
+template <typename T>
+void WorkItem<T>::exception()
 {
-    state->paused(this);
+    this->state->exception(this);
 }
 
-void WorkItem::resume()
+template <typename T>
+void WorkItem<T>::validate()
 {
-    state->resume(this);
+    this->state->validate(this);
 }
 
-void WorkItem::retry()
-{
-    state->retry(this);
-}
-
-void WorkItem::failed()
-{
-    state->failed(this);
-}
-
-void WorkItem::failedDelivery()
-{
-    state->failedDelivery(this);
-}
-
-void WorkItem::exception()
-{
-    state->exception(this);
-}
-
-void WorkItem::validate()
-{
-    state->validate(this);
-}
-
-void WorkItem::set(const std::string& data)
+template <typename T>
+void WorkItem<T>::set(const std::string& data)
 {
     this->data = data;
 }
 
-std::string WorkItem::get() const
+template <typename T>
+std::string WorkItem<T>::get() const
 {
     return data;
 }
 
-void WorkItem::addTimeSpent(int units)
+template <typename T>
+void WorkItem<T>::addTimeSpent(int units)
 {
     timeSpent += units;
 }
 
-WorkItemState* WorkItem::getState() const
+
+template <typename T>
+State<T>* WorkItem<T>::getState() const
 {
-    return state;
+    return this->state;
 }
 
-void WorkItem::setState(WorkItemState* newState)
+template <typename T>
+void WorkItem<T>::setState(State<T>* newState)
 {
     if (newState == nullptr)
     {
-        std::cout << "  [State] Cannot set a null state for " << name << std::endl;
+        std::cout << "  [State] Cannot set a null state for " << this->name << std::endl;
         return;
     }
-    std::cout << "  [State] " << name << ": " << state->getName() << " -> " << newState->getName() << std::endl;
-    WorkItemState* old = state;
-    state = newState;
+    std::cout << "  [State] " << this->name << ": " << this->state->getName() << " -> " << newState->getName() << std::endl;
+    State<T>* old = this->state;
+    this->state = newState;
     delete old;
 
     notify();  //For Observer, if the state changes then notify the observers
 }
 
-bool WorkItem::isWithinDeadline() const
+template <typename T>
+bool WorkItem<T>::isWithinDeadline() const
 {
     return timeSpent <= deadline;
 }
 
-bool WorkItem::hasValidData() const
+template <typename T>
+bool WorkItem<T>::hasValidData() const
 {
     return !data.empty();
 }
 
-void WorkItem::notifyWorkflow()
+template <typename T>
+void WorkItem<T>::notifyWorkflow()
 {
-    if (mediator != nullptr)
+    if (this->mediator != nullptr)
     {
-        mediator->notify(this);
+        this->mediator->notify(this);
     }
 }
 
-WorkItemMemento* WorkItem::createMemento()
+template <typename T>
+WorkItemMemento<T>* WorkItem<T>::createMemento()
 {
-    std::cout << "[WorkItem] " << name << " creating snapshot of state: "
-              << (state ? state->getName() : "None") << std::endl;
+    std::cout << "[WorkItem] " << this->name << " creating snapshot of state: "
+              << (this->state ? this->state->getName() : "None") << std::endl;
               
-    return new WorkItemMemento(this->state);
+    return new WorkItemMemento<T>(this->state);
 }
 
-void WorkItem::setMemento(WorkItemMemento* m)
+template <typename T>
+void WorkItem<T>::setMemento(WorkItemMemento<T>* m)
 {
     if (m == nullptr)
     {
-        std::cout << "[WorkItem] " << name << " cannot restore from null memento." << std::endl;
+        std::cout << "[WorkItem] " << this->name << " cannot restore from null memento." << std::endl;
         return;
     }
 
-    WorkItemState* savedState = m->getState();
+    State<T>* savedState = m->getState();
     if (savedState != nullptr)
     {
-        std::cout << "[WorkItem] " << name << " restoring state from memento: "
+        std::cout << "[WorkItem] " << this->name << " restoring state from memento: "
                   << savedState->getName() << std::endl;
         this->setState(savedState);
     }
 }
 
-void WorkItem::operation(){
+// template <typename T> // changed to display() and implemented in abstractworkitem
+// void WorkItem<T>::operation(){
 
-    std::cout << "Execute WorkItem operation..." << std::endl;  //Decorator 
-}
+//     std::cout << "Execute WorkItem operation..." << std::endl;  //Decorator 
+// }
 
-void WorkItem::attach(Observer* observer){
+template <typename T>
+void WorkItem<T>::attach(Observer* observer){
 
     observers.push_back(observer);
 }
 
-void WorkItem::detach(Observer* observer){
+template <typename T>
+void WorkItem<T>::detach(Observer* observer){
 
     for (std::vector<Observer*>::iterator it = observers.begin(); it != observers.end(); ++it){
 
@@ -176,7 +178,8 @@ void WorkItem::detach(Observer* observer){
     }
 }
 
-void WorkItem::notify(){
+template <typename T>
+void WorkItem<T>::notify(){
 
     for (Observer* observer : observers) {
         

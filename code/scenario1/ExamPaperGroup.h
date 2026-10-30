@@ -3,21 +3,17 @@
 
 #include "ExamComponent.h"
 
-#include <iostream>
-#include <list>
+#include <vector>
 
-using namespace std;
-
-class ExamPaperGroup : ExamComponent {
+class ExamPaperGroup : public ExamComponent {
 private:
-    list<ExamComponent*> elements;
+    std::vector<ExamComponent*> elements;
 
 public:
-    void mark();
-    void add(ExamComponent* e);
-    void remove(ExamComponent* e);
-
-    // getchild?
+    void mark() override;
+    void add(ExamComponent* element);
+    void remove(ExamComponent* element);
+    double getMarks() override;
 };
 
 #endif

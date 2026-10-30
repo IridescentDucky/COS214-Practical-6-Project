@@ -8,16 +8,17 @@
 
 using namespace std;
 
-class Composite: public Component {
+template <typename T>
+class Composite: public Component<T> {
 public:	
-	void operation();
-	void add(Component*);
-    void remove(Component*);
-    Component* getChild(int n);
+	void display(int indent = 0);
+	void add(Component<T>*);
+    void remove(Component<T>*);
+    Component<T>* getChild(int n);
 
     ~Composite();
 private:
-	list<Component*> children;
+	list<Component<T>*> children;
 };
 
 #endif

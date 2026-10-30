@@ -1,15 +1,12 @@
 #ifndef EXAMCOMPONENT_H
 #define EXAMCOMPONENT_H
 
-#include "AbstractExamPaper.h"
-
-class ExamComponent : AbstractExamPaper {
+class ExamComponent {
 public:
-    virtual void mark();
-    virtual double getMarks();
+    virtual ~ExamComponent() = default;
+    virtual double getBonusMarks() = 0;
+    virtual int getExtraTime() = 0;
 
-    virtual void add(ExamComponent* e);
-    virtual void remove(ExamComponent* e);
 };
 
 #endif

@@ -3,110 +3,130 @@
 
 #include <iostream>
 
-//workitemstate
-void WorkItemState::reject(const std::string& operation) const
+//State
+template <typename T>
+void State<T>::reject(const std::string& operation) const
 {
     std::cout << "  [State] '" << operation << "' is not allowed while " << getName() << std::endl;
 }
 
-void WorkItemState::nextState(WorkItem*)
+template <typename T>
+void State<T>::nextState(WorkItem<T>*)
 {
-    reject("nextState");
+    State<T>::reject("nextState");
 }
 
-void WorkItemState::paused(WorkItem*)
+template <typename T>
+void State<T>::paused(WorkItem<T>*)
 {
-    reject("paused");
+    State<T>::reject("paused");
 }
 
-void WorkItemState::resume(WorkItem*)
+template <typename T>
+void State<T>::resume(WorkItem<T>*)
 {
-    reject("resume");
+    State<T>::reject("resume");
 }
 
-void WorkItemState::retry(WorkItem*)
+template <typename T>
+void State<T>::retry(WorkItem<T>*)
 {
-    reject("retry");
+    State<T>::reject("retry");
 }
 
-void WorkItemState::failed(WorkItem*)
+template <typename T>
+void State<T>::failed(WorkItem<T>*)
 {
-    reject("failed");
+    State<T>::reject("failed");
 }
 
-void WorkItemState::failedDelivery(WorkItem*)
+template <typename T>
+void State<T>::failedDelivery(WorkItem<T>*)
 {
-    reject("failedDelivery");
+    State<T>::reject("failedDelivery");
 }
 
-void WorkItemState::exception(WorkItem*)
+template <typename T>
+void State<T>::exception(WorkItem<T>*)
 {
-    reject("exception");
+    State<T>::reject("exception");
 }
 
-void WorkItemState::validate(WorkItem*)
+template <typename T>
+void State<T>::validate(WorkItem<T>*)
 {
-    reject("validate");
+    State<T>::reject("validate");
 }
 
 //created
-std::string Created::getName() const
+template <typename T>
+std::string Created<T>::getName() const
 {
     return "Created";
 }
 
-WorkItemState* Created::clone() const
+template <typename T>
+State<T>* Created<T>::clone() const
 {
-    return new Created();
+    return new Created<T>();
 }
 
-void Created::nextState(WorkItem* item)
+template <typename T>
+void Created<T>::nextState(WorkItem<T>* item)
 {
-    item->setState(new Delivered());
+    item->setState(new Delivered<T>());
 }
 
 //delivered
-std::string Delivered::getName() const
+template <typename T>
+std::string Delivered<T>::getName() const
 {
     return "Delivered";
 }
 
-WorkItemState* Delivered::clone() const
+template <typename T>
+State<T>* Delivered<T>::clone() const
 {
     return new Delivered();
 }
 
-void Delivered::nextState(WorkItem* item)
+template <typename T>
+void Delivered<T>::nextState(WorkItem<T>* item)
 {
-    item->setState(new InProgress());
+    item->setState(new InProgress<T>());
 }
 
-void Delivered::failedDelivery(WorkItem* item)
+template <typename T>
+void Delivered<T>::failedDelivery(WorkItem<T>* item)
 {
-    item->setState(new Failed());
+    item->setState(new Failed<T>());
 }
 
-void Delivered::retry(WorkItem* item)
+template <typename T>
+void Delivered<T>::retry(WorkItem<T>* item)
 {
-    item->setState(new Delivered());
+    item->setState(new Delivered<T>());
 }
 
 //inprogress
-std::string InProgress::getName() const
+template <typename T>
+std::string InProgress<T>::getName() const
 {
     return "InProgress";
 }
 
-WorkItemState* InProgress::clone() const
+template <typename T>
+State<T>* InProgress<T>::clone() const
 {
-    return new InProgress();
+    return new InProgress<T>();
 }
 
-void InProgress::nextState(WorkItem* item)
+template <typename T>
+void InProgress<T>::nextState(WorkItem<T>* item)
 {
     if (item->isWithinDeadline())
     {
-        item->setState(new Validation());
+        item->setState(new Validation<T>());
     }
     else
     {
@@ -114,141 +134,168 @@ void InProgress::nextState(WorkItem* item)
     }
 }
 
-void InProgress::paused(WorkItem* item)
+template <typename T>
+void InProgress<T>::paused(WorkItem<T>* item)
 {
-    item->setState(new Paused());
+    item->setState(new Paused<T>());
 }
 
-void InProgress::failed(WorkItem* item)
+template <typename T>
+void InProgress<T>::failed(WorkItem<T>* item)
 {
-    item->setState(new Failed());
+    item->setState(new Failed<T>());
 }
 
-void InProgress::exception(WorkItem* item)
+template <typename T>
+void InProgress<T>::exception(WorkItem<T>* item)
 {
-    item->setState(new Exception());
+    item->setState(new Exception<T>());
 }
 
 //paused
-std::string Paused::getName() const
+template <typename T>
+std::string Paused<T>::getName() const
 {
     return "Paused";
 }
 
-WorkItemState* Paused::clone() const
+template <typename T>
+State<T>* Paused<T>::clone() const
 {
-    return new Paused();
+    return new Paused<T>();
 }
 
-void Paused::nextState(WorkItem* item)
+template <typename T>
+void Paused<T>::nextState(WorkItem<T>* item)
 {
     resume(item);
 }
 
-void Paused::resume(WorkItem* item)
+template <typename T>
+void Paused<T>::resume(WorkItem<T>* item)
 {
-    item->setState(new InProgress());
+    item->setState(new InProgress<T>());
 }
 
 //completed
-std::string Completed::getName() const
+template <typename T>
+std::string Completed<T>::getName() const
 {
     return "Completed";
 }
 
-WorkItemState* Completed::clone() const
+template <typename T>
+State<T>* Completed<T>::clone() const
 {
-    return new Completed();
+    return new Completed<T>();
 }
 
-void Completed::nextState(WorkItem* item)
+template <typename T>
+void Completed<T>::nextState(WorkItem<T>* item)
 {
-    item->setState(new Archived());
+    item->setState(new Archived<T>());
 }
 
 //validation
-std::string Validation::getName() const
+template <typename T>
+std::string Validation<T>::getName() const
 {
     return "Validation";
 }
 
-WorkItemState* Validation::clone() const
+template <typename T>
+State<T>* Validation<T>::clone() const
 {
-    return new Validation();
+    return new Validation<T>();
 }
 
-void Validation::nextState(WorkItem* item)
+template <typename T>
+void Validation<T>::nextState(WorkItem<T>* item)
 {
     if (item->hasValidData())
     {
-        item->setState(new Completed());
+        item->setState(new Completed<T>());
         item->notifyWorkflow();
     }
     else
     {
-        item->setState(new InProgress());
+        item->setState(new InProgress<T>());
     }
 }
 
-void Validation::retry(WorkItem* item)
+template <typename T>
+void Validation<T>::retry(WorkItem<T>* item)
 {
-    item->setState(new InProgress());
+    item->setState(new InProgress<T>());
 }
 
-void Validation::failed(WorkItem* item)
+template <typename T>
+void Validation<T>::failed(WorkItem<T>* item)
 {
-    item->setState(new Failed());
+    item->setState(new Failed<T>());
 }
 
 //failed
-std::string Failed::getName() const
+template <typename T>
+std::string Failed<T>::getName() const
 {
     return "Failed";
 }
 
-WorkItemState* Failed::clone() const
+template <typename T>
+State<T>* Failed<T>::clone() const
 {
     return new Failed();
 }
 
-void Failed::nextState(WorkItem* item)
+template <typename T>
+void Failed<T>::nextState(WorkItem<T>* item)
 {
-    item->setState(new Archived());
+    item->setState(new Archived<T>());
 }
 
 //archived
-std::string Archived::getName() const
+template <typename T>
+std::string Archived<T>::getName() const
 {
     return "Archived";
 }
 
-WorkItemState* Archived::clone() const
+template <typename T>
+State<T>* Archived<T>::clone() const
 {
-    return new Archived();
+    return new Archived<T>();
 }
 
-void Archived::nextState(WorkItem*)
+template <typename T>
+void Archived<T>::nextState(WorkItem<T>*)
 {
-    reject("nextState");
+    State<T>::reject("nextState");
 }
 
 //exception
-std::string Exception::getName() const
+template <typename T>
+std::string Exception<T>::getName() const
 {
     return "Exception";
 }
 
-WorkItemState* Exception::clone() const
+template <typename T>
+State<T>* Exception<T>::clone() const
 {
-    return new Exception();
+    return new Exception<T>();
 }
 
-void Exception::nextState(WorkItem* item)
+
+template <typename T>
+void Exception<T>::nextState(WorkItem<T>* item)
 {
-    item->setState(new InProgress());
+    item->setState(new InProgress<T>());
 }
 
-void Exception::validate(WorkItem* item)
+
+template <typename T>
+void Exception<T>::validate(WorkItem<T>* item)
 {
-    item->setState(new Validation());
+    item->setState(new Validation<T>());
 }

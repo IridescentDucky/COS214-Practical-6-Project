@@ -1,6 +1,8 @@
 #ifndef STATES_h
 #define STATES_h
 
+#include "PaperState.h"
+
 //----------- WrittenState ---------------------------------------
 
 class WrittenState :public PaperState{

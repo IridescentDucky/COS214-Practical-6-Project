@@ -3,18 +3,24 @@
 
 #include <string>
 
+// #include "AbstractWorkflowFactory.h"    //Abstract Fac
+// #include "ConcreteWorkflowFactory1.h"   //Factory
+// #include "ConcreteWorkflowFactory2.h"   //Factory
+// #include "AbstractWorkflowInstanceA.h"  //AbstractProduct
+// #include "AbstractWorkflowInstanceB.h"  //Abstract pRoduct
+
+#include "AbstractWorkItem.h"
+#include "WorkItem.h"
 #include "Iterator.h"
-#include "AbstractWorkflowFactory.h"    //Abstract Fac
-#include "ConcreteWorkflowFactory1.h"   //Factory
-#include "ConcreteWorkflowFactory2.h"   //Factory
-#include "AbstractWorkflowInstanceA.h"  //AbstractProduct
-#include "AbstractWorkflowInstanceB.h"  //Abstract pRoduct
 
+template <typename T>
 class AbstractWorkItem;
-class WorkflowMediator;
 
-class TIVIDY
-{
+template <typename T>
+class WorkItem;
+
+template <typename T>
+class TIVIDY {
 public:
     TIVIDY();
     ~TIVIDY();
@@ -29,14 +35,14 @@ public:
     void printStatus() const;
     bool addDependency(int predecessorId, int successorId);
     std::string getWorkItemState(int id) const;
-    Iterator* createIterator() const;
+    Iterator<T>* createIterator() const;
 
-    void runWorkflow(AbstractWorkflowFactory* factory);//Abtract factory
+    // void runWorkflow(AbstractWorkflowFactory<T>* factory);//Abtract factory
 
 private:
-    AbstractWorkItem* find(int id) const;
+    AbstractWorkItem<T>* find(int id) const;
 
-    WorkflowMediator* mediator;
+    WorkflowMediator<T>* mediator;
     int nextId;
 };
 

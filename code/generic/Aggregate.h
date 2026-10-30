@@ -1,8 +1,10 @@
 #ifndef AGGREGATE_H
 #define AGGREGATE_H
 
+template <typename T>
 class Iterator;
 
+template <typename T>
 class Aggregate
 {
 public:
@@ -10,7 +12,7 @@ public:
     {
     }
 
-    virtual Iterator* createIterator() const = 0;
+    virtual Iterator<T>* createIterator() const = 0;
 };
 
 #endif

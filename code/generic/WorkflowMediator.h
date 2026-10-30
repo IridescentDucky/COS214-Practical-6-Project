@@ -1,31 +1,37 @@
 #ifndef WORKFLOWMEDIATOR_H
 #define WORKFLOWMEDIATOR_H
 
+#include "AbstractWorkItem.h"
 #include "Aggregate.h"
 
 #include <vector>
 #include <map>
 
+template <typename T>
 class AbstractWorkItem;
 
-class WorkflowMediator : public Aggregate
-{
+template <typename T>
+class WorkItemIterator;
+
+template <typename T>
+class WorkflowMediator : public Aggregate<T> {
 public:
     WorkflowMediator();
     ~WorkflowMediator();
 
-    void addWorkItem(AbstractWorkItem* item);
-    AbstractWorkItem* getWorkItem(int id) const;
+    void addWorkItem(AbstractWorkItem<T>* item);
+    AbstractWorkItem<T>* getWorkItem(int id) const;
+    const std::vector<AbstractWorkItem<T>*>& getWorkItems() const;
     bool addDependency(int predecessorId, int successorId);
 
-    void notify(AbstractWorkItem* colleague);
+    void notify(AbstractWorkItem<T>* colleague);
 
-    Iterator* createIterator() const override;
+    Iterator<T>* createIterator() const override;
 
 private:
-    friend class WorkItemIterator;
+    friend class WorkItemIterator<T>;
 
-    std::vector<AbstractWorkItem*> workItems;
+    std::vector<AbstractWorkItem<T>*> workItems;
     std::map<int, std::vector<int> > dependencies;
 };
 

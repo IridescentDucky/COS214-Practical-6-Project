@@ -2,20 +2,24 @@
 
 #include <iostream>
 
-void Component::add(Component*) {
+template <typename T>
+void Component<T>::add(Component<T>*) {
     std::cout << "(component) Could not add" << std::endl;
 }
 
-void Component::remove(Component*) {
+template <typename T>
+void Component<T>::remove(Component<T>*) {
     std::cout << "(component) Could not remove" << std::endl;
 }
 
-Component* Component::getChild(int n) {
+template <typename T>
+Component<T>* Component<T>::getChild(int n) {
     std::cout << "(component) Could not get" << std::endl;
     
     return nullptr;
 }
 
-Component::~Component(){
+template <typename T>
+Component<T>::~Component(){
     
 }
