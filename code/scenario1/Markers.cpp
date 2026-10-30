@@ -139,7 +139,15 @@ void Tutor::handle(AbstractExamPaper* abstractPaper) {
 }
 
 void Tutor::update() {
+    //std::cout << "[Tutor] Notified that an exam paper is ready for marking." << std::endl; just moving it
+    if (paper == nullptr) {
+        return;
+    }
+    
+    State* currentState = paper->getState();
+
     std::cout << "[Tutor] Notified that an exam paper is ready for marking." << std::endl;
+    handle(paper); //send it to COR
 }
 
 AssistantLecturer::AssistantLecturer(std::string id, std::string name) : Marker(id, name) {}
@@ -176,6 +184,13 @@ void AssistantLecturer::handle(AbstractExamPaper* abstractPaper) {
 }
 
 void AssistantLecturer::update() {
+
+    if (paper == nullptr) {
+        return;
+    }
+
+    State* currentState = paper->getState();
+    
     std::cout << "[AssistantLecturer] Notified that an exam paper is ready for marking."
               << std::endl;
 }
@@ -214,5 +229,12 @@ void Lecturer::handle(AbstractExamPaper* abstractPaper) {
 }
 
 void Lecturer::update() {
+    
+    if (paper == nullptr) {
+        return;
+    }
+
+    State* currentState = paper->getState();
+    
     std::cout << "[Lecturer] Notified that an exam paper requires review." << std::endl;
 }

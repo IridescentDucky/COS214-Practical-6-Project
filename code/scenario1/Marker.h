@@ -10,6 +10,7 @@ protected:
     Marker* next;
     std::string tutorId;
     std::string name;
+    AbstractExamPaper* paper;
 
 public:
     Marker(std::string id, std::string markerName)
@@ -30,6 +31,8 @@ public:
 
     virtual void handle(AbstractExamPaper* paper) = 0;
     virtual void update() = 0;
+
+    void setExamPaper(AbstractExamPaper* paper) { this->paper = paper;}
 };
 
 #endif
