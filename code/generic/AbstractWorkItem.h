@@ -4,20 +4,22 @@
 #include "WorkflowMediator.h"
 #include "WorkItemMemento.h"
 #include "Component.h"
-#include "Observer.h"
+#include "TaskEscalationManager.h"
 #include "State.h"
 
 #include <string>
 #include <vector>
 #include <iostream>
 
-class Observer;
 
 // template <typename T>
 // class State;
 
 template <typename T>
 class WorkflowMediator;
+
+template <typename T>
+class TaskEscalationManager;
 
 // template <typename T>
 // class WorkItemMemento;
@@ -29,7 +31,7 @@ protected:
     State<T>* state;
     std::string name;
     WorkflowMediator<T>* mediator;
-    std::vector<Observer*> observers;
+    std::vector<TaskEscalationManager<T>*> observers;
     int score;
     int time;
     
@@ -57,8 +59,8 @@ public:
     virtual WorkItemMemento<T>* createMemento() = 0;   //MEMENTO
     virtual void setMemento(WorkItemMemento<T>* m) = 0;
 
-    virtual void attach(Observer* observer);    //FOR OBSERVER
-    virtual void detach(Observer* observer);    ///OBSERVER
+    virtual void attach(TaskEscalationManager<T>* observer);    //FOR OBSERVER
+    virtual void detach(TaskEscalationManager<T>* observer);    ///OBSERVER
     virtual void notify();            //OBSERVER
 
     virtual void setState(State<T>* newState);
