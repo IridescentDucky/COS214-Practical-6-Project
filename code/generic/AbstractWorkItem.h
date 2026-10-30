@@ -28,7 +28,8 @@ protected:
     int id;
     State<T>* state;
     std::string name;
-    WorkflowMediator* mediator;
+    WorkflowMediator<T>* mediator;
+    std::vector<Observer*> observers;
     int score;
     int time;
     
@@ -56,12 +57,15 @@ public:
     virtual WorkItemMemento<T>* createMemento() = 0;   //MEMENTO
     virtual void setMemento(WorkItemMemento<T>* m) = 0;
 
-    void attach(Observer* observer);    //FOR OBSERVER
-    void detach(Observer* observer);    ///OBSERVER
-    void notify();            //OBSERVER
+    virtual void attach(Observer* observer);    //FOR OBSERVER
+    virtual void detach(Observer* observer);    ///OBSERVER
+    virtual void notify();            //OBSERVER
 
-    void setState(State<T>* newState);
-    State<T>* getState();
+    virtual void setState(State<T>* newState);
+    State<T>* getState() const;
+
+    int getScore();
+    int getTime();
 
     // Composite
     void display(int indent = 0); 

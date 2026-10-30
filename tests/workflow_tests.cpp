@@ -1,6 +1,9 @@
+#include "BonusScoreDecorator.h"
+#include "BonusTimeDecorator.h"
 #include "Caretaker.h"
-#include "ConcreteWorkflowFactory1.h"
-#include "ConcreteWorkflowFactory2.h"
+#include "Composite.h"
+#include "ConcreteCreator.h"
+#include "ConcreteHandler.h"
 #include "Iterator.h"
 #include "Observer.h"
 #include "TIVIDY.h"
@@ -9,7 +12,7 @@
 
 #include <gtest/gtest.h>
 
-#include <typeinfo>
+#include <sstream>
 #include <vector>
 
 namespace
@@ -27,7 +30,7 @@ public:
     int updateCount;
 };
 
-void complete(WorkItem& item)
+void complete(WorkItem<int>& item)
 {
     item.handleState();
     item.handleState();
@@ -39,7 +42,7 @@ void complete(WorkItem& item)
 
 TEST(StateTest, ValidDataCompletesAndInvalidDataReturnsToInProgress)
 {
-    WorkItem item(1, "Task", 5, nullptr);
+    WorkItem<int> item(1, "Task", 5, nullptr);
     item.handleState();
     item.handleState();
     item.handleState();
@@ -57,7 +60,7 @@ TEST(StateTest, ValidDataCompletesAndInvalidDataReturnsToInProgress)
 
 TEST(StateTest, DeadlineGuardPreventsValidation)
 {
-    WorkItem item(1, "Late task", 1, nullptr);
+    WorkItem<int> item(1, "Late task", 1, nullptr);
     item.handleState();
     item.handleState();
     item.addTimeSpent(2);
@@ -68,7 +71,7 @@ TEST(StateTest, DeadlineGuardPreventsValidation)
 
 TEST(StateTest, PauseAndResumeRestoreInProgress)
 {
-    WorkItem item(1, "Task", 5, nullptr);
+    WorkItem<int> item(1, "Task", 5, nullptr);
     item.handleState();
     item.handleState();
     item.paused();
@@ -79,9 +82,9 @@ TEST(StateTest, PauseAndResumeRestoreInProgress)
 
 TEST(MediatorTest, RejectsInvalidAndDuplicateDependencies)
 {
-    WorkflowMediator mediator;
-    mediator.addWorkItem(new WorkItem(1, "First", 5, &mediator));
-    mediator.addWorkItem(new WorkItem(2, "Second", 5, &mediator));
+    WorkflowMediator<int> mediator;
+    mediator.addWorkItem(new WorkItem<int>(1, "First", 5, &mediator));
+    mediator.addWorkItem(new WorkItem<int>(2, "Second", 5, &mediator));
 
     EXPECT_TRUE(mediator.addDependency(1, 2));
     EXPECT_FALSE(mediator.addDependency(1, 2));
@@ -91,10 +94,10 @@ TEST(MediatorTest, RejectsInvalidAndDuplicateDependencies)
 
 TEST(MediatorTest, CompletionActivatesEveryCreatedDependentOnlyOnce)
 {
-    WorkflowMediator mediator;
-    WorkItem* predecessor = new WorkItem(1, "First", 5, &mediator);
-    WorkItem* firstDependent = new WorkItem(2, "Second", 5, &mediator);
-    WorkItem* secondDependent = new WorkItem(3, "Third", 5, &mediator);
+    WorkflowMediator<int> mediator;
+    WorkItem<int>* predecessor = new WorkItem<int>(1, "First", 5, &mediator);
+    WorkItem<int>* firstDependent = new WorkItem<int>(2, "Second", 5, &mediator);
+    WorkItem<int>* secondDependent = new WorkItem<int>(3, "Third", 5, &mediator);
     mediator.addWorkItem(predecessor);
     mediator.addWorkItem(firstDependent);
     mediator.addWorkItem(secondDependent);
@@ -114,8 +117,8 @@ TEST(MediatorTest, CompletionActivatesEveryCreatedDependentOnlyOnce)
 
 TEST(MementoTest, RestoresAnIndependentStateSnapshot)
 {
-    WorkItem item(1, "Task", 5, nullptr);
-    Caretaker caretaker;
+    WorkItem<int> item(1, "Task", 5, nullptr);
+    Caretaker<int> caretaker;
     item.handleState();
     ASSERT_EQ("Delivered", item.getStateName());
     caretaker.addMemento(item.createMemento());
@@ -130,7 +133,7 @@ TEST(MementoTest, RestoresAnIndependentStateSnapshot)
 
 TEST(ObserverTest, AttachedObserverIsNotifiedAndDetachedObserverIsNot)
 {
-    WorkItem item(1, "Task", 5, nullptr);
+    WorkItem<int> item(1, "Task", 5, nullptr);
     CountingObserver observer;
     item.attach(&observer);
 
@@ -142,33 +145,68 @@ TEST(ObserverTest, AttachedObserverIsNotifiedAndDetachedObserverIsNot)
     EXPECT_EQ(1, observer.updateCount);
 }
 
-TEST(AbstractFactoryTest, EachFactoryCreatesItsOwnProductFamily)
+TEST(DecoratorTest, BonusesStackOnTheWrappedWorkItem)
 {
-    ConcreteWorkflowFactory1 firstFactory;
-    ConcreteWorkflowFactory2 secondFactory;
-    AbstractWorkflowInstanceA* firstA = firstFactory.createWorkflowInstanceA();
-    AbstractWorkflowInstanceB* firstB = firstFactory.createWorkflowInstanceB();
-    AbstractWorkflowInstanceA* secondA = secondFactory.createWorkflowInstanceA();
-    AbstractWorkflowInstanceB* secondB = secondFactory.createWorkflowInstanceB();
+    WorkItem<int> item(1, "Task", 5, nullptr);
+    BonusScoreDecorator<int> scored(&item, 10, 2);
+    BonusTimeDecorator<int> extended(&scored, 3);
 
-    EXPECT_NE(typeid(*firstA), typeid(*secondA));
-    EXPECT_NE(typeid(*firstB), typeid(*secondB));
-
-    delete firstA;
-    delete firstB;
-    delete secondA;
-    delete secondB;
+    EXPECT_EQ(20, extended.getScore());
+    EXPECT_EQ(3, extended.getTime());
+    EXPECT_EQ(0, item.getScore());
 }
 
-TEST(AbstractFactoryTest, NullFactoryIsIgnoredSafely)
+TEST(CompositeTest, GroupAddsUpItsChildren)
 {
-    TIVIDY tividy;
-    EXPECT_NO_THROW(tividy.runWorkflow(nullptr));
+    WorkItem<int> second(2, "Second", 5, nullptr);
+    Composite<int> group("Sprint");
+    WorkItem<int>* first = new WorkItem<int>(1, "First", 5, nullptr);
+    group.add(first);
+    group.add(new BonusTimeDecorator<int>(&second, 4));
+
+    EXPECT_EQ(4, group.getTime());
+    EXPECT_TRUE(group.getChild(0) == first);
+    EXPECT_TRUE(group.getChild(5) == nullptr);
+}
+
+TEST(FactoryMethodTest, CreatorMakesANewWorkItem)
+{
+    ConcreteCreator<int> creator;
+    AbstractWorkItem<int>* item = creator.createWorkItem();
+
+    ASSERT_TRUE(item != nullptr);
+    EXPECT_EQ("Created", item->getStateName());
+    delete item;
+}
+
+TEST(ChainOfResponsibilityTest, RequestGoesToFirstHandlerThatCanTakeIt)
+{
+    ConcreteHandler<int>* lead = new ConcreteHandler<int>("Lead", 3);
+    lead->setSuccessor(new ConcreteHandler<int>("Manager", 7));
+
+    std::ostringstream output;
+    std::streambuf* original = std::cout.rdbuf(output.rdbuf());
+    lead->handleRequest(1);
+    lead->handleRequest(5);
+    lead->handleRequest(9);
+    std::cout.rdbuf(original);
+    delete lead;
+
+    EXPECT_EQ("Lead handled the request\n"
+              "Lead passed the request on\nManager handled the request\n"
+              "Lead passed the request on\nThe request could not be handled\n", output.str());
+}
+
+TEST(FacadeTest, NullOrUnknownIdsAreIgnoredSafely)
+{
+    TIVIDY<int> tividy;
+    EXPECT_NO_THROW(tividy.advanceWork(42));
+    EXPECT_EQ("", tividy.getWorkItemState(42));
 }
 
 TEST(WorkflowEndToEndTest, FacadeCompletesPredecessorAndActivatesDependent)
 {
-    TIVIDY tividy;
+    TIVIDY<int> tividy;
     const int predecessor = tividy.createWorkItem("Design", 5);
     const int dependent = tividy.createWorkItem("Build", 5);
     ASSERT_TRUE(tividy.addDependency(predecessor, dependent));
@@ -184,12 +222,12 @@ TEST(WorkflowEndToEndTest, FacadeCompletesPredecessorAndActivatesDependent)
 
 TEST(IteratorTest, VisitsEveryWorkItemInOrderThenStops)
 {
-    WorkflowMediator mediator;
-    mediator.addWorkItem(new WorkItem(1, "First", 5, &mediator));
-    mediator.addWorkItem(new WorkItem(2, "Second", 5, &mediator));
-    mediator.addWorkItem(new WorkItem(3, "Third", 5, &mediator));
+    WorkflowMediator<int> mediator;
+    mediator.addWorkItem(new WorkItem<int>(1, "First", 5, &mediator));
+    mediator.addWorkItem(new WorkItem<int>(2, "Second", 5, &mediator));
+    mediator.addWorkItem(new WorkItem<int>(3, "Third", 5, &mediator));
 
-    Iterator* it = mediator.createIterator();
+    Iterator<int>* it = mediator.createIterator();
     std::vector<int> ids;
     while (it->hasNext())
     {
@@ -207,8 +245,8 @@ TEST(IteratorTest, VisitsEveryWorkItemInOrderThenStops)
 
 TEST(IteratorTest, EmptyMediatorHasNothingToVisit)
 {
-    WorkflowMediator mediator;
-    Iterator* it = mediator.createIterator();
+    WorkflowMediator<int> mediator;
+    Iterator<int>* it = mediator.createIterator();
 
     EXPECT_FALSE(it->hasNext());
     EXPECT_TRUE(it->next() == nullptr);

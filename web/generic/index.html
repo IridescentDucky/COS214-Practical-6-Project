@@ -824,22 +824,22 @@ details.more[open] summary h3::before {
                 <h2>Engine services</h2>
             </div>
             <div class="panel-head" style="margin-bottom:0.5rem">
-                <h3>Workflow factories</h3>
-                <span class="pattern">Abstract Factory</span>
+                <h3>Work item factory</h3>
+                <span class="pattern">Factory Method</span>
             </div>
             <div class="row">
-                <button class="btn" type="button" data-factory="1">Run factory 1</button>
-                <button class="btn" type="button" data-factory="2">Run factory 2</button>
+                <button class="btn" type="button" id="factory">Run factory method</button>
             </div>
-            <p class="note">Each factory creates a matching family of workflow instances (A1 + B1, or A2 + B2).</p>
+            <p class="note">The creator asks its subclass which concrete work item to make, so the engine never names WorkItem directly.</p>
             <div class="panel-head" style="margin:1rem 0 0.5rem">
                 <h3>Escalation chain</h3>
                 <span class="pattern">Chain of Responsibility</span>
             </div>
             <div class="row">
+                <input type="number" id="escalate-severity" min="1" max="10" value="5" aria-label="Severity (1-10)" style="max-width:6rem;min-width:4rem">
                 <button class="btn" type="button" id="escalate">Escalate a request</button>
             </div>
-            <p class="note">The request is passed along the handler chain until one handles it or the chain ends.</p>
+            <p class="note">The team lead takes severity below 3, the manager below 7. Anything higher falls off the end of the chain.</p>
         </section>
 
         <section class="panel log-panel">
@@ -933,9 +933,9 @@ const TAGS = [
     [/^\[State\]/, "State"],
     [/^Observer notified|^Current state/, "Observer"],
     [/^\[(Caretaker|WorkItemMemento|WorkItem)\]/, "Memento"],
-    [/^Execute WorkItem|^Adding functionality/, "Decorator"],
-    [/^Creating Workflow/, "Factory"],
-    [/^\[ConcreteHandler/, "Chain"],
+    [/^\[Decorator\]/, "Decorator"],
+    [/^Creating a WorkItem|^\[Factory\]/, "Factory"],
+    [/handled the request|passed the request on|could not be handled/, "Chain"],
     [/^\[TIVIDY\]/, "Facade"],
     [/^\[UI\]/, "UI"]
 ];
@@ -943,7 +943,7 @@ const TAGS = [
 const LABELS = {
     advance: "Advance", submit: "Submit work", pause: "Pause", resume: "Resume", fail: "Mark failed",
     failedDelivery: "Delivery failed", exception: "Raise exception", retry: "Retry", validate: "Validate",
-    time: "Log time", snapshot: "Save snapshot", restore: "Restore snapshot", decorate: "Run decorated operation"
+    time: "Log time", snapshot: "Save snapshot", restore: "Restore snapshot", decorate: "Apply decorators"
 };
 
 let model = { items: [], dependencies: [] };
@@ -1185,9 +1185,9 @@ function renderDetail() {
         + '<div class="row"><select id="restore-index" aria-label="Snapshot to restore"' + (item.snapshots ? "" : " disabled") + ">" + (restoreOptions || "<option>No snapshots yet</option>") + "</select>"
         + '<button class="btn" type="button" data-action="restore" data-label="Restore snapshot"' + (item.snapshots ? "" : " disabled") + ">Restore</button></div>";
 
-    const decorator = '<p class="note" style="margin-top:0">Wrap the item in decorators to add behaviour without changing the WorkItem class.</p>'
-        + '<div class="checks" style="margin-top:0.7rem"><label><input type="checkbox" id="deco-a" checked> Decorator A</label><label><input type="checkbox" id="deco-b"> Decorator B</label></div>'
-        + '<div class="row" style="margin-top:0.6rem">' + button("decorate", "Run operation()") + "</div>";
+    const decorator = '<p class="note" style="margin-top:0">Wrap the item in decorators to change its score and time without changing the WorkItem class.</p>'
+        + '<div class="checks" style="margin-top:0.7rem"><label><input type="checkbox" id="deco-score" checked> Bonus score (+10, &times;2)</label><label><input type="checkbox" id="deco-time"> Extra time (+3)</label></div>'
+        + '<div class="row" style="margin-top:0.6rem">' + button("decorate", "Apply decorators") + "</div>";
 
     panel.innerHTML = '<div class="detail-head"><div><div class="detail-title">' + escapeHtml(item.name) + ' <span class="item-id">#' + item.id + '</span></div>'
         + '<div class="detail-sub">Submitted work: ' + (item.data ? "“" + escapeHtml(item.data) + "”" : "none yet") + " · Time " + item.timeSpent + "/" + item.deadline + "</div></div>"
@@ -1218,7 +1218,7 @@ function renderDetail() {
                 submit: () => ({ data: $("submit-data").value }),
                 time: () => ({ units: $("time-units").value }),
                 restore: () => ({ index: $("restore-index").value }),
-                decorate: () => ({ a: $("deco-a").checked ? "1" : "0", b: $("deco-b").checked ? "1" : "0" })
+                decorate: () => ({ score: $("deco-score").checked ? "1" : "0", time: $("deco-time").checked ? "1" : "0" })
             };
             itemAction(action, extras[action] ? extras[action]() : {}, btn.dataset.label);
         });
@@ -1337,11 +1337,9 @@ $("dep-add").addEventListener("click", () => {
     call("/dependencies", { from: $("dep-from").value, to: $("dep-to").value }, title);
 });
 
-document.querySelectorAll("[data-factory]").forEach((btn) => {
-    btn.addEventListener("click", () => call("/factory/" + btn.dataset.factory, {}, "Run workflow factory " + btn.dataset.factory));
-});
+$("factory").addEventListener("click", () => call("/factory", {}, "Run factory method"));
 
-$("escalate").addEventListener("click", () => call("/escalate", {}, "Escalate a request"));
+$("escalate").addEventListener("click", () => call("/escalate", { severity: $("escalate-severity").value }, "Escalate a request"));
 
 $("reset").addEventListener("click", () => {
     if (confirm("Clear every work item and start a fresh session?")) {

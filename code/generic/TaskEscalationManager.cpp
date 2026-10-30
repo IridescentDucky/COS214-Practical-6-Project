@@ -11,3 +11,5 @@ TaskEscalationManager<T>::~TaskEscalationManager() {
 
     successor = nullptr;
 }
+
+template class TaskEscalationManager<int>;

@@ -22,3 +22,5 @@ AbstractWorkItem<T>* WorkItemIterator<T>::next()
     }
     return collection->workItems[currentIndex++];
 }
+
+template class WorkItemIterator<int>;

@@ -10,3 +10,5 @@ int BonusTimeDecorator<T>::getTime() {
 
     return this->component->getTime() + this->extraTime;
 }
+
+template class BonusTimeDecorator<int>;

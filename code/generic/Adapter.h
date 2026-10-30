@@ -8,8 +8,9 @@
 
 using namespace std;
 
-class Adapter : Target {
+class Adapter : public Target {
 public:	
+    Adapter(Adaptee* adaptee);
 	void request();
 
 private:

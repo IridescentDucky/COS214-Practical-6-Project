@@ -95,3 +95,5 @@ void WorkflowMediator<T>::notify(AbstractWorkItem<T>* colleague)
         }
     }
 }
+
+template class WorkflowMediator<int>;

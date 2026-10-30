@@ -23,3 +23,5 @@ template <typename T>
 Component<T>::~Component(){
     
 }
+
+template class Component<int>;

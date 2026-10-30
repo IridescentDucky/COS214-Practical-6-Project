@@ -3,6 +3,10 @@
 using namespace std;
 
 template <typename T>
+Composite<T>::Composite(const string& name) : name(name) {
+}
+
+template <typename T>
 void Composite<T>::display(int indent) {
     for (int i = 0; i < indent; i++)
     {
@@ -45,8 +49,28 @@ Component<T>* Composite<T>::getChild(int n) {
 }
 
 template <typename T>
+int Composite<T>::getScore() {
+    int total = 0;
+    for (auto child : this->children) {
+        total += child->getScore();
+    }
+    return total;
+}
+
+template <typename T>
+int Composite<T>::getTime() {
+    int total = 0;
+    for (auto child : this->children) {
+        total += child->getTime();
+    }
+    return total;
+}
+
+template <typename T>
 Composite<T>::~Composite() {
     for (typename list<Component<T>*>::iterator it = this->children.begin(); it != this->children.end(); ++it) {
         delete *it;
     }
 };	
+
+template class Composite<int>;

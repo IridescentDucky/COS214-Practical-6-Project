@@ -10,7 +10,7 @@ class Decorator : public Component<T> {
 public:
 
     Decorator(Component<T>* component);
-    virtual void operation() = 0;
+    void display(int indent = 0);
     virtual ~Decorator();
 
     int getScore();

@@ -1,14 +1,12 @@
 #include "GenericApi.h"
 #include "httplib.h"
 
+#include "BonusScoreDecorator.h"
+#include "BonusTimeDecorator.h"
 #include "Caretaker.h"
-#include "ConcreteDecoratorA.h"
-#include "ConcreteDecoratorB.h"
-#include "ConcreteHandler1.h"
-#include "ConcreteHandler2.h"
+#include "ConcreteCreator.h"
+#include "ConcreteHandler.h"
 #include "ConcreteObserver.h"
-#include "ConcreteWorkflowFactory1.h"
-#include "ConcreteWorkflowFactory2.h"
 #include "TIVIDY.h"
 #include "WorkItem.h"
 
@@ -36,11 +34,11 @@ struct ItemExtras
 
 struct GenericSession
 {
-    TIVIDY tividy;
+    TIVIDY<int> tividy;
     std::map<int, ItemExtras> extras;
     std::vector<std::pair<int, int> > dependencies;
-    std::map<int, std::unique_ptr<Caretaker> > history;
-    std::map<int, std::unique_ptr<ConcreteObserver> > observers;
+    std::map<int, std::unique_ptr<Caretaker<int> > > history;
+    std::map<int, std::unique_ptr<ConcreteObserver<int> > > observers;
 };
 
 class RequestError : public std::runtime_error
@@ -84,7 +82,7 @@ private:
     std::streambuf* original;
 };
 
-typedef std::function<void(GenericSession&, AbstractWorkItem*, const httplib::Request&)> ItemAction;
+typedef std::function<void(GenericSession&, AbstractWorkItem<int>*, const httplib::Request&)> ItemAction;
 
 std::mutex sessionMutex;
 std::unique_ptr<GenericSession> session(new GenericSession());
@@ -128,11 +126,11 @@ std::string snapshotJson(const GenericSession& current, const std::string& actio
 {
     std::ostringstream json;
     json << "{\"items\":[";
-    std::unique_ptr<Iterator> it(current.tividy.createIterator());
+    std::unique_ptr<Iterator<int> > it(current.tividy.createIterator());
     bool first = true;
     while (it->hasNext())
     {
-        AbstractWorkItem* item = it->next();
+        AbstractWorkItem<int>* item = it->next();
         ItemExtras extra = current.extras.at(item->getId());
         json << (first ? "" : ",")
              << "{\"id\":" << item->getId()
@@ -181,23 +179,18 @@ int intParam(const httplib::Request& req, const std::string& key, int low, int h
     return value;
 }
 
-AbstractWorkItem* findItem(GenericSession& current, int id)
+AbstractWorkItem<int>* findItem(GenericSession& current, int id)
 {
-    std::unique_ptr<Iterator> it(current.tividy.createIterator());
+    std::unique_ptr<Iterator<int> > it(current.tividy.createIterator());
     while (it->hasNext())
     {
-        AbstractWorkItem* item = it->next();
+        AbstractWorkItem<int>* item = it->next();
         if (item->getId() == id)
         {
             return item;
         }
     }
     throw RequestError("No work item with id " + std::to_string(id));
-}
-
-WorkItem* asWorkItem(AbstractWorkItem* item)
-{
-    return static_cast<WorkItem*>(item);
 }
 
 void runAction(httplib::Response& res, const std::string& action,
@@ -232,44 +225,44 @@ std::map<std::string, ItemAction> buildItemActions()
 {
     std::map<std::string, ItemAction> actions;
 
-    actions["advance"] = [](GenericSession& s, AbstractWorkItem* item, const httplib::Request&)
+    actions["advance"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         s.tividy.advanceWork(item->getId());
     };
-    actions["submit"] = [](GenericSession& s, AbstractWorkItem* item, const httplib::Request& req)
+    actions["submit"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request& req)
     {
         s.tividy.submitWork(item->getId(), req.get_param_value("data"));
     };
-    actions["pause"] = [](GenericSession& s, AbstractWorkItem* item, const httplib::Request&)
+    actions["pause"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         s.tividy.pauseWork(item->getId());
     };
-    actions["resume"] = [](GenericSession& s, AbstractWorkItem* item, const httplib::Request&)
+    actions["resume"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         s.tividy.resumeWork(item->getId());
     };
 
-    actions["fail"] = [](GenericSession&, AbstractWorkItem* item, const httplib::Request&)
+    actions["fail"] = [](GenericSession&, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         item->failed();
     };
-    actions["failedDelivery"] = [](GenericSession&, AbstractWorkItem* item, const httplib::Request&)
+    actions["failedDelivery"] = [](GenericSession&, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         item->failedDelivery();
     };
-    actions["exception"] = [](GenericSession&, AbstractWorkItem* item, const httplib::Request&)
+    actions["exception"] = [](GenericSession&, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         item->exception();
     };
-    actions["retry"] = [](GenericSession&, AbstractWorkItem* item, const httplib::Request&)
+    actions["retry"] = [](GenericSession&, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         item->retry();
     };
-    actions["validate"] = [](GenericSession&, AbstractWorkItem* item, const httplib::Request&)
+    actions["validate"] = [](GenericSession&, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         item->validate();
     };
-    actions["time"] = [](GenericSession& s, AbstractWorkItem* item, const httplib::Request& req)
+    actions["time"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request& req)
     {
         int units = intParam(req, "units", 1, 1000);
         item->addTimeSpent(units);
@@ -279,12 +272,12 @@ std::map<std::string, ItemAction> buildItemActions()
                   << extra.timeSpent << "/" << extra.deadline << ")" << std::endl;
     };
 
-    actions["snapshot"] = [](GenericSession& s, AbstractWorkItem* item, const httplib::Request&)
+    actions["snapshot"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         s.history[item->getId()]->addMemento(item->createMemento());
         s.extras[item->getId()].snapshots++;
     };
-    actions["restore"] = [](GenericSession& s, AbstractWorkItem* item, const httplib::Request& req)
+    actions["restore"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request& req)
     {
         int saved = s.extras[item->getId()].snapshots;
         if (saved == 0)
@@ -295,21 +288,22 @@ std::map<std::string, ItemAction> buildItemActions()
         item->setMemento(s.history[item->getId()]->getMemento(index));
     };
 
-    actions["decorate"] = [](GenericSession&, AbstractWorkItem* item, const httplib::Request& req)
+    actions["decorate"] = [](GenericSession&, AbstractWorkItem<int>* item, const httplib::Request& req)
     {
-        std::vector<std::unique_ptr<Component> > wrappers;
-        Component* current = asWorkItem(item);
-        if (req.get_param_value("a") == "1")
+        std::vector<std::unique_ptr<Component<int> > > wrappers;
+        Component<int>* current = item;
+        if (req.get_param_value("score") == "1")
         {
-            wrappers.push_back(std::unique_ptr<Component>(new ConcreteDecoratorA(current)));
+            wrappers.push_back(std::unique_ptr<Component<int> >(new BonusScoreDecorator<int>(current, 10, 2)));
             current = wrappers.back().get();
         }
-        if (req.get_param_value("b") == "1")
+        if (req.get_param_value("time") == "1")
         {
-            wrappers.push_back(std::unique_ptr<Component>(new ConcreteDecoratorB(current)));
+            wrappers.push_back(std::unique_ptr<Component<int> >(new BonusTimeDecorator<int>(current, 3)));
             current = wrappers.back().get();
         }
-        current->operation();
+        current->display();
+        std::cout << "[Decorator] Score: " << current->getScore() << ", time: " << current->getTime() << std::endl;
     };
 
     return actions;
@@ -359,8 +353,8 @@ void registerGenericApi(httplib::Server& server)
             int id = s.tividy.createWorkItem(trimmed, deadline);
             ItemExtras extra = { deadline, 0, 0 };
             s.extras[id] = extra;
-            s.history[id].reset(new Caretaker());
-            s.observers[id].reset(new ConcreteObserver(asWorkItem(findItem(s, id))));
+            s.history[id].reset(new Caretaker<int>());
+            s.observers[id].reset(new ConcreteObserver<int>(findItem(s, id), nullptr));
         });
     });
 
@@ -390,8 +384,8 @@ void registerGenericApi(httplib::Server& server)
             if (s.tividy.addDependency(from, to))
             {
                 s.dependencies.push_back(std::make_pair(from, to));
-                AbstractWorkItem* first = findItem(s, from);
-                AbstractWorkItem* then = findItem(s, to);
+                AbstractWorkItem<int>* first = findItem(s, from);
+                AbstractWorkItem<int>* then = findItem(s, to);
                 std::cout << "[UI] " << then->getName() << " now waits for " << first->getName() << std::endl;
                 if (first->getStateName() == "Completed" || first->getStateName() == "Archived")
                 {
@@ -411,28 +405,25 @@ void registerGenericApi(httplib::Server& server)
         });
     });
 
-    server.Post(R"(/api/generic/factory/([12]))", [](const httplib::Request& req, httplib::Response& res)
+    server.Post("/api/generic/factory", [](const httplib::Request&, httplib::Response& res)
     {
-        std::string which = req.matches[1];
-        runAction(res, "Run workflow factory " + which, [&](GenericSession& s)
+        runAction(res, "Run factory method", [](GenericSession&)
         {
-            ConcreteWorkflowFactory1 factory1;
-            ConcreteWorkflowFactory2 factory2;
-            std::map<std::string, AbstractWorkflowFactory*> factories;
-            factories["1"] = &factory1;
-            factories["2"] = &factory2;
-            s.tividy.runWorkflow(factories[which]);
+            ConcreteCreator<int> creator;
+            std::unique_ptr<AbstractWorkItem<int> > made(creator.createWorkItem());
+            std::cout << "[Factory] Made '" << made->getName() << "' in state " << made->getStateName() << std::endl;
         });
     });
 
-    server.Post("/api/generic/escalate", [](const httplib::Request&, httplib::Response& res)
+    server.Post("/api/generic/escalate", [](const httplib::Request& req, httplib::Response& res)
     {
-        runAction(res, "Escalate request", [](GenericSession&)
+        runAction(res, "Escalate request", [&](GenericSession&)
         {
-            ConcreteHandler1 first;
-            ConcreteHandler2 second;
-            first.setSuccessor(&second);
-            first.handleRequest();
+            int severity = intParam(req, "severity", 1, 10);
+            std::unique_ptr<ConcreteHandler<int> > lead(new ConcreteHandler<int>("Team lead", 3));
+            lead->setSuccessor(new ConcreteHandler<int>("Manager", 7));
+            std::cout << "[UI] Escalating a severity " << severity << " request" << std::endl;
+            lead->handleRequest(severity);
         });
     });
 }

@@ -14,3 +14,5 @@ template <typename T>
 int BonusScoreDecorator<T>::getScore(){
     return (this->component->getScore() + this->bonusScore) * multiplier;
 }
+
+template class BonusScoreDecorator<int>;

@@ -11,3 +11,5 @@ AbstractWorkItem<T>* Creator<T>::createWorkItem(){
 
     return factoryMethod(); //followed Chocolate example in lecture slides
 }
+
+template class Creator<int>;

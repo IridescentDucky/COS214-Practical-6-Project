@@ -188,3 +188,5 @@ void WorkItem<T>::notify(){
         }
     }
 }
+
+template class WorkItem<int>;

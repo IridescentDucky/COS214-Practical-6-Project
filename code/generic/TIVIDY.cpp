@@ -130,3 +130,5 @@ void TIVIDY<T>::printStatus() const
 //     delete instanceA;
 //     delete instanceB;
 // }
+
+template class TIVIDY<int>;

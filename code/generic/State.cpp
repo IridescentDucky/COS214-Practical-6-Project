@@ -299,3 +299,14 @@ void Exception<T>::validate(WorkItem<T>* item)
 {
     item->setState(new Validation<T>());
 }
+
+template class State<int>;
+template class Created<int>;
+template class Delivered<int>;
+template class InProgress<int>;
+template class Paused<int>;
+template class Completed<int>;
+template class Validation<int>;
+template class Failed<int>;
+template class Archived<int>;
+template class Exception<int>;
