@@ -1,4 +1,5 @@
 #include "ConcreteHandler.h"
+#include "State.h"
 
 template <typename T>
 ConcreteHandler<T>::ConcreteHandler(string name, T condition) : TaskEscalationManager<T>(condition), name(name) {}
@@ -24,6 +25,20 @@ ConcreteHandler<T>::~ConcreteHandler() {
     delete this->successor;
 
     this->successor = nullptr;
+}
+
+template <typename T>
+void ConcreteHandler<T>::update() {
+
+    if (this->workItem == nullptr) {
+        return;
+    }
+
+    State<T>* currentState = this->workItem->getState();
+
+    std::cout << name << " was notified that WorkItem has changed state to " << currentState->getName() << std::endl;
+
+    handleRequest(this->condition);     //handleRequest takes in a T, condition is of type T
 }
 
 template class ConcreteHandler<int>;

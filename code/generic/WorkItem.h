@@ -36,20 +36,20 @@ public:
     void setMemento(WorkItemMemento<T>* m) override;
 
     State<T>* getState() const;
-    void setState(State<T>* newState);
+    //void setState(State<T>* newState);   //this needs to be handled by AbstractWorkItem, since thats the context
 
     bool isWithinDeadline() const;
     bool hasValidData() const;
     void notifyWorkflow();
 
-    void attach(Observer* observer) override;        //Observer
-    void detach(Observer* observer) override;        //Observer
-    void notify() override;                          //Observer
+    // void attach(Observer* observer) override;        //Observer
+    // void detach(Observer* observer) override;        //Observer
+    // void notify() override;                          //Observer
 private:
     int deadline;
     int timeSpent;
     std::string data;
-    std::vector<Observer*> observers; // Subject holds its observers.
+ //   std::vector<Observer*> observers; // Subject holds its observers.
 
 };
 

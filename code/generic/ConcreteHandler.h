@@ -16,6 +16,8 @@ public:
     ConcreteHandler(string name, T condition);
     void handleRequest(T a);
 
+    void update();//for observer
+
     ~ConcreteHandler();
 };
 
