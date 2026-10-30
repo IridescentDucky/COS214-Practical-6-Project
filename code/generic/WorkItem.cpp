@@ -1,7 +1,7 @@
 #include "WorkItem.h"
 #include "State.h"
 #include "WorkflowMediator.h"
-#include "Observer.h"
+//#include "Observer.h"
 #include "WorkItemMemento.h"
 
 #include <iostream>
@@ -89,21 +89,22 @@ State<T>* WorkItem<T>::getState() const
     return this->state;
 }
 
-template <typename T>
-void WorkItem<T>::setState(State<T>* newState)
-{
-    if (newState == nullptr)
-    {
-        std::cout << "  [State] Cannot set a null state for " << this->name << std::endl;
-        return;
-    }
-    std::cout << "  [State] " << this->name << ": " << this->state->getName() << " -> " << newState->getName() << std::endl;
-    State<T>* old = this->state;
-    this->state = newState;
-    delete old;
+//THIS GETS HANDLED BY ITS PARENT
+// template <typename T>
+// void WorkItem<T>::setState(State<T>* newState)
+// {
+//     if (newState == nullptr)
+//     {
+//         std::cout << "  [State] Cannot set a null state for " << this->name << std::endl;
+//         return;
+//     }
+//     std::cout << "  [State] " << this->name << ": " << this->state->getName() << " -> " << newState->getName() << std::endl;
+//     State<T>* old = this->state;
+//     this->state = newState;
+//     delete old;
 
-    notify();  //For Observer, if the state changes then notify the observers
-}
+//     notify();  //For Observer, if the state changes then notify the observers
+// }
 
 template <typename T>
 bool WorkItem<T>::isWithinDeadline() const
@@ -159,34 +160,34 @@ void WorkItem<T>::setMemento(WorkItemMemento<T>* m)
 //     std::cout << "Execute WorkItem operation..." << std::endl;  //Decorator 
 // }
 
-template <typename T>
-void WorkItem<T>::attach(Observer* observer){
+// template <typename T>
+// void WorkItem<T>::attach(Observer* observer){
 
-    observers.push_back(observer);
-}
+//     observers.push_back(observer);
+// }
 
-template <typename T>
-void WorkItem<T>::detach(Observer* observer){
+// template <typename T>
+// void WorkItem<T>::detach(Observer* observer){
 
-    for (std::vector<Observer*>::iterator it = observers.begin(); it != observers.end(); ++it){
+//     for (std::vector<Observer*>::iterator it = observers.begin(); it != observers.end(); ++it){
 
-        if (*it == observer){
+//         if (*it == observer){
 
-            observers.erase(it);        //stole algo from Iterator slides hehe
-            break;
-        }
-    }
-}
+//             observers.erase(it);        //stole algo from Iterator slides hehe
+//             break;
+//         }
+//     }
+// }
 
-template <typename T>
-void WorkItem<T>::notify(){
+// template <typename T>
+// void WorkItem<T>::notify(){
 
-    for (Observer* observer : observers) {
+//     for (Observer* observer : observers) {
         
-        if (observer != nullptr) {
-            observer->update();
-        }
-    }
-}
+//         if (observer != nullptr) {
+//             observer->update();
+//         }
+//     }
+// }
 
 template class WorkItem<int>;
