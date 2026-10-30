@@ -6,7 +6,6 @@
 #include "Composite.h"
 #include "ConcreteCreator.h"
 #include "ConcreteHandler.h"
-#include "ConcreteObserver.h"
 #include "ConcreteStrategyA.h"
 #include "ConcreteStrategyB.h"
 #include "ConcreteStrategyC.h"
