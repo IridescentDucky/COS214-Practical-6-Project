@@ -4,7 +4,7 @@ ExamDecorator::ExamDecorator(ExamComponent* component)
     : component(component) {
 }
 
-int ExamDecorator::getBonusMarks() {
+double ExamDecorator::getBonusMarks() {
     return component->getBonusMarks();
 }
 
