@@ -52,11 +52,6 @@ public:
     // void attach(Observer* observer) override;        //Observer
     // void detach(Observer* observer) override;        //Observer
     // void notify() override;                          //Observer
-private:
-    int deadline;
-    int timeSpent;
-    std::string data;
- //   std::vector<Observer*> observers; // Subject holds its observers.
 
 };
 
