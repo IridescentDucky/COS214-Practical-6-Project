@@ -39,14 +39,14 @@ AbstractWorkItem<T>::~AbstractWorkItem(){
 
 
 template <typename T>
-void AbstractWorkItem<T>::attach(Observer* observer) {
+void AbstractWorkItem<T>::attach(TaskEscalationManager<T>* observer) {
 
     this->observers.push_back(observer);
 }
 
 template <typename T>
-void AbstractWorkItem<T>::detach(Observer* observer) {
-    for (std::vector<Observer*>::iterator it = observers.begin(); it != observers.end(); ++it){
+void AbstractWorkItem<T>::detach(TaskEscalationManager<T>* observer) {
+    for (typename std::vector<TaskEscalationManager<T>*>::iterator it = observers.begin(); it != observers.end(); ++it){
         if (*it == observer){
             this->observers.erase(it);        //stole algo from Iterator slides hehe
             break;
@@ -56,7 +56,7 @@ void AbstractWorkItem<T>::detach(Observer* observer) {
 
 template <typename T>
 void AbstractWorkItem<T>::notify() {
-    for (Observer* observer : observers) {
+    for (TaskEscalationManager<T>* observer : observers) {
         observer->update();
     }
 }
