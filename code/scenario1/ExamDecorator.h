@@ -9,7 +9,7 @@ protected:
 
 public:
      ExamDecorator(ExamComponent* component);
-     virtual int getBonusMarks();
+     virtual double getBonusMarks();
      virtual int getExtraTime();
     ~ExamDecorator() override = default;
 };
