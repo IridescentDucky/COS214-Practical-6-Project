@@ -2,15 +2,10 @@
 
 ConcessionDecorator::ConcessionDecorator(
     ExamComponent* component,
-    int additionalTime)
-    : ExamDecorator(component), additionalTime(additionalTime) {
+    int extraTime)
+    : ExamDecorator(component), extraTime(extraTime) {
 }
 
-void ConcessionDecorator::mark() {
-    // TODO: apply the concession before delegating marking.
-}
-
-int ConcessionDecorator::getAdjustedDuration() {
-    // TODO: return the wrapped paper duration plus additionalTime.
-    return 0;
+int ConcessionDecorator::getExtraTime() {
+    return component->getExtraTime() + extraTime;
 }
