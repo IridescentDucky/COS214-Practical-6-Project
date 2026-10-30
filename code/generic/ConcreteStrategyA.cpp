@@ -1,8 +1,31 @@
 #include "ConcreteStrategyA.h"
+#include <iostream>
 
-void ConcreteStrategyA::algorithm(){
+// concreteStrategyA does an average algorithm
+
+template <typename T>
+double ConcreteStrategyA<T>::algorithm(AbstractWorkItem<T>* workItem) {
     
-    // implementation for strategy A algorithm goes here
-    
-    return;
+    if (workItem == nullptr) {
+        std::cout << "[Strategy A] workItem is null." << std::endl;
+        return 0.0;
+    }
+
+    int count = workItem->getTaskCount();
+    if (count == 0) {
+        std::cout << "[Strategy A] No tasks to average." << std::endl;
+        return 0.0;
+    }
+
+    int totalScore = 0;
+    for (int i = 0; i < count; ++i) {
+        const TaskRecord& task = workItem->getTask(i);
+        totalScore += task.score;
+    }
+
+    double average = static_cast<double>(totalScore) / count;
+    std::cout << "[Strategy A] Calculated overall average: " << average << "%" << std::endl;
+    return average;
 }
+
+template class ConcreteStrategyA<int>;

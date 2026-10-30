@@ -1,12 +1,15 @@
-#ifndef ConcreteStrategyC_h
-#define ConcreteStrategyC_h
+#ifndef CONCRETESTRATEGYC_H
+#define CONCRETESTRATEGYC_H
 
 #include "Strategy.h"
+#include "AbstractWorkItem.h"
 
-class ConcreteStrategyC : public Strategy {
+template <typename T>
+class ConcreteStrategyC : public Strategy<T> {
+    
 public:
     ~ConcreteStrategyC() override = default;
-    void algorithm() override;
+    double algorithm(AbstractWorkItem<T>* workItem) override;
 };
 
 #endif

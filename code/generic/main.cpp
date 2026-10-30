@@ -8,6 +8,8 @@
 #include "ConcreteHandler.h"
 #include "ConcreteObserver.h"
 #include "ConcreteStrategyA.h"
+#include "ConcreteStrategyB.h"
+#include "ConcreteStrategyC.h"
 #include "Iterator.h"
 #include "TIVIDY.h"
 #include "WorkItem.h"
@@ -85,8 +87,22 @@ int main()
     delete lead;
 
     std::cout << std::endl << "=== 10. Strategy ===" << std::endl;
-    ConcreteStrategyA strategy;
-    strategy.algorithm();
+   
+    WorkItem<int> task(30, "Task", 120, nullptr);
+    task.addTask("T1", 8, 10);
+    task.addTask("T2", 5, 10);
+    task.addTask("T3", 10, 10);
+    task.addTask("T4", 2, 10);
+    
+    task.updateTaskScore(3, 7); // Updates T4 from 2 to 7
+
+    ConcreteStrategyA<int> avgStrategy;
+    ConcreteStrategyB<int> maxStrategy;
+    ConcreteStrategyC<int> minStrategy;
+
+    avgStrategy.algorithm(&task);
+    maxStrategy.algorithm(&task);
+    minStrategy.algorithm(&task);
 
     std::cout << std::endl << "=== 11. Adapter ===" << std::endl;
     Adaptee external;

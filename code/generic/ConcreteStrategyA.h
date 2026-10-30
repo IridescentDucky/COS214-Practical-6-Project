@@ -1,12 +1,15 @@
-#ifndef ConcreteStrategyA_h
-#define ConcreteStrategyA_h
+#ifndef CONCRETESTRATEGYA_H
+#define CONCRETESTRATEGYA_H
 
 #include "Strategy.h"
+#include "AbstractWorkItem.h" // for access to TaskRecord and getTask()
 
-class ConcreteStrategyA : public Strategy {
+template <typename T>
+class ConcreteStrategyA : public Strategy<T> {
+    
 public:
     ~ConcreteStrategyA() override = default;
-    void algorithm() override;
+    double algorithm(AbstractWorkItem<T>* item) override;
 };
 
 #endif

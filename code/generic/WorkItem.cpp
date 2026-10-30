@@ -191,3 +191,60 @@ void WorkItem<T>::setMemento(WorkItemMemento<T>* m)
 // }
 
 template class WorkItem<int>;
+
+// Task vector functions
+
+template <typename T>
+void WorkItem<T>::addTask(const std::string& name, int score, int maxScore) {
+    
+    std::cout << "[WorkItem] Added task: " << name << " (" << score << "/" << maxScore << ")" << std::endl;
+    this->tasks.push_back(TaskRecord(name, score, maxScore));
+}
+
+template <typename T>
+double WorkItem<T>::getAverageScore() const {
+    
+    if (this->tasks.empty()) {
+        return 0.0;
+    }
+    
+    int total = 0;
+    for (std::size_t i = 0; i < this->tasks.size(); ++i) {
+        total += this->tasks[i].score;
+    }
+    
+    return static_cast<double>(total) / this->tasks.size();
+}
+
+template <typename T>
+const TaskRecord& WorkItem<T>::getTask(int index) const {
+    
+    if (index < 0 || static_cast<std::size_t>(index) >= this->tasks.size()) {
+        std::cout << "[WorkItem] task index: " << index << " out of bounds." << std::endl;
+        
+        static const TaskRecord emptyRecord("", 0 ,0);
+        return emptyRecord;
+    }
+    
+    return this->tasks[static_cast<std::size_t>(index)];
+}
+
+template <typename T>
+int WorkItem<T>::getTaskCount() const {
+    
+    return static_cast<int>(this->tasks.size());
+}
+
+template <typename T>
+void WorkItem<T>::updateTaskScore(int index, int newScore) {
+    
+    if (index < 0 || static_cast<std::size_t>(index) >= this->tasks.size()) {
+        std::cout << "[WorkItem] Update failed: task index " << index << " out of bounds." << std::endl;
+        return;
+    }
+    
+    this->tasks[static_cast<std::size_t>(index)].score = newScore;
+    
+    std::cout << "[WorkItem] Updated: " << this->tasks[static_cast<std::size_t>(index)].name
+              << " score to " << newScore << std::endl;
+}

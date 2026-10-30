@@ -12,6 +12,17 @@
 #include <iostream>
 
 
+// Struct for the vector so that it can be used across our scenarios
+
+struct TaskRecord {
+    std::string name;
+    int score;
+    int maxScore;
+
+    TaskRecord() : name(""), score(0), maxScore(0) {}
+    TaskRecord(const std::string& n, int s, int ms) : name(n), score(s), maxScore(ms) {}
+};
+
 // template <typename T>
 // class State;
 
@@ -74,6 +85,13 @@ public:
 	void add(Component<T>*);
     void remove(Component<T>*);
     Component<T>* getChild(int n);
+    
+    // For task vector
+    virtual void addTask(const std::string& name, int score, int maxScore) = 0;
+    virtual double getAverageScore() const = 0;
+    virtual const TaskRecord& getTask(int index) const = 0;
+    virtual int getTaskCount() const = 0;
+    virtual void updateTaskScore(int index, int newScore) = 0;
 };
 
 #endif 

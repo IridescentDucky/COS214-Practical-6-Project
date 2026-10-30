@@ -16,6 +16,13 @@
 
 template <typename T>
 class WorkItem : public AbstractWorkItem<T> {
+    
+private:
+    int deadline;
+    int timeSpent;
+    std::string data;
+    std::vector<Observer*> observers; // Subject holds its observers.
+    
 public:
     WorkItem(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator);
 
