@@ -149,6 +149,56 @@ TEST(ObserverTest, AttachedObserverIsNotifiedAndDetachedObserverIsNot)
     EXPECT_EQ(1, observer.updateCount);
 }
 
+TEST(ObserverTest, AttachingTwiceStillNotifiesOnce)
+{
+    WorkItem<int> item(1, "Task", 5, nullptr);
+    CountingObserver observer;
+    item.attach(&observer);
+    item.attach(&observer);
+
+    item.handleState();
+    EXPECT_EQ(1, observer.updateCount);
+}
+
+TEST(ObserverTest, AttachingToAnotherItemMovesTheObserver)
+{
+    WorkItem<int> first(1, "First", 5, nullptr);
+    WorkItem<int> second(2, "Second", 5, nullptr);
+    CountingObserver observer;
+    first.attach(&observer);
+    second.attach(&observer);
+
+    first.handleState();
+    EXPECT_EQ(0, observer.updateCount);
+
+    second.handleState();
+    EXPECT_EQ(1, observer.updateCount);
+    EXPECT_TRUE(observer.getWorkItem() == &second);
+}
+
+TEST(ObserverTest, DestroyedObserverDetachesItself)
+{
+    WorkItem<int> item(1, "Task", 5, nullptr);
+    {
+        CountingObserver observer;
+        item.attach(&observer);
+    }
+
+    item.handleState();
+    EXPECT_EQ("Delivered", item.getStateName());
+}
+
+TEST(ObserverTest, DestroyedWorkItemReleasesItsObservers)
+{
+    CountingObserver observer;
+    {
+        WorkItem<int> item(1, "Task", 5, nullptr);
+        item.attach(&observer);
+    }
+
+    EXPECT_TRUE(observer.getWorkItem() == nullptr);
+}
+
 TEST(DecoratorTest, BonusesStackOnTheWrappedWorkItem)
 {
     WorkItem<int> item(1, "Task", 5, nullptr);
