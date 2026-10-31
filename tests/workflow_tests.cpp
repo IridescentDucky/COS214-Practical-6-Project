@@ -518,7 +518,7 @@ TEST(ChainOfResponsibilityTest, FiveHandlerTypesCanFormOneChain)
     std::string text = output.text();
     delete first;
 
-    EXPECT_EQ("A passed the request on\nB handled the request", text);
+    EXPECT_EQ("A passed the request on\nB handled the request\n", text);
 }
 
 TEST(CompletionTest, MediatorScoresNotifiesExternalSystemAndDeliversDependents)

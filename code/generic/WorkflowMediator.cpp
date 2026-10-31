@@ -41,13 +41,13 @@ void WorkflowMediator<T>::addWorkItem(AbstractWorkItem<T>* item)
         workItems.push_back(item);
 
         TaskEscalationManager<T>* teamLead = new ConcreteHandlerA<T>("Team lead", 3);
-        TaskEscalationManager<T>* manager = new ConcreteHandlerB<T>("Manager", 7);
-        TaskEscalationManager<T>* departmentHead = new ConcreteHandlerC<T>("Department head", 12);
-        TaskEscalationManager<T>* director = new ConcreteHandlerD<T>("Director", 18);
+        TaskEscalationManager<T>* manager = new ConcreteHandlerA<T>("Manager", 7);
+        TaskEscalationManager<T>* departmentHead = new ConcreteHandlerA<T>("Department head", 12);
+        TaskEscalationManager<T>* director = new ConcreteHandlerA<T>("Director", 18);
         teamLead->setSuccessor(manager);
         manager->setSuccessor(departmentHead);
         departmentHead->setSuccessor(director);
-        director->setSuccessor(new ConcreteHandlerE<T>("Executive", 25));
+        director->setSuccessor(new ConcreteHandlerA<T>("Executive", 25));
         item->attach(teamLead);
         escalations.push_back(teamLead);
     }
