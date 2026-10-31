@@ -28,4 +28,6 @@ public:
     void printState() const;
 };
 
+#include "StatsOriginator.cpp"
+
 #endif
