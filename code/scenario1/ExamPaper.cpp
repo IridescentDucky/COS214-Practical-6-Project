@@ -1,18 +1,16 @@
 #include "ExamPaper.h"
 #include "Marker.h"
+#include "States.h"
 
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 #include <vector>
 #include <string>
 
-double AbstractExamPaper::getMarks() {
-    return marks;
-}
-
-ExamPaper::ExamPaper(std::string code, int duration, double initialMarks)
-    : AbstractExamPaper(code, duration, initialMarks),
+ExamPaper::ExamPaper(std::string code, int duration, double initialMarks, int year)
+    : AbstractExamPaper(code, duration, initialMarks, year),
       marker(nullptr),
       tutorMarks(0.0),
       assistantLecturerMarks(0.0),
@@ -24,10 +22,52 @@ ExamPaper::ExamPaper(std::string code, int duration, double initialMarks)
       escalationReviewed(false) {}
 
 AbstractExamPaper* ExamPaper::clonePaper() {
-    return new ExamPaper(*this);
+    ExamPaper* copy = new ExamPaper(moduleCode, examDuration, marks, year);
+    copy->questions = questions;
+    copy->questionMaximumMarks = questionMaximumMarks;
+    copy->tutorMarks = tutorMarks;
+    copy->assistantLecturerMarks = assistantLecturerMarks;
+    copy->tutorMarksCaptured = tutorMarksCaptured;
+    copy->assistantLecturerMarksCaptured = assistantLecturerMarksCaptured;
+    copy->physicalError = physicalError;
+    copy->markDiscrepancy = markDiscrepancy;
+    copy->manualEscalation = manualEscalation;
+    copy->escalationReviewed = escalationReviewed;
+
+    if (state == nullptr) {
+        copy->setState(nullptr);
+    } else if (dynamic_cast<WrittenState*>(state) != nullptr) {
+        copy->setState(new WrittenState(copy));
+    } else if (dynamic_cast<DeliveredState*>(state) != nullptr) {
+        copy->setState(new DeliveredState(copy));
+    } else if (dynamic_cast<MarkingState*>(state) != nullptr) {
+        copy->setState(new MarkingState(copy));
+    } else if (dynamic_cast<ExceptionState*>(state) != nullptr) {
+        copy->setState(new ExceptionState(copy));
+    } else if (dynamic_cast<PausedState*>(state) != nullptr) {
+        copy->setState(new PausedState(copy));
+    } else if (dynamic_cast<ValidatedState*>(state) != nullptr) {
+        copy->setState(new ValidatedState(copy));
+    } else if (dynamic_cast<MarkedState*>(state) != nullptr) {
+        copy->setState(new MarkedState(copy));
+    } else if (dynamic_cast<CapturedState*>(state) != nullptr) {
+        copy->setState(new CapturedState(copy));
+    } else if (dynamic_cast<FailedState*>(state) != nullptr) {
+        copy->setState(new FailedState(copy));
+    } else {
+        delete copy;
+        throw std::logic_error("Cannot clone an unsupported paper state.");
+    }
+
+    return copy;
 }
 
 void ExamPaper::mark() {
+    if (state == nullptr) {
+        std::cerr << "[ExamPaper] Cannot mark archived paper "
+                  << moduleCode << "." << std::endl;
+        return;
+    }
     if (marker == nullptr) {
         std::cout << "[ExamPaper] Cannot mark " << moduleCode
                   << ": no marker has been assigned." << std::endl;
@@ -39,7 +79,7 @@ void ExamPaper::mark() {
         return;
     }
 
-    marker->handle(this);
+    notify();
 }
 
 void ExamPaper::setMarker(Marker* marker) {
@@ -49,21 +89,35 @@ void ExamPaper::setMarker(Marker* marker) {
         return;
     }
 
+    if (this->marker == marker) {
+        return;
+    }
+    if (this->marker != nullptr) {
+        detach(this->marker);
+    }
+
     this->marker = marker;
+    attach(marker);
+}
+
+void ExamPaper::detach(Marker* observer) {
+    AbstractExamPaper::detach(observer);
+    if (marker == observer) {
+        marker = nullptr;
+    }
 }
 
 PaperState* ExamPaper::getState() {
-    std::cout << "[ExamPaper] " << this->moduleCode << " is in state: " << this->state << std::endl;
     return this->state;
 }
 
 void ExamPaper::setState(PaperState* state) {
-    if (state == nullptr) {
-        std::cout << "[ExamPaper] Cannot set a null state." << std::endl;
+    if (this->state == state) {
         return;
     }
 
     std::cout << "[ExamPaper] Changing state for " << this->moduleCode << std::endl;
+    delete this->state;
     this->state = state;
 }
 

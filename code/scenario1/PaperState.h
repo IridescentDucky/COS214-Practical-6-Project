@@ -1,23 +1,24 @@
 #ifndef PAPERSTATE_h
 #define PAPERSTATE_h
 
+class AbstractExamPaper;
+
 class PaperState{
-    
+protected:
+    AbstractExamPaper* paper;
+
+    explicit PaperState(AbstractExamPaper* paper) : paper(paper) {}
+
 public:
-    virtual ~PaperState() = default;
-    
-    virtual void write() = 0;
-    virtual void deliver() = 0;
-    virtual void startMarking() = 0;
-    virtual void pause() = 0;
-    virtual void completeMarking() = 0;
-    virtual void captureMarks() = 0;
-    virtual void archive() = 0;
-    virtual void marked() = 0;
-    virtual void createException() = 0;
-    virtual void fail() = 0;
-    virtual void validate() = 0;
-    virtual void resumeMarking() = 0;
+    virtual ~PaperState() = 0;
+
+    virtual void nextState() {}
+    virtual void pause() {}
+    virtual void completeMarking() {}
+    virtual void createException() {}
+    virtual void fail() {}
+    virtual void validate() {}
+    virtual void resumeMarking() {}
 };
 
 #endif

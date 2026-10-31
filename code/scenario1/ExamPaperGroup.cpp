@@ -1,11 +1,9 @@
 #include "ExamPaperGroup.h"
 
-void ExamPaperGroup::mark() {
-    // TODO: mark each child component.
-}
-
 void ExamPaperGroup::add(ExamComponent* element) {
-    elements.push_back(element);
+    if (element != nullptr) {
+        elements.push_back(element);
+    }
 }
 
 void ExamPaperGroup::remove(ExamComponent* element) {
@@ -17,7 +15,18 @@ void ExamPaperGroup::remove(ExamComponent* element) {
     }
 }
 
-double ExamPaperGroup::getMarks() {
-    // TODO: aggregate marks from child components.
-    return 0.0;
+double ExamPaperGroup::getBonusMarks() {
+    double bonusMarks = 0.0;
+    for (ExamComponent* element : elements) {
+        bonusMarks += element->getBonusMarks();
+    }
+    return bonusMarks;
+}
+
+int ExamPaperGroup::getExtraTime() {
+    int extraTime = 0;
+    for (ExamComponent* element : elements) {
+        extraTime += element->getExtraTime();
+    }
+    return extraTime;
 }

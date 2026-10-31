@@ -4,31 +4,34 @@
 #include "ExamComponent.h"
 
 #include <string>
+#include <vector>
 
 class PaperState;
+class Marker;
 
 class AbstractExamPaper : public ExamComponent {
 protected:
     PaperState* state;
+    std::vector<Marker*> observers;
     std::string moduleCode;
     int examDuration;
     double marks;
-    int year;    //THIS HAS A YEAR PARAMETER NOW
+    int year;
 public:
-    virtual ~AbstractExamPaper() = default;
-    AbstractExamPaper(std::string code, int duration, double initialMarks, int year)
-        : state(nullptr), moduleCode(code), examDuration(duration), marks(initialMarks), year(year){}
+    virtual ~AbstractExamPaper();
+    AbstractExamPaper(std::string code, int duration, double initialMarks, int year);
 
     virtual AbstractExamPaper* clonePaper() = 0;
     virtual PaperState* getState() = 0;
     virtual void setState(PaperState* state) = 0;
-    void mark() override = 0;
-    double getMarks() override;
+    virtual void mark() = 0;
+    double getMarks() const;
+    double getBonusMarks() override;
+    int getExtraTime() override;
 
     void attach(Marker* observer);
-    void detach(Marker* observer);    //OBSERVER FUNCTIONS
+    virtual void detach(Marker* observer);
     void notify();
-
 };
 
 #endif

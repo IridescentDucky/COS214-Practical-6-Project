@@ -120,37 +120,41 @@ Things the diagrams must change so they match the code and each other.
 
 === 4. EXAM SCENARIO CLASS DIAGRAM ===
 
-Rule from Bella: a state with one method calls it nextState. A state with several
-methods uses the same names as the generic (paused, resume, retry, failed, exception, validate).
+The current state diagram defines this normal workflow:
+   WrittenPaper  --deliverPaper()--> DeliveredPaper
+   DeliveredPaper --mark()----------> StartMarking
+   StartMarking  --pauseMarking()---> PauseMarking
+   PauseMarking  --mark()-----------> StartMarking
+   StartMarking  --finMarking()-----> MarkedPaper
+   MarkedPaper   --captureMark()----> CapturedPaper
+   CapturedPaper --archivePaper()--> ArchivedPaper
 
-[DO NOW] Renames:
-   WrittenState    deliver()        -> nextState()
-   DeliveredState  startMarking()   -> nextState()
-   MarkingState    pause()          -> paused()
-                   completeMarking()-> nextState()
-                   createException()-> exception()
-                   validate()       -> validate()   (no change)
-                   fail()           -> failed()
-   PausedState     resumeMarking()  -> nextState() and resume() (both, like the generic)
-   ValidatedState  marked()         -> nextState()
-   MarkedState     captureMarks()   -> nextState()
-   CapturedState   archive()        -> nextState()
-   PaperState      update the abstract class to declare the new names.
+The class diagram's operation names are retained; the state operations implement
+the corresponding transitions:
+   WrittenState.nextState()       -> DeliveredState
+   DeliveredState.nextState()     -> MarkingState
+   MarkingState.pause()           -> PausedState
+   PausedState.resumeMarking()    -> MarkingState
+   MarkingState.completeMarking() -> MarkedState
+   MarkedState.nextState()        -> CapturedState
+   CapturedState.nextState()      -> archived terminal (null state pointer)
 
-[WAITING - Bella to confirm] Problems compared with the Exam Paper Lifecycle diagram.
-The code (code/scenario1) already does the "Code does" column, so the UML should match it
-unless Bella decides otherwise:
-   - No PrintedState class, but the lifecycle starts at Printed.
-       Code does: added PrintedState (nextState -> Written). Papers start Printed.
-   - ExceptionState has pause(), but the lifecycle leaves Exception by resume() or fail().
-       Code does: ExceptionState has nextState() -> Marking and failed() -> Failed.
-   - FailedState has pause(), but Failed is a final state.
-       Code does: FailedState has no methods (final).
-   - ValidatedState gets exception() -> Exception (lifecycle: NeedsValidation -> Exception).
-   - State names differ: the lifecycle says NeedsValidation and Completed,
-     the class diagram says Validated and Marked. Code uses Validated and Marked.
-   - Still stubs (print [TODO]): MarkingState::validate() and CapturedState::nextState() (archive),
-     because it is unclear what they should do.
+The ArchivedPaper terminal has no corresponding state class in the class diagram;
+the implementation uses a null state pointer to represent it. Other state methods
+not covered by the normal lifecycle remain stubs. State objects retain a
+non-owning pointer to their paper so their UML no-argument methods can perform
+transitions.
+
+Observer notifications originate at AbstractExamPaper. Attach the chain head as
+an observer; its update starts the chain, which forwards using Marker::next.
+ModuleCoordinator was scrapped and is intentionally not implemented.
+
+The component API is getBonusMarks() : double and getExtraTime() : int.
+ExamPaperGroup aggregates those values; decorators add to them.
+
+The facade owns papers it creates; returned ExamPaper pointers are borrowed.
+Statistics generation and the Strategy classes are deferred until their scope
+and data source are decided.
 
 
 === 5. GAME SCENARIO CLASS DIAGRAM ===

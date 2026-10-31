@@ -27,6 +27,13 @@ ExamPaper* ExamPaperIterator::next() {
     AbstractExamPaper* abstractPaper = collection->getPaperAt(currentIndex);
     currentIndex++;
 
-    std::cout << "[ExamPaperIterator] next paper: " << abstractPaper->getModuleCode() << std::endl;
-    return dynamic_cast<ExamPaper*>(abstractPaper);
+    ExamPaper* paper = dynamic_cast<ExamPaper*>(abstractPaper);
+    if (paper == nullptr) {
+        std::cerr << "[ExamPaperIterator] Collection contains an unsupported paper type."
+                  << std::endl;
+        return nullptr;
+    }
+
+    std::cout << "[ExamPaperIterator] next paper: " << paper->getModuleCode() << std::endl;
+    return paper;
 }
