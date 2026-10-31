@@ -6,7 +6,6 @@
 #include "Caretaker.h"
 #include "ConcreteCreator.h"
 #include "ConcreteHandler.h"
-#include "ConcreteObserver.h"
 #include "TIVIDY.h"
 #include "WorkItem.h"
 
@@ -38,7 +37,7 @@ struct GenericSession
     std::map<int, ItemExtras> extras;
     std::vector<std::pair<int, int> > dependencies;
     std::map<int, std::unique_ptr<Caretaker<int> > > history;
-    std::map<int, std::unique_ptr<ConcreteObserver<int> > > observers;
+    std::map<int, std::unique_ptr<ConcreteHandler<int> > > observers;
 };
 
 class RequestError : public std::runtime_error
@@ -354,7 +353,8 @@ void registerGenericApi(httplib::Server& server)
             ItemExtras extra = { deadline, 0, 0 };
             s.extras[id] = extra;
             s.history[id].reset(new Caretaker<int>());
-            s.observers[id].reset(new ConcreteObserver<int>(findItem(s, id), nullptr));
+            s.observers[id].reset(new ConcreteHandler<int>("Observer", 1));
+            findItem(s, id)->attach(s.observers[id].get());
         });
     });
 

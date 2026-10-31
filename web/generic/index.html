@@ -931,7 +931,7 @@ const TAGS = [
     [/is not allowed while/, "Rejected"],
     [/guard \[withinDeadline\] failed/, "Guard"],
     [/^\[State\]/, "State"],
-    [/^Observer notified|^Current state/, "Observer"],
+    [/was notified that/, "Observer"],
     [/^\[(Caretaker|WorkItemMemento|WorkItem)\]/, "Memento"],
     [/^\[Decorator\]/, "Decorator"],
     [/^Creating a WorkItem|^\[Factory\]/, "Factory"],
@@ -1199,7 +1199,7 @@ function renderDetail() {
         + section("engine", "Engine events", "State triggers", engine)
         + section("memento", "Snapshots", "Memento", memento)
         + section("decorator", "Extra behaviour", "Decorator", decorator)
-        + '<p class="note">Each item has an observer attached (Observer pattern): every state change logs &ldquo;Observer notified&rdquo;.</p>';
+        + '<p class="note">Each item has an observer attached (Observer pattern): every state change notifies its handler, which logs &ldquo;Observer was notified&hellip;&rdquo; and passes the request into the escalation chain.</p>';
 
     panel.querySelectorAll("details.more").forEach((el) => {
         el.addEventListener("toggle", () => {
