@@ -559,6 +559,35 @@ details.more[open] summary h3::before {
     padding-left: 0;
 }
 
+.deps .grow {
+    flex: 1;
+    min-width: 0;
+}
+
+.deps .meta {
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.deps .btn {
+    flex: none;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+}
+
+.task-form {
+    display: grid;
+    grid-template-columns: 1fr 4.5rem 4.5rem auto;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+}
+
+@media (max-width: 520px) {
+    .task-form {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 .log {
     max-height: 520px;
     overflow: auto;
@@ -635,6 +664,24 @@ details.more[open] summary h3::before {
 .tag[data-tag="Memento"] {
     background: transparent;
     border: 1px solid var(--accent-2);
+}
+
+.tag[data-tag="Strategy"],
+.tag[data-tag="Prototype"] {
+    background: var(--surface-2);
+    border: 1px solid var(--accent);
+}
+
+.tag[data-tag="Adapter"],
+.tag[data-tag="Composite"] {
+    background: var(--surface-2);
+    border: 1px solid var(--pale);
+}
+
+.tag[data-tag="Chain"] {
+    background: var(--accent-2);
+    color: var(--bg);
+    font-weight: 600;
 }
 
 .tag[data-tag="Rejected"],
@@ -824,22 +871,46 @@ details.more[open] summary h3::before {
                 <h2>Engine services</h2>
             </div>
             <div class="panel-head" style="margin-bottom:0.5rem">
+                <h3>Scoring rule</h3>
+                <span class="pattern">Strategy</span>
+            </div>
+            <div class="row">
+                <select id="strategy" aria-label="Scoring rule">
+                    <option value="average">Average task score</option>
+                    <option value="highest">Highest task score</option>
+                    <option value="lowest">Lowest task score</option>
+                </select>
+                <button class="btn" type="button" id="strategy-set">Use this rule</button>
+            </div>
+            <p class="note">When an item completes, the mediator scores its tasks with this rule, then tells the external system through the Adapter. In use: <strong id="strategy-current">Average</strong>.</p>
+            <div class="panel-head" style="margin:1rem 0 0.5rem">
+                <h3>Templates</h3>
+                <span class="pattern">Prototype</span>
+            </div>
+            <ul class="deps" id="templates"></ul>
+            <div class="panel-head" style="margin:1rem 0 0.5rem">
+                <h3>Escalation</h3>
+                <span class="pattern">Observer &middot; Chain of Responsibility</span>
+            </div>
+            <p class="note">The mediator gives every item a watcher. Once an item is past its deadline, the watcher sends how late it is up the chain: the team lead handles under 3 time units late, the manager under 7, anything later is unhandled. Log time on an item to see it.</p>
+            <div class="panel-head" style="margin:1rem 0 0.5rem">
                 <h3>Work item factory</h3>
                 <span class="pattern">Factory Method</span>
             </div>
-            <div class="row">
-                <button class="btn" type="button" id="factory">Run factory method</button>
+            <p class="note">Every new item, from the form above or the example, is made by the creator&rsquo;s factory method. Look for the Factory lines in the log.</p>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2>Groups</h2>
+                <span class="pattern">Composite</span>
             </div>
-            <p class="note">The creator asks its subclass which concrete work item to make, so the engine never names WorkItem directly.</p>
-            <div class="panel-head" style="margin:1rem 0 0.5rem">
-                <h3>Escalation chain</h3>
-                <span class="pattern">Chain of Responsibility</span>
-            </div>
-            <div class="row">
-                <input type="number" id="escalate-severity" min="1" max="10" value="5" aria-label="Severity (1-10)" style="max-width:6rem;min-width:4rem">
-                <button class="btn" type="button" id="escalate">Escalate a request</button>
-            </div>
-            <p class="note">The team lead takes severity below 3, the manager below 7. Anything higher falls off the end of the chain.</p>
+            <form class="row" id="group-form">
+                <input id="group-name" maxlength="40" placeholder="e.g. Sprint 1" aria-label="Group name" required>
+                <button class="btn" type="submit">Create group</button>
+            </form>
+            <ul class="deps" id="groups"></ul>
+            <p class="note">A group treats its items as one: its score and time allowed are the totals of its members.</p>
         </section>
 
         <section class="panel log-panel">
@@ -910,7 +981,7 @@ const GUIDE = {
         secondary: [["retry", "Send back for rework"], ["fail", "Reject as failed"]]
     },
     Completed: {
-        text: "Done. The mediator has been told, so any items waiting for this one were delivered automatically. Archive it to close it off.",
+        text: "Done. The mediator scored its tasks, told the external system and delivered any items waiting for this one. Archive it to close it off.",
         primary: ["advance", "Archive"]
     },
     Exception: {
@@ -932,10 +1003,16 @@ const TAGS = [
     [/guard \[withinDeadline\] failed/, "Guard"],
     [/^\[State\]/, "State"],
     [/was notified that/, "Observer"],
+    [/^\[WorkItem\] (Added task|Updated)/, "Facade"],
     [/^\[(Caretaker|WorkItemMemento|WorkItem)\]/, "Memento"],
     [/^\[Decorator\]/, "Decorator"],
-    [/^Creating a WorkItem|^\[Factory\]/, "Factory"],
+    [/^\[Factory\]/, "Factory"],
     [/handled the request|passed the request on|could not be handled/, "Chain"],
+    [/^\[Strategy/, "Strategy"],
+    [/^\[Mediator\]/, "Mediator"],
+    [/^\((Adapter|Adaptee)\)/, "Adapter"],
+    [/^\[Composite\]/, "Composite"],
+    [/^\[TIVIDY\] .*template/, "Prototype"],
     [/^\[TIVIDY\]/, "Facade"],
     [/^\[UI\]/, "UI"]
 ];
@@ -943,7 +1020,8 @@ const TAGS = [
 const LABELS = {
     advance: "Advance", submit: "Submit work", pause: "Pause", resume: "Resume", fail: "Mark failed",
     failedDelivery: "Delivery failed", exception: "Raise exception", retry: "Retry", validate: "Validate",
-    time: "Log time", snapshot: "Save snapshot", restore: "Restore snapshot", decorate: "Apply decorators"
+    time: "Log time", snapshot: "Save snapshot", restore: "Restore snapshot", decorate: "Apply decorators",
+    task: "Add task", template: "Save as template"
 };
 
 let model = { items: [], dependencies: [] };
@@ -1025,6 +1103,12 @@ function render() {
     renderItems();
     renderDetail();
     renderDependencies();
+    renderServices();
+    renderGroups();
+}
+
+function taskTotal(item) {
+    return item.tasks.reduce((sum, task) => sum + task.score, 0);
 }
 
 function renderItems() {
@@ -1043,6 +1127,7 @@ function renderItems() {
             + '<div class="item-top"><span class="item-name">' + escapeHtml(item.name) + ' <span class="item-id">#' + item.id + '</span></span>'
             + '<span class="badge" data-state="' + item.state + '">' + item.state + '</span></div>'
             + '<div class="item-meta"><span>Time ' + item.timeSpent + "/" + item.deadline + (over ? " (overdue)" : "") + '</span>'
+            + (item.tasks.length ? "<span>Score " + taskTotal(item) + "</span>" : "")
             + (item.snapshots ? "<span>" + item.snapshots + " snapshot" + (item.snapshots > 1 ? "s" : "") + "</span>" : "")
             + (waits.length && item.state === "Created" ? "<span>waiting for " + waits.join(", ") + "</span>" : "") + "</div>"
             + '<div class="bar' + (over ? " over" : "") + '"><span style="width:' + percent + '%"></span></div>'
@@ -1135,8 +1220,11 @@ function nextStepCard(item) {
         warning = "Waiting for " + names + ". When it completes, the mediator delivers this item automatically. You can also deliver it now by hand.";
         primary = ["advance", "Deliver anyway"];
     }
+    if (over) {
+        warning = item.overdue + " time unit(s) past the deadline, so the watcher escalated it up the chain (see the log).";
+    }
     if (item.state === "InProgress" && over) {
-        warning = "Over deadline (" + item.timeSpent + "/" + item.deadline + "). The [withinDeadline] guard will block finishing. Raise an exception to escalate it, then re-validate.";
+        warning += " The [withinDeadline] guard also blocks finishing: raise an exception, then re-validate.";
     }
 
     let actions = "";
@@ -1185,21 +1273,34 @@ function renderDetail() {
         + '<div class="row"><select id="restore-index" aria-label="Snapshot to restore"' + (item.snapshots ? "" : " disabled") + ">" + (restoreOptions || "<option>No snapshots yet</option>") + "</select>"
         + '<button class="btn" type="button" data-action="restore" data-label="Restore snapshot"' + (item.snapshots ? "" : " disabled") + ">Restore</button></div>";
 
-    const decorator = '<p class="note" style="margin-top:0">Wrap the item in decorators to change its score and time without changing the WorkItem class.</p>'
+    const tasks = '<p class="note" style="margin-top:0">Tasks are what the scoring rule (Strategy) works on when this item completes. Score: <strong>' + taskTotal(item) + "</strong>.</p>"
+        + '<ul class="deps">' + (item.tasks.map((t) => "<li><span class=\"grow\">" + escapeHtml(t.name) + '</span><span class="meta">' + t.score + "/" + t.max + "</span></li>").join("")
+            || '<li class="empty-note">No tasks yet.</li>') + "</ul>"
+        + '<div class="task-form"><input id="task-name" maxlength="40" placeholder="Task, e.g. Wireframes" aria-label="Task name">'
+        + '<input id="task-score" type="number" min="0" max="1000" value="7" aria-label="Score">'
+        + '<input id="task-max" type="number" min="1" max="1000" value="10" aria-label="Out of">'
+        + button("task", "Add task") + "</div>";
+
+    const reuse = '<p class="note" style="margin-top:0">Save this item as a template. Items made from it are clones: same name, deadline and tasks, but a fresh id and lifecycle.</p>'
+        + '<div class="row" style="margin-top:0.7rem">' + button("template", "Save as template") + "</div>";
+
+    const decorator = '<p class="note" style="margin-top:0">Wrap the item in decorators to raise its score (its task total) and its time allowance without changing the WorkItem class.</p>'
         + '<div class="checks" style="margin-top:0.7rem"><label><input type="checkbox" id="deco-score" checked> Bonus score (+10, &times;2)</label><label><input type="checkbox" id="deco-time"> Extra time (+3)</label></div>'
         + '<div class="row" style="margin-top:0.6rem">' + button("decorate", "Apply decorators") + "</div>";
 
     panel.innerHTML = '<div class="detail-head"><div><div class="detail-title">' + escapeHtml(item.name) + ' <span class="item-id">#' + item.id + '</span></div>'
-        + '<div class="detail-sub">Submitted work: ' + (item.data ? "“" + escapeHtml(item.data) + "”" : "none yet") + " · Time " + item.timeSpent + "/" + item.deadline + "</div></div>"
+        + '<div class="detail-sub">Submitted work: ' + (item.data ? "“" + escapeHtml(item.data) + "”" : "none yet") + " · Time " + item.timeSpent + "/" + item.deadline + (item.overdue ? " (" + item.overdue + " overdue)" : "") + "</div></div>"
         + '<span class="badge" data-state="' + item.state + '">' + item.state + "</span></div>"
         + nextStepCard(item)
         + '<div class="diagram-wrap"><div class="panel-head" style="margin:0"><h3>Lifecycle</h3><span class="pattern">State</span></div>'
         + '<div class="diagram">' + diagram(item.state) + "</div>"
         + '<div class="legend"><span><i style="background:#3d7bff"></i>Current state</span><span><i style="border:1px solid #7aa6ff"></i>Can move to next</span><span>Hover an arrow to see its trigger</span></div></div>'
         + section("engine", "Engine events", "State triggers", engine)
+        + section("tasks", "Tasks", "Strategy", tasks)
         + section("memento", "Snapshots", "Memento", memento)
         + section("decorator", "Extra behaviour", "Decorator", decorator)
-        + '<p class="note">Each item has an observer attached (Observer pattern): every state change notifies its handler, which logs &ldquo;Observer was notified&hellip;&rdquo; and passes the request into the escalation chain.</p>';
+        + section("reuse", "Reuse", "Prototype", reuse)
+        + '<p class="note">The mediator attached a watcher to this item (Observer). It hears about every change and escalates the item up the chain once it is overdue.</p>';
 
     panel.querySelectorAll("details.more").forEach((el) => {
         el.addEventListener("toggle", () => {
@@ -1218,7 +1319,8 @@ function renderDetail() {
                 submit: () => ({ data: $("submit-data").value }),
                 time: () => ({ units: $("time-units").value }),
                 restore: () => ({ index: $("restore-index").value }),
-                decorate: () => ({ score: $("deco-score").checked ? "1" : "0", time: $("deco-time").checked ? "1" : "0" })
+                decorate: () => ({ score: $("deco-score").checked ? "1" : "0", time: $("deco-time").checked ? "1" : "0" }),
+                task: () => ({ name: $("task-name").value, score: $("task-score").value, max: $("task-max").value })
             };
             itemAction(action, extras[action] ? extras[action]() : {}, btn.dataset.label);
         });
@@ -1254,6 +1356,48 @@ function renderDependencies() {
     };
     $("deps").innerHTML = model.dependencies.map((d) => "<li>" + name(d[0]) + ' <span class="arrow">&rarr;</span> ' + name(d[1]) + "</li>").join("")
         || '<li class="empty-note">' + (model.items.length < 2 ? "Create at least two items to link them." : "No links yet.") + "</li>";
+}
+
+function renderServices() {
+    $("strategy-current").textContent = model.strategy || "Average";
+    const templates = model.templates || [];
+    $("templates").innerHTML = templates.map((t, i) => '<li><span class="grow">' + escapeHtml(t.name) + ' <span class="meta">deadline ' + t.deadline + "</span></span>"
+        + '<button class="btn" type="button" data-template="' + i + '">Create from it</button></li>').join("")
+        || '<li class="empty-note">No templates yet. Open an item and use Reuse &rarr; Save as template.</li>';
+    $("templates").querySelectorAll("[data-template]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            const t = templates[Number(btn.dataset.template)];
+            const data = await call("/templates/" + btn.dataset.template, {}, "Create from template · " + t.name);
+            if (data && !data.error) {
+                selectedId = data.items[data.items.length - 1].id;
+                render();
+            }
+        });
+    });
+}
+
+function renderGroups() {
+    const groups = model.groups || [];
+    const item = selectedItem();
+    const name = (id) => {
+        const member = itemById(id);
+        return member ? escapeHtml(member.name) + " #" + id : "#" + id;
+    };
+    $("groups").innerHTML = groups.map((g, i) => {
+        const canAdd = item && g.members.indexOf(item.id) < 0;
+        return '<li><span class="grow"><strong>' + escapeHtml(g.name) + '</strong><br><span class="meta">'
+            + (g.members.length ? g.members.map(name).join(", ") : "No items yet")
+            + " &middot; score " + g.score + " &middot; time allowed " + g.time + "</span></span>"
+            + '<button class="btn" type="button" data-group="' + i + '"' + (canAdd ? "" : " disabled") + ">"
+            + (item ? "Add " + escapeHtml(item.name) : "Select an item") + "</button></li>";
+    }).join("") || '<li class="empty-note">No groups yet.</li>';
+    $("groups").querySelectorAll("[data-group]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const target = selectedItem();
+            const g = groups[Number(btn.dataset.group)];
+            call("/groups/" + btn.dataset.group + "/add", { item: target.id }, "Add " + target.name + " to " + g.name);
+        });
+    });
 }
 
 function classify(line, actor) {
@@ -1303,14 +1447,18 @@ function toast(message) {
 }
 
 async function loadExample() {
-    const steps = [["Design", 5], ["Build", 4], ["Test", 3]];
+    const steps = [["Design", 5, [["Wireframes", 8], ["User flows", 6]]], ["Build", 4, [["API", 7]]], ["Test", 3, []]];
     const ids = [];
-    for (const [name, deadline] of steps) {
+    for (const [name, deadline, tasks] of steps) {
         const data = await call("/items", { name: name, deadline: deadline }, "Create work item · " + name);
         if (!data || data.error) {
             return;
         }
-        ids.push(data.items[data.items.length - 1].id);
+        const id = data.items[data.items.length - 1].id;
+        ids.push(id);
+        for (const [task, score] of tasks) {
+            await call("/items/" + id + "/task", { name: task, score: score, max: 10 }, "Add task · " + task);
+        }
     }
     await call("/dependencies", { from: ids[0], to: ids[1] }, "Link Design → Build");
     await call("/dependencies", { from: ids[1], to: ids[2] }, "Link Build → Test");
@@ -1337,9 +1485,19 @@ $("dep-add").addEventListener("click", () => {
     call("/dependencies", { from: $("dep-from").value, to: $("dep-to").value }, title);
 });
 
-$("factory").addEventListener("click", () => call("/factory", {}, "Run factory method"));
+$("strategy-set").addEventListener("click", () => {
+    const select = $("strategy");
+    call("/strategy", { rule: select.value }, "Scoring rule · " + select.options[select.selectedIndex].text);
+});
 
-$("escalate").addEventListener("click", () => call("/escalate", { severity: $("escalate-severity").value }, "Escalate a request"));
+$("group-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = $("group-name").value;
+    const data = await call("/groups", { name: name }, "Create group · " + name.trim());
+    if (data && !data.error) {
+        $("group-name").value = "";
+    }
+});
 
 $("reset").addEventListener("click", () => {
     if (confirm("Clear every work item and start a fresh session?")) {

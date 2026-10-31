@@ -84,6 +84,23 @@ void WorkItem<T>::addTimeSpent(int units)
 }
 
 template <typename T>
+int WorkItem<T>::getScore()
+{
+    int total = this->score;
+    for (std::size_t i = 0; i < tasks.size(); ++i)
+    {
+        total += tasks[i].score;
+    }
+    return total;
+}
+
+template <typename T>
+int WorkItem<T>::getTime()
+{
+    return this->time + deadline;
+}
+
+template <typename T>
 int WorkItem<T>::getOverdue() const
 {
     return timeSpent > deadline ? timeSpent - deadline : 0;

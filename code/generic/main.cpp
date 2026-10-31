@@ -35,6 +35,7 @@ int main()
     tividy.addTask(design, "Style guide", 10, 10);
     int designTemplate = tividy.saveAsTemplate(design);
     int build = tividy.createWorkItem("Build", 5);
+    tividy.addTask(build, "API", 7, 10);
     int test = tividy.createWorkItem("Test", 5);
 
     std::cout << std::endl << "=== 2. Dependencies and lifecycle (Mediator + State + Observer) ===" << std::endl;
@@ -73,13 +74,14 @@ int main()
     BonusScoreDecorator<int> scored(buildItem, 10, 2);
     BonusTimeDecorator<int> extended(&scored, 3);
     extended.display();
-    std::cout << "  Score: " << extended.getScore() << ", extra time: " << extended.getTime() << std::endl;
+    std::cout << "  Score: " << buildItem->getScore() << " -> " << extended.getScore() << ", time allowed: " << buildItem->getTime() << " -> " << extended.getTime() << std::endl;
 
     std::cout << std::endl << "=== 8. Group work (Composite) ===" << std::endl;
     Composite<int> sprint("Sprint 1");
     sprint.add(buildItem);
     sprint.add(findItem(tividy, test));
     sprint.display();
+    std::cout << "  Sprint total score: " << sprint.getScore() << ", time allowed: " << sprint.getTime() << std::endl;
 
     std::cout << std::endl << "=== 9. Reuse a template and swap the scoring rule (Prototype + Strategy) ===" << std::endl;
     int redesign = tividy.createFromTemplate(designTemplate);

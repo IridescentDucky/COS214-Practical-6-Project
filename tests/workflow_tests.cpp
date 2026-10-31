@@ -255,24 +255,30 @@ TEST(ObserverTest, DestroyedWorkItemReleasesItsObservers)
 TEST(DecoratorTest, BonusesStackOnTheWrappedWorkItem)
 {
     WorkItem<int> item(1, "Task", 5, nullptr);
+    item.addTask("Part A", 6, 10);
+    item.addTask("Part B", 4, 10);
     BonusScoreDecorator<int> scored(&item, 10, 2);
     BonusTimeDecorator<int> extended(&scored, 3);
 
-    EXPECT_EQ(20, extended.getScore());
-    EXPECT_EQ(3, extended.getTime());
-    EXPECT_EQ(0, item.getScore());
+    EXPECT_EQ(10, item.getScore());
+    EXPECT_EQ(5, item.getTime());
+    EXPECT_EQ(40, extended.getScore());
+    EXPECT_EQ(8, extended.getTime());
 }
 
 TEST(CompositeTest, GroupAddsUpItsChildren)
 {
     WorkItem<int> first(1, "First", 5, nullptr);
     WorkItem<int> second(2, "Second", 5, nullptr);
+    first.addTask("Spec", 7, 10);
+    second.addTask("Code", 9, 10);
     BonusTimeDecorator<int> extended(&second, 4);
     Composite<int> group("Sprint");
     group.add(&first);
     group.add(&extended);
 
-    EXPECT_EQ(4, group.getTime());
+    EXPECT_EQ(16, group.getScore());
+    EXPECT_EQ(14, group.getTime());
     EXPECT_TRUE(group.getChild(0) == &first);
     EXPECT_TRUE(group.getChild(5) == nullptr);
 }
