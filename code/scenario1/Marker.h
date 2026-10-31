@@ -15,7 +15,7 @@ protected:
 public:
     Marker(std::string id, std::string markerName)
         : next(nullptr), tutorId(id), name(markerName), paper(nullptr) {}
-    virtual ~Marker() = default;
+    virtual ~Marker();
 
     void setNext(Marker* marker) {
         next = marker;

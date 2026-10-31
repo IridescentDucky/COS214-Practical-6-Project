@@ -1,31 +1,24 @@
 #include "ExamMarkingFacade.h"
-#include "StatsStrategies.h"
+#include "ExamPaper.h"
+#include "Markers.h"
+#include "PaperState.h"
 
-#include <iostream>
+int main() {
+    Tutor tutor("T001", "Tutor");
+    AssistantLecturer assistant("A001", "Assistant Lecturer");
+    tutor.setNext(&assistant);
 
-int main()
-{
-    ExamMarkingFacade facade(2026);
+    ExamMarkingFacade facade;
+    ExamPaper* paper = facade.createExamPaper("COS214", 180, 0.0, 2026);
+    paper->addQuestion("Question 1", 50.0);
+    paper->addQuestion("Question 2", 50.0);
 
-    std::cout << "=== 1. Create papers (Facade + Factory Method) ===" << std::endl;
-    int cos214 = facade.createExamPaper("COS214", 120);
-    facade.addQuestion(cos214, "Explain the Observer pattern", 10);
-    facade.addQuestion(cos214, "Draw a class diagram", 20);
-    facade.addQuestion(cos214, "Implement a Strategy", 20);
-    int cos212 = facade.createExamPaper("COS212", 90);
-    facade.addQuestion(cos212, "Insert into a binary search tree", 25);
-    facade.addQuestion(cos212, "Analyse heap sort", 25);
-
-    std::cout << std::endl << "=== 2. Mark papers (Chain of Responsibility) ===" << std::endl;
-    facade.captureMarks(cos214);
-    facade.captureMarks(cos212);
-
-    std::cout << std::endl << "=== 3. Statistics (Strategy + Iterator + Memento) ===" << std::endl;
-    AverageMarksStrategy average;
-    TopMarkStrategy top;
-    facade.generateStatistics(&average);
-    facade.generateStatistics(&top);
-    facade.undoStatistics();
-
+    facade.assignPaper(paper, &tutor);
+    paper->getState()->nextState();
+    paper->getState()->nextState();
+    facade.captureMarks(paper);
+    paper->getState()->completeMarking();
+    paper->getState()->nextState();
+    paper->getState()->nextState();
     return 0;
 }

@@ -6,7 +6,9 @@
 
 #include <iostream>
 
-double AverageMarksStrategy::calculateStat(ExamPaperCollection* papers, ExamStatisticsOriginator* statistics)
+double LegacyStatistics::AverageMarksStrategy::calculateStat(
+    ExamPaperCollection* papers,
+    ExamStatisticsOriginator* statistics)
 {
     double total = 0.0;
     int count = 0;
@@ -24,7 +26,9 @@ double AverageMarksStrategy::calculateStat(ExamPaperCollection* papers, ExamStat
     return average;
 }
 
-double TopMarkStrategy::calculateStat(ExamPaperCollection* papers, ExamStatisticsOriginator* statistics)
+double LegacyStatistics::TopMarkStrategy::calculateStat(
+    ExamPaperCollection* papers,
+    ExamStatisticsOriginator* statistics)
 {
     double top = 0.0;
     Iterator* it = papers->createIterator();

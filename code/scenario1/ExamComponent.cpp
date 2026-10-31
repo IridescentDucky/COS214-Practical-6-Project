@@ -1,2 +1,1 @@
 #include "ExamComponent.h"
-

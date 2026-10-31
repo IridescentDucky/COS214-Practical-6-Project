@@ -1,11 +1,9 @@
 #include "ExamPaperGroup.h"
 
-void ExamPaperGroup::mark() {
-    // TODO: mark each child component.
-}
-
 void ExamPaperGroup::add(ExamComponent* element) {
-    elements.push_back(element);
+    if (element != nullptr) {
+        elements.push_back(element);
+    }
 }
 
 void ExamPaperGroup::remove(ExamComponent* element) {

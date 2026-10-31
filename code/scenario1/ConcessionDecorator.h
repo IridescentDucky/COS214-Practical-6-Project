@@ -9,7 +9,7 @@ private:
 
 public:
     ConcessionDecorator(ExamComponent* component, int extraTime);
-    int getExtraTime();
+    int getExtraTime() override;
 };
 
 #endif

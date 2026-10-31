@@ -1,87 +1,82 @@
-#include "PaperState.h"
+#include "AbstractExamPaper.h"
 #include "States.h"
 
-//----------- WrittenState ---------------------------------------
+#include <iostream>
 
-void WrittenState::deliver(){
-    
-    return;
+PaperState::~PaperState() = default;
+
+void WrittenState::nextState() {
+    if (paper != nullptr) {
+        paper->setState(new DeliveredState(paper));
+    }
 }
 
-//----------- DeliveredState -------------------------------------
-
-void DeliveredState::startMarking(){
-    
-    return;
+void DeliveredState::nextState() {
+    if (paper != nullptr) {
+        paper->setState(new MarkingState(paper));
+    }
 }
 
-//----------- MarkingState ---------------------------------------
-
-void MarkingState::pause(){
-    
-    return;
+void MarkingState::pause() {
+    if (paper != nullptr) {
+        paper->setState(new PausedState(paper));
+    }
 }
 
-void MarkingState::completeMarking(){
-    
-    return;
+void MarkingState::completeMarking() {
+    if (paper != nullptr) {
+        paper->setState(new MarkedState(paper));
+    }
 }
 
-void MarkingState::createException(){
-    
-    return;
+void MarkingState::nextState() {
+    completeMarking();
 }
 
-void MarkingState::validate(){
-    
-    return;
+void MarkingState::createException() {
+    if (paper != nullptr) {
+        paper->setState(new ExceptionState(paper));
+    }
 }
 
-void MarkingState::fail(){
-    
-    return;
+void MarkingState::validate() {
+    if (paper != nullptr) {
+        paper->setState(new ValidatedState(paper));
+    }
 }
 
-//----------- ExceptionState -------------------------------------
-
-void ExceptionState::pause(){
-    
-    return;
+void MarkingState::fail() {
+    if (paper != nullptr) {
+        paper->setState(new FailedState(paper));
+    }
 }
 
-//----------- PausedState ----------------------------------------
-
-void PausedState::resumeMarking(){
-    
-    return;
+void ExceptionState::pause() {
+    if (paper != nullptr) {
+        paper->setState(new PausedState(paper));
+    }
 }
 
-//----------- ValidatedState -------------------------------------
-
-void ValidatedState::marked(){
-    
-    return;
+void PausedState::resumeMarking() {
+    if (paper != nullptr) {
+        paper->setState(new MarkingState(paper));
+    }
 }
 
-//----------- MarkedState ----------------------------------------
-
-void MarkedState::captureMarks(){
-    
-    return;
+void ValidatedState::nextState() {
+    if (paper != nullptr) {
+        paper->setState(new MarkedState(paper));
+    }
 }
 
-//----------- CapturedState --------------------------------------
-
-void CapturedState::archive(){
-    
-    return;
+void MarkedState::nextState() {
+    if (paper != nullptr) {
+        paper->setState(new CapturedState(paper));
+    }
 }
 
-//----------- FailedState ----------------------------------------
-
-void FailedState::pause(){
-    
-    return;
+void CapturedState::nextState() {
+    if (paper != nullptr) {
+        paper->setState(nullptr);
+    }
 }
-
-//----------- end. -----------------------------------------------

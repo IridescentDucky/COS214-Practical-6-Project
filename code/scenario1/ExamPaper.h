@@ -13,11 +13,11 @@ class ExamPaper : public AbstractExamPaper {
 private:
     std::vector<std::string> questions;
     std::vector<double> questionMaximumMarks;
+    std::vector<double> questionMarks;
+    std::vector<bool> questionMarksCaptured;
     Marker* marker;
     double tutorMarks;
     double assistantLecturerMarks;
-    bool tutorMarksCaptured;
-    bool assistantLecturerMarksCaptured;
     bool physicalError;
     bool markDiscrepancy;
     bool manualEscalation;
@@ -29,14 +29,19 @@ public:
     AbstractExamPaper* clonePaper() override;
     void mark() override;
     void setMarker(Marker* marker);
+    void detach(Marker* observer) override;
     double getMaximumMarks() const;
     double getTutorMaximumMarks() const;
     double getAssistantLecturerMaximumMarks() const;
     int getTutorQuestionCount() const;
     double getTutorMarks() const;
     double getAssistantLecturerMarks() const;
-    bool setTutorMarks(double marks);
-    bool setAssistantLecturerMarks(double marks);
+    bool setQuestionMark(int index, double marks);
+    double getQuestionMark(int index) const;
+    double getQuestionMaximumMarks(int index) const;
+    bool hasQuestionMark(int index) const;
+    bool isMarked() const;
+    int getExamDuration() const;
     void flagPhysicalError();
     void flagMarkDiscrepancy();
     void flagManualEscalation();
@@ -48,7 +53,7 @@ public:
     PaperState* getState() override;
     void setState(PaperState* state) override;
 
-    std::string getModuleCode();
+    const std::string& getModuleCode() const;
     void addQuestion(const std::string& question);
     void addQuestion(const std::string& question, double maximumMarks);
     const std::vector<std::string>& getQuestions() const;

@@ -6,77 +6,77 @@
 //----------- WrittenState ---------------------------------------
 
 class WrittenState :public PaperState{
-    
 public:
-    void deliver();
+    explicit WrittenState(AbstractExamPaper* paper) : PaperState(paper) {}
+    void nextState() override;
 };
 
 //----------- DeliveredState -------------------------------------
 
 class DeliveredState :public PaperState{
-    
 public:
-    void startMarking();
+    explicit DeliveredState(AbstractExamPaper* paper) : PaperState(paper) {}
+    void nextState() override;
 };
 
 //----------- MarkingState ---------------------------------------
 
 class MarkingState :public PaperState{
-    
 public:
-    void pause();
-    void completeMarking();
-    void createException();
-    void validate();
-    void fail();
+    explicit MarkingState(AbstractExamPaper* paper) : PaperState(paper) {}
+    void pause() override;
+    void completeMarking() override;
+    void nextState() override;
+    void createException() override;
+    void validate() override;
+    void fail() override;
 };
 
 //----------- ExceptionState -------------------------------------
 
 class ExceptionState :public PaperState{
-    
 public:
-    void pause();
+    explicit ExceptionState(AbstractExamPaper* paper) : PaperState(paper) {}
+    void pause() override;
 };
 
 //----------- PausedState ----------------------------------------
 
 class PausedState :public PaperState{
-    
 public:
-    void resumeMarking();
+    explicit PausedState(AbstractExamPaper* paper) : PaperState(paper) {}
+    void resumeMarking() override;
 };
 
 //----------- ValidatedState -------------------------------------
 
 class ValidatedState :public PaperState{
-    
 public:
-    void marked();
+    explicit ValidatedState(AbstractExamPaper* paper) : PaperState(paper) {}
+    void nextState() override;
 };
 
 //----------- MarkedState ----------------------------------------
 
 class MarkedState :public PaperState{
-    
 public:
-    void captureMarks();
+    explicit MarkedState(AbstractExamPaper* paper) : PaperState(paper) {}
+    void nextState() override;
 };
 
 //----------- CapturedState --------------------------------------
 
 class CapturedState :public PaperState{
-    
 public:
-    void archive();
+    explicit CapturedState(AbstractExamPaper* paper) : PaperState(paper) {}
+    void nextState() override;
 };
 
 //----------- FailedState ----------------------------------------
 
 class FailedState :public PaperState{
-    
 public:
-    void pause();
+    explicit FailedState(AbstractExamPaper* paper) : PaperState(paper) {}
 };
 
 //----------- end. -----------------------------------------------

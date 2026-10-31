@@ -8,7 +8,8 @@ protected:
     AbstractExamPaper* factoryMethod(
         const std::string& moduleCode,
         int examDuration,
-        double marks, int year) override;
+        double marks,
+        int year) override;
 };
 
 #endif
