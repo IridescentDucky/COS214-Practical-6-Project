@@ -40,6 +40,28 @@ add_library(game_core
     code/scenario2/GameState.cpp)
 target_include_directories(game_core PUBLIC code/scenario2)
 
+add_executable(exam_demo
+    code/scenario1/ConcessionDecorator.cpp
+    code/scenario1/Creator.cpp
+    code/scenario1/ExamComponent.cpp
+    code/scenario1/ExamDecorator.cpp
+    code/scenario1/ExamDelivery.cpp
+    code/scenario1/ExamDeliveryService.cpp
+    code/scenario1/ExamMarkingFacade.cpp
+    code/scenario1/ExamPaper.cpp
+    code/scenario1/ExamPaperCollection.cpp
+    code/scenario1/ExamPaperCreator.cpp
+    code/scenario1/ExamPaperGroup.cpp
+    code/scenario1/ExamPaperIterator.cpp
+    code/scenario1/ExamStatisticsOriginator.cpp
+    code/scenario1/ExtraMarksDecorator.cpp
+    code/scenario1/Markers.cpp
+    code/scenario1/StatisticsCaretaker.cpp
+    code/scenario1/States.cpp
+    code/scenario1/StatsStrategies.cpp
+    code/scenario1/main.cpp)
+target_include_directories(exam_demo PRIVATE code/scenario1)
+
 include(FetchContent)
 FetchContent_Declare(
     googletest

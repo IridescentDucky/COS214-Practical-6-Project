@@ -11,8 +11,42 @@ double AbstractExamPaper::getMarks() {
     return marks;
 }
 
-ExamPaper::ExamPaper(std::string code, int duration, double initialMarks)
-    : AbstractExamPaper(code, duration, initialMarks),
+int AbstractExamPaper::getYear() const {
+    return year;
+}
+
+double AbstractExamPaper::getBonusMarks() {
+    return 0.0;
+}
+
+int AbstractExamPaper::getExtraTime() {
+    return 0;
+}
+
+void AbstractExamPaper::attach(Marker* observer) {
+    if (observer != nullptr) {
+        observers.push_back(observer);
+    }
+}
+
+void AbstractExamPaper::detach(Marker* observer) {
+    for (std::vector<Marker*>::iterator it = observers.begin(); it != observers.end(); ++it) {
+        if (*it == observer) {
+            observers.erase(it);
+            return;
+        }
+    }
+}
+
+void AbstractExamPaper::notify() {
+    for (Marker* observer : observers) {
+        observer->setExamPaper(this);
+        observer->update();
+    }
+}
+
+ExamPaper::ExamPaper(std::string code, int duration, double initialMarks, int year)
+    : AbstractExamPaper(code, duration, initialMarks, year),
       marker(nullptr),
       tutorMarks(0.0),
       assistantLecturerMarks(0.0),
