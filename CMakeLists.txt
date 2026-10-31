@@ -71,6 +71,8 @@ add_library(game_core
 target_include_directories(game_core PUBLIC code/scenario2)
 
 include(FetchContent)
+# Keep older fetched projects compatible with current CMake policy diagnostics.
+set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
 FetchContent_Declare(
     googletest
     URL https://codeload.github.com/google/googletest/zip/refs/tags/release-1.12.1
