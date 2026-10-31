@@ -7,9 +7,9 @@ Creator<T>::~Creator(){
 }
 
 template <typename T>
-AbstractWorkItem<T>* Creator<T>::createWorkItem(){
+AbstractWorkItem<T>* Creator<T>::createWorkItem(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator){
 
-    return factoryMethod(); //followed Chocolate example in lecture slides
+    return factoryMethod(id, name, deadline, mediator); //followed Chocolate example in lecture slides
 }
 
 template class Creator<int>;

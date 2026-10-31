@@ -144,7 +144,6 @@ void Tutor::update() {
         return;
     }
     
-    State* currentState = paper->getState();
 
     std::cout << "[Tutor] Notified that an exam paper is ready for marking." << std::endl;
     handle(paper); //send it to COR
@@ -189,7 +188,6 @@ void AssistantLecturer::update() {
         return;
     }
 
-    State* currentState = paper->getState();
     
     std::cout << "[AssistantLecturer] Notified that an exam paper is ready for marking."
               << std::endl;
@@ -234,7 +232,6 @@ void Lecturer::update() {
         return;
     }
 
-    State* currentState = paper->getState();
     
     std::cout << "[Lecturer] Notified that an exam paper requires review." << std::endl;
 }

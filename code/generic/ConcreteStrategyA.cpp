@@ -24,7 +24,7 @@ double ConcreteStrategyA<T>::algorithm(AbstractWorkItem<T>* workItem) {
     }
 
     double average = static_cast<double>(totalScore) / count;
-    std::cout << "[Strategy A] Calculated overall average: " << average << "%" << std::endl;
+    std::cout << "[Strategy A] Calculated overall average score: " << average << std::endl;
     return average;
 }
 

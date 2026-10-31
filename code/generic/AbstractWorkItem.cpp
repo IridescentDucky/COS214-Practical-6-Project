@@ -31,6 +31,10 @@ std::string AbstractWorkItem<T>::getStateName() const
 template <typename T>
 AbstractWorkItem<T>::~AbstractWorkItem(){
 
+    for (TaskEscalationManager<T>* observer : this->observers) {
+        observer->setWorkItem(nullptr);
+    }
+
     delete this->state;
 
     //IM NOT GETTING MY PAWS DIRTY WITH THIS ONE...YET, ill wait for everyone to add their things first
@@ -40,8 +44,11 @@ AbstractWorkItem<T>::~AbstractWorkItem(){
 
 template <typename T>
 void AbstractWorkItem<T>::attach(TaskEscalationManager<T>* observer) {
-    if (observer == nullptr) {
+    if (observer == nullptr || observer->getWorkItem() == this) {
         return;
+    }
+    if (observer->getWorkItem() != nullptr) {
+        observer->getWorkItem()->detach(observer);
     }
     observer->setWorkItem(this);
     this->observers.push_back(observer);

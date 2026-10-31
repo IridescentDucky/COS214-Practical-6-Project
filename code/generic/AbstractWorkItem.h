@@ -49,6 +49,8 @@ protected:
 public:
     AbstractWorkItem(int id, const std::string& name, WorkflowMediator<T>* mediator);
     virtual ~AbstractWorkItem();
+    AbstractWorkItem(const AbstractWorkItem&) = delete;
+    AbstractWorkItem& operator=(const AbstractWorkItem&) = delete;
 
     int getId() const;
     std::string getName() const;
@@ -66,6 +68,8 @@ public:
     virtual void set(const std::string& data) = 0;  //?
     virtual std::string get() const = 0;
     virtual void addTimeSpent(int units) = 0;
+    virtual int getOverdue() const = 0;
+    virtual AbstractWorkItem<T>* clone(int id, WorkflowMediator<T>* mediator) const = 0;
     
     virtual WorkItemMemento<T>* createMemento() = 0;   //MEMENTO
     virtual void setMemento(WorkItemMemento<T>* m) = 0;

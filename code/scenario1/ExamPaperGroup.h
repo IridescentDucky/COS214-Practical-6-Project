@@ -10,10 +10,12 @@ private:
     std::vector<ExamComponent*> elements;
 
 public:
-    void mark() override;
+    void mark();
     void add(ExamComponent* element);
     void remove(ExamComponent* element);
-    double getMarks() override;
+    double getMarks();
+    double getBonusMarks() override;
+    int getExtraTime() override;
 };
 
 #endif

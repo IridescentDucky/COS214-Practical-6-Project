@@ -14,6 +14,8 @@ private:
 public:
     WorkItemMemento(State<T>* s);
     ~WorkItemMemento();
+    WorkItemMemento(const WorkItemMemento&) = delete;
+    WorkItemMemento& operator=(const WorkItemMemento&) = delete;
     // Returns a newly allocated copy. The caller owns the returned state.
     State<T>* getState() const;
     void setState(State<T>* s);

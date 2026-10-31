@@ -80,6 +80,38 @@ template <typename T>
 void WorkItem<T>::addTimeSpent(int units)
 {
     timeSpent += units;
+    this->notify();
+}
+
+template <typename T>
+int WorkItem<T>::getScore()
+{
+    int total = this->score;
+    for (std::size_t i = 0; i < tasks.size(); ++i)
+    {
+        total += tasks[i].score;
+    }
+    return total;
+}
+
+template <typename T>
+int WorkItem<T>::getTime()
+{
+    return this->time + deadline;
+}
+
+template <typename T>
+int WorkItem<T>::getOverdue() const
+{
+    return timeSpent > deadline ? timeSpent - deadline : 0;
+}
+
+template <typename T>
+AbstractWorkItem<T>* WorkItem<T>::clone(int id, WorkflowMediator<T>* mediator) const
+{
+    WorkItem<T>* copy = new WorkItem<T>(id, this->name, deadline, mediator);
+    copy->tasks = tasks;
+    return copy;
 }
 
 
@@ -190,7 +222,6 @@ void WorkItem<T>::setMemento(WorkItemMemento<T>* m)
 //     }
 // }
 
-template class WorkItem<int>;
 
 // Task vector functions
 
@@ -248,3 +279,5 @@ void WorkItem<T>::updateTaskScore(int index, int newScore) {
     std::cout << "[WorkItem] Updated: " << this->tasks[static_cast<std::size_t>(index)].name
               << " score to " << newScore << std::endl;
 }
+
+template class WorkItem<int>;

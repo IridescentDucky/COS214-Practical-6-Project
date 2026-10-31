@@ -4,8 +4,10 @@
 #include "ExamComponent.h"
 
 #include <string>
+#include <vector>
 
 class PaperState;
+class Marker;
 
 class AbstractExamPaper : public ExamComponent {
 protected:
@@ -14,6 +16,7 @@ protected:
     int examDuration;
     double marks;
     int year;    //THIS HAS A YEAR PARAMETER NOW
+    std::vector<Marker*> observers;
 public:
     virtual ~AbstractExamPaper() = default;
     AbstractExamPaper(std::string code, int duration, double initialMarks, int year)
@@ -22,8 +25,11 @@ public:
     virtual AbstractExamPaper* clonePaper() = 0;
     virtual PaperState* getState() = 0;
     virtual void setState(PaperState* state) = 0;
-    void mark() override = 0;
-    double getMarks() override;
+    virtual void mark() = 0;
+    double getMarks();
+    int getYear() const;
+    double getBonusMarks() override;
+    int getExtraTime() override;
 
     void attach(Marker* observer);
     void detach(Marker* observer);    //OBSERVER FUNCTIONS

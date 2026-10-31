@@ -39,6 +39,10 @@ public:
     void set(const std::string& data) override;
     std::string get() const override;
     void addTimeSpent(int units) override;
+    int getOverdue() const override;
+    int getScore() override;
+    int getTime() override;
+    AbstractWorkItem<T>* clone(int id, WorkflowMediator<T>* mediator) const override;
     
     WorkItemMemento<T>* createMemento() override;
     void setMemento(WorkItemMemento<T>* m) override;

@@ -68,9 +68,6 @@ int Composite<T>::getTime() {
 
 template <typename T>
 Composite<T>::~Composite() {
-    for (typename list<Component<T>*>::iterator it = this->children.begin(); it != this->children.end(); ++it) {
-        delete *it;
-    }
-};	
+}	
 
 template class Composite<int>;

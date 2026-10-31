@@ -24,7 +24,7 @@ private:
     bool escalationReviewed;
 
 public:
-    ExamPaper(std::string code, int duration, double initialMarks);
+    ExamPaper(std::string code, int duration, double initialMarks, int year);
 
     AbstractExamPaper* clonePaper() override;
     void mark() override;

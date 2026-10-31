@@ -1,12 +1,12 @@
-#include "ConcreteHandler.h"
+#include "ConcreteHandlerB.h"
 #include "AbstractWorkItem.h"
 #include "State.h"
 
 template <typename T>
-ConcreteHandler<T>::ConcreteHandler(string name, T condition) : TaskEscalationManager<T>(condition), name(name) {}
+ConcreteHandlerB<T>::ConcreteHandlerB(string name, T condition) : TaskEscalationManager<T>(condition), name(name) {}
 
 template <typename T>
-void ConcreteHandler<T>::handleRequest(T a){    
+void ConcreteHandlerB<T>::handleRequest(T a){    
     if(a < this->condition) { // could have multiple classes for the differing types of conditions (eg. a class for <, >, ==, <=, >=)
         std::cout << name << " handled the request" << std::endl;
     }
@@ -22,17 +22,23 @@ void ConcreteHandler<T>::handleRequest(T a){
 }
 
 template <typename T>
-void ConcreteHandler<T>::update() {
+void ConcreteHandlerB<T>::update() {
 
     if (this->workItem == nullptr) {
         return;
     }
 
     State<T>* currentState = this->workItem->getState();
+    int overdue = this->workItem->getOverdue();
 
-    std::cout << name << " was notified that WorkItem has changed state to " << currentState->getName() << std::endl;
-
-    handleRequest(static_cast<T>(this->workItem->getScore()));
+    std::cout << name << " was notified that " << this->workItem->getName() << " is " << currentState->getName();
+    if (overdue > 0) {
+        std::cout << " and " << overdue << " time unit(s) overdue" << std::endl;
+        handleRequest(static_cast<T>(overdue));
+    }
+    else {
+        std::cout << std::endl;
+    }
 }
 
-template class ConcreteHandler<int>;
+template class ConcreteHandlerB<int>;

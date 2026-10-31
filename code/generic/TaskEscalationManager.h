@@ -13,10 +13,13 @@ protected:
     
 public:
     TaskEscalationManager(T condition) : condition(condition) {}
+    TaskEscalationManager(const TaskEscalationManager&) = delete;
+    TaskEscalationManager& operator=(const TaskEscalationManager&) = delete;
 
     virtual void handleRequest(T a) = 0;
     void setSuccessor(TaskEscalationManager<T>* next);
     void setWorkItem(AbstractWorkItem<T>* item) { workItem = item; }
+    AbstractWorkItem<T>* getWorkItem() const { return workItem; }
 
     virtual ~TaskEscalationManager();
 

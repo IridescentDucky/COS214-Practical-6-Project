@@ -38,4 +38,27 @@ Remaining to be implemented:
         - also not sure how the function names will be changed so I did not want to do anything there just yet.
 
 -> Memento:
-        - will leave for when updated UML with strategy added gets added to git
+        - done: the facade saves a StatisticsMemento before each new calculation, and undoStatistics() restores it
+
+-- Strategy, Memento and Facade changes --------------------
+
+-> Strategy moved from AbstractExamPaper to ExamStatisticsOriginator:
+    - average and top marks need every paper, so a single paper cannot calculate them
+    - ExamStatisticsOriginator is the strategy's context: calculate(papers) runs calculateStat(papers, this)
+    - each strategy walks the papers with the Iterator and stores its result on the originator (setAverageMark / setMaxMark)
+    - removed #strategy and calculateStats() from AbstractExamPaper
+
+-> ExamStatisticsOriginator and StatisticsMemento:
+    - passRate replaced with maxMark to match the UML
+    - added setStrategy(), calculate(), and getters/setters for averageMark and maxMark
+
+-> ExamMarkingFacade:
+    - owns the ExamPaperCreator, the ExamPaperCollection, the marker chain (Tutor -> AssistantLecturer -> Lecturer), the originator and the caretaker
+    - takes simple inputs and returns simple results: createExamPaper() returns the paper's index
+    - added addQuestion() (papers need questions before they can be marked) and undoStatistics() (restores the last snapshot)
+    - removed assignPaper(): captureMarks() assigns the marker chain itself
+
+-> AbstractExamPaper:
+    - implements getBonusMarks() and getExtraTime() so decorators can wrap it (ExamComponent changed to the decorator interface)
+    - added the observers vector and implemented attach/detach/notify (they were declared but missing)
+    - added getYear()
