@@ -2,6 +2,7 @@
 #define WORKFLOWMEDIATOR_H
 
 #include "AbstractWorkItem.h"
+#include "PrototypeManager.h"
 #include "Aggregate.h"
 
 #include <vector>
@@ -28,6 +29,7 @@ public:
 
     Iterator<T>* createIterator() const override;
 
+    PrototypeManager<T>* pm; // if private, then additional functions must be added to mediator
 private:
     friend class WorkItemIterator<T>;
 

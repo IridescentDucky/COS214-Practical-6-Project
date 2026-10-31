@@ -14,6 +14,8 @@ WorkflowMediator<T>::~WorkflowMediator()
     {
         delete item;
     }
+
+    delete pm;
 }
 
 template <typename T>

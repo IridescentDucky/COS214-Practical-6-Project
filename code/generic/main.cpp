@@ -12,6 +12,7 @@
 #include "Iterator.h"
 #include "TIVIDY.h"
 #include "WorkItem.h"
+#include "PrototypeManager.h"
 
 #include <iostream>
 
@@ -110,6 +111,7 @@ int main()
     Adapter adapter(&external);
     Target* target = &adapter;
     target->request();
+
 
     return 0;
 }
