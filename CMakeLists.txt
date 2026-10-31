@@ -32,7 +32,8 @@ set(WORKFLOW_SOURCES
     code/generic/WorkItem.cpp
     code/generic/WorkItemIterator.cpp
     code/generic/WorkItemMemento.cpp
-    code/generic/WorkflowMediator.cpp)
+    code/generic/WorkflowMediator.cpp
+    code/generic/StatsCaretaker.cpp)
 
 add_library(workflow_core ${WORKFLOW_SOURCES})
 target_include_directories(workflow_core PUBLIC code/generic)
