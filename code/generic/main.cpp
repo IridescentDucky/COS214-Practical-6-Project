@@ -12,7 +12,6 @@
 #include "Iterator.h"
 #include "TIVIDY.h"
 #include "WorkItem.h"
-#include "PrototypeManager.h"
 
 #include <iostream>
 
