@@ -79,6 +79,42 @@ Things the diagrams must change so they match the code and each other.
                 - updateTaskScore(int index, int newScore): void
 
 
+[DO NOW]
+
+--> StatsOriginator [TEMPLATE]:
+        - private:
+                year: int
+                maxMark: double
+                minMark: double
+                scoreAvg: double
+                strategyA: Strategy<T>*
+                strategyB: Strategy<T>*
+                strategyC: Strategy<T>*
+        - public:
+                calculateStats(AbstractWorkItem<T>* workItem): void
+                createMemento() const: StatsMemento*
+                restoreFromMemento(StatsMemento* m): void
+                printState() const: void
+                
+--> StatsMemento [TEMPLATE NOT NEEDED]:
+        - private:
+                year: int
+                maxMark: double
+                minMark: double
+                scoreAvg: double
+        -public:
+                getYear(): int
+                getMaxMark(): double
+                getMinMark(): double
+                getScoreAvg(): double
+                
+--> StatsCaretaker [TEMPLATE NOT NEEDED]:
+        - private:
+                memento: StatsMemento*
+        - public:
+                getMemento() const: StatsMemento*
+                saveMemento(StatsMemento* m): void
+
 === 2. GENERIC STATE DIAGRAM ===
 
 [DO NOW] Match the Class Diagram's 9 states. Add Delivered, Validation, Failed and Exception.
