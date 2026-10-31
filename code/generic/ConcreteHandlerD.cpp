@@ -7,7 +7,7 @@ ConcreteHandlerD<T>::ConcreteHandlerD(string name, T condition) : TaskEscalation
 
 template <typename T>
 void ConcreteHandlerD<T>::handleRequest(T a){    
-    if(a < this->condition) { // could have multiple classes for the differing types of conditions (eg. a class for <, >, ==, <=, >=)
+    if(a <= this->condition) { 
         std::cout << name << " handled the request" << std::endl;
     }
     else if(this->successor != nullptr){
