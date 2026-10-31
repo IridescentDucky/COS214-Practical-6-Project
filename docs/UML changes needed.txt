@@ -5,10 +5,10 @@ Things the diagrams must change so they match the code and each other.
 
 === 1. GENERIC CLASS DIAGRAM ===
 
-[DO NOW] Remove operation() from WorkItemState.
-   Keep operation() on WorkItem, Component and the decorators (that is the Decorator pattern).
+[Done] Remove operation() from WorkItemState.
+   Keep operation() on WorkItem, Component and the decorators (that is the Decorator pattern). -- display() instead of operation()
 
-[DO NOW] Add the Iterator pattern:
+[Done] Add the Iterator pattern:
    Aggregate (abstract)    +createIterator() : Iterator*
    Iterator (abstract)     +hasNext() : bool
                            +next() : AbstractWorkItem*
@@ -22,10 +22,7 @@ Things the diagrams must change so they match the code and each other.
    - WorkflowMediator - - <<instantiate>> - -> WorkItemIterator (dashed)
    - WorkItemIterator --> WorkflowMediator (association, its "collection")
 
-[DO NOW] Remove the Strategy pattern if it is still shown (Revision 4):
-   Strategy, ConcreteStrategyA/B/C, and -strategy / +algorithm() on WorkflowMediator.
-
-[DO NOW] Fill in WorkflowMediator to match the code:
+[Done] Fill in WorkflowMediator to match the code:
    -dependencies : map<int, vector<int>>
    +addWorkItem(item : AbstractWorkItem*)
    +getWorkItem(id : int) : AbstractWorkItem*
@@ -33,7 +30,7 @@ Things the diagrams must change so they match the code and each other.
    +notify(colleague : AbstractWorkItem*)
    +createIterator() : Iterator*
 
-[DO NOW] Fill in TIVIDY (the facade box is empty):
+[Done] Fill in TIVIDY (the facade box is empty):
    +createWorkItem(name : string, deadline : int) : int
    +advanceWork(id : int)
    +submitWork(id : int, data : string)
@@ -45,7 +42,7 @@ Things the diagrams must change so they match the code and each other.
    +createIterator() : Iterator*
    +runWorkflow(factory : AbstractWorkflowFactory*)
 
-[DO NOW] WorkItemState: add +getName() : string and +clone() : WorkItemState*
+[???] WorkItemState: add +getName() : string and +clone() : WorkItemState*
    (clone is used by the Memento).
 
 [DO NOW] WorkItem: add the helpers the states use:
