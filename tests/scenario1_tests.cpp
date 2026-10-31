@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
+#include <limits>
 #include <sstream>
 
 namespace
@@ -170,6 +171,27 @@ TEST(Scenario1FacadeTest, OwnsCreatedPaperAndAssignsMarkerChain)
     EXPECT_EQ(nullptr, marker.observedPaper());
 }
 
+TEST(Scenario1FacadeTest, RejectsForeignPapersWithoutChangingTheirMarkerOrMarks)
+{
+    ExamMarkingFacade owner;
+    ExamMarkingFacade other;
+    CountingMarker marker;
+    ExamPaper* foreignPaper = other.createExamPaper("COS214", 180, 0.0, 2026);
+    foreignPaper->addQuestion("Question 1", 10.0);
+    ASSERT_TRUE(foreignPaper->setQuestionMark(0, 5.0));
+    other.assignPaper(foreignPaper, &marker);
+
+    owner.assignPaper(foreignPaper, &marker);
+    owner.captureMarks(foreignPaper);
+
+    EXPECT_FALSE(
+        owner.calculateMetric(foreignPaper, ExamMetric::TopQuestion).valid);
+    EXPECT_EQ(0, marker.updateCount);
+    EXPECT_EQ(0, marker.handleCount);
+    EXPECT_EQ(5.0, foreignPaper->getMarks());
+    EXPECT_EQ(foreignPaper, marker.observedPaper());
+}
+
 TEST(Scenario1StrategyTest, CalculatesQuestionPercentagesAndAllocatedMinuteRate)
 {
     ExamMarkingFacade facade;
@@ -211,6 +233,67 @@ TEST(Scenario1StrategyTest, RejectsInvalidScoresAndRequiresEveryQuestionToBeMark
     EXPECT_FALSE(paper.isMarked());
     ASSERT_TRUE(paper.setQuestionMark(1, 5.0));
     EXPECT_TRUE(paper.isMarked());
+}
+
+TEST(Scenario1StrategyTest, RejectsNonFiniteScoresAndInvalidQuestionMaximums)
+{
+    ExamPaper paper("COS214", 180, 0.0, 2026);
+    paper.addQuestion("Zero maximum", 0.0);
+    paper.addQuestion("Negative maximum", -1.0);
+    paper.addQuestion("Infinite maximum", std::numeric_limits<double>::infinity());
+    EXPECT_EQ(0, paper.getQuestionCount());
+
+    paper.addQuestion("Question 1", 10.0);
+    EXPECT_FALSE(
+        paper.setQuestionMark(0, std::numeric_limits<double>::quiet_NaN()));
+    EXPECT_FALSE(
+        paper.setQuestionMark(0, std::numeric_limits<double>::infinity()));
+    EXPECT_FALSE(paper.isMarked());
+    EXPECT_TRUE(paper.setQuestionMark(0, 10.0));
+    EXPECT_TRUE(paper.isMarked());
+}
+
+TEST(Scenario1MarkingTest, EscalationIsResolvedOnlyWithAValidReplacementScore)
+{
+    ExamPaper paper("COS214", 180, 0.0, 2026);
+    paper.addQuestion("Question 1", 10.0);
+    ASSERT_TRUE(paper.setQuestionMark(0, 5.0));
+
+    EXPECT_FALSE(paper.resolveEscalation(5.0));
+    paper.flagManualEscalation();
+    EXPECT_FALSE(paper.resolveEscalation(-1.0));
+    EXPECT_FALSE(paper.resolveEscalation(11.0));
+    EXPECT_FALSE(
+        paper.resolveEscalation(std::numeric_limits<double>::quiet_NaN()));
+    EXPECT_TRUE(paper.hasPendingEscalation());
+
+    EXPECT_TRUE(paper.resolveEscalation(8.0));
+    EXPECT_FALSE(paper.hasPendingEscalation());
+    EXPECT_DOUBLE_EQ(8.0, paper.getMarks());
+}
+
+TEST(Scenario1MarkingTest, RoutesEscalatedPaperToLecturerForResolution)
+{
+    Tutor tutor("T001", "Tutor");
+    AssistantLecturer assistant("A001", "Assistant");
+    Lecturer lecturer("L001", "Lecturer");
+    tutor.setNext(&assistant);
+    assistant.setNext(&lecturer);
+
+    ExamPaper paper("COS214", 180, 0.0, 2026);
+    paper.addQuestion("Question 1", 10.0);
+    paper.addQuestion("Question 2", 10.0);
+    paper.setMarker(&tutor);
+
+    std::istringstream enteredMarks("5\ny\nn\nn\n5\nn\nn\nn\n8\n");
+    std::streambuf* originalInput = std::cin.rdbuf(enteredMarks.rdbuf());
+    paper.mark();
+    std::cin.rdbuf(originalInput);
+
+    EXPECT_TRUE(paper.isMarked());
+    EXPECT_TRUE(paper.hasPhysicalError());
+    EXPECT_FALSE(paper.hasPendingEscalation());
+    EXPECT_DOUBLE_EQ(8.0, paper.getMarks());
 }
 
 TEST(Scenario1MarkingTest, CapturesIndividualQuestionScoresAndZeroForUnanswered)
@@ -259,4 +342,14 @@ TEST(Scenario1StatisticsTest, AggregatesFixedOutcomeBandsAndSnapshotsPaperMetric
     EXPECT_TRUE(snapshot->getPaperMetrics()[0].valid);
     EXPECT_EQ(ExamMetric::TopQuestion, snapshot->getPaperMetrics()[0].metric);
     EXPECT_DOUBLE_EQ(49.0, snapshot->getPaperMetrics()[0].value);
+}
+
+TEST(Scenario1StatisticsTest, ReturnsNoSnapshotWhenNoPaperMatchesYear)
+{
+    ExamMarkingFacade facade;
+    ExamPaper* paper = facade.createExamPaper("COS214", 60, 0.0, 2026);
+    paper->addQuestion("Question 1", 100.0);
+    ASSERT_TRUE(paper->setQuestionMark(0, 80.0));
+
+    EXPECT_EQ(nullptr, facade.generateStatistics(2025));
 }

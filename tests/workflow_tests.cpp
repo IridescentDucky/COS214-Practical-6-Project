@@ -176,6 +176,43 @@ TEST(MediatorTest, CompletionActivatesEveryCreatedDependentOnlyOnce)
     EXPECT_EQ("Delivered", secondDependent->getStateName());
 }
 
+TEST(MediatorTest, IncompletePredecessorDoesNotActivateDependents)
+{
+    WorkflowMediator<int> mediator;
+    WorkItem<int>* predecessor = new WorkItem<int>(1, "First", 5, &mediator);
+    WorkItem<int>* dependent = new WorkItem<int>(2, "Second", 5, &mediator);
+    mediator.addWorkItem(predecessor);
+    mediator.addWorkItem(dependent);
+    ASSERT_TRUE(mediator.addDependency(1, 2));
+
+    mediator.notify(predecessor);
+    EXPECT_EQ("Created", dependent->getStateName());
+
+    complete(*predecessor);
+    EXPECT_EQ("Completed", predecessor->getStateName());
+    EXPECT_EQ("Delivered", dependent->getStateName());
+}
+
+TEST(FacadeTest, WorkflowsKeepItemsAndDependenciesInstanceLocal)
+{
+    TIVIDY<int> first;
+    TIVIDY<int> second;
+    const int firstPredecessor = first.createWorkItem("First design", 5);
+    const int firstDependent = first.createWorkItem("First build", 5);
+    const int secondPredecessor = second.createWorkItem("Second design", 5);
+    const int secondDependent = second.createWorkItem("Second build", 5);
+    ASSERT_EQ(firstPredecessor, secondPredecessor);
+    ASSERT_EQ(firstDependent, secondDependent);
+    ASSERT_TRUE(first.addDependency(firstPredecessor, firstDependent));
+
+    completeThroughFacade(first, firstPredecessor);
+
+    EXPECT_EQ("Completed", first.getWorkItemState(firstPredecessor));
+    EXPECT_EQ("Delivered", first.getWorkItemState(firstDependent));
+    EXPECT_EQ("Created", second.getWorkItemState(secondPredecessor));
+    EXPECT_EQ("Created", second.getWorkItemState(secondDependent));
+}
+
 TEST(MementoTest, RestoresAnIndependentStateSnapshot)
 {
     WorkItem<int> item(1, "Task", 5, nullptr);

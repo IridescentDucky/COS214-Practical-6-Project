@@ -37,6 +37,8 @@ Run the Generic Workflow test executable:
 .\build\workflow_tests.exe
 ```
 
+The Generic Workflow tests cover state transitions and deadline/data validation; dependency creation and activation; invalid and duplicate dependencies; observer attach/detach and lifetime behavior; chain routing and escalation boundaries; facade handling of invalid IDs and inputs; iterator edge cases; memento restore; and prototype cloning and instance isolation.
+
 Or run all registered tests with CTest:
 
 ```powershell
@@ -58,6 +60,8 @@ The demo prompts for question marks and escalation flags. Enter a score for each
 ```powershell
 .\build\scenario1_tests.exe
 ```
+
+Scenario 1 tests cover paper lifecycle transitions, validation, exceptions, pause/resume and failure; marker notification and chain routing, including Lecturer escalation; invalid and non-finite question scores and escalation resolutions; facade ownership and rejection of foreign papers; question metric calculations; cohort statistics and year filtering; and decorators/groups.
 
 Or run all registered tests with CTest:
 
@@ -106,3 +110,7 @@ Then open <http://localhost:8080>.
 - Tamlyn Kahn u24675815
 - Yoshua Smit u25433726
 - Jonathan Witter u25108582
+
+## Bonus Marks
+
+The GitHub Actions workflow in `.github/workflows/cpp-ci.yml` configures and builds the CMake project, then runs the registered C++ tests with CTest on every push and pull request. It can also be started manually from the repository's Actions tab. The workflow reports build or test failures but does not deploy or publish executables.
