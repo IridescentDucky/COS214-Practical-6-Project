@@ -49,12 +49,15 @@ set(EXAM_SCENARIO_SOURCES
     code/scenario1/ExamPaperCreator.cpp
     code/scenario1/ExamPaperGroup.cpp
     code/scenario1/ExamPaperIterator.cpp
+    code/scenario1/AverageMarksStrategy.cpp
     code/scenario1/ExamStatisticsOriginator.cpp
     code/scenario1/ExtraMarksDecorator.cpp
     code/scenario1/Marker.cpp
+    code/scenario1/LowestMarkStrategy.cpp
     code/scenario1/Markers.cpp
     code/scenario1/States.cpp
-    code/scenario1/StatisticsCaretaker.cpp)
+    code/scenario1/StatisticsCaretaker.cpp
+    code/scenario1/TopMarkStrategy.cpp)
 
 add_library(exam_scenario1_core ${EXAM_SCENARIO_SOURCES})
 target_include_directories(exam_scenario1_core PUBLIC code/scenario1)

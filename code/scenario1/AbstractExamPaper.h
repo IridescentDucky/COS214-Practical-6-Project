@@ -26,6 +26,7 @@ public:
     virtual void setState(PaperState* state) = 0;
     virtual void mark() = 0;
     double getMarks() const;
+    int getYear() const;
     double getBonusMarks() override;
     int getExtraTime() override;
 

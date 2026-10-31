@@ -153,8 +153,13 @@ The component API is getBonusMarks() : double and getExtraTime() : int.
 ExamPaperGroup aggregates those values; decorators add to them.
 
 The facade owns papers it creates; returned ExamPaper pointers are borrowed.
-Statistics generation and the Strategy classes are deferred until their scope
-and data source are decided.
+The facade selects a Strategy for each paper metric: highest question percentage,
+lowest question percentage, or marks per allocated exam minute. Question-level
+scores are retained by the paper; unanswered questions receive zero. Cohort
+statistics are grouped by year, with fixed outcome bands (<50 failure,
+50-<75 pass, >=75 distinction). The statistics memento snapshots the cohort
+rates and each resolved paper's metric results. Papers with incomplete marking
+or unresolved escalation are excluded.
 
 
 === 5. GAME SCENARIO CLASS DIAGRAM ===

@@ -19,11 +19,17 @@ ExamPaper* getConcretePaper(AbstractExamPaper* paper, const char* markerName) {
 
 bool readMarks(const std::string& prompt, double maximumMarks, double& awardedMarks) {
     while (true) {
-        std::cout << prompt << " (0-" << maximumMarks << "): ";
+        std::cout << prompt << " (0-" << maximumMarks
+                  << ", blank for unanswered): ";
         std::string line;
         if (!std::getline(std::cin, line)) {
             std::cerr << "[Marking] Input ended before marks were entered." << std::endl;
             return false;
+        }
+
+        if (line.find_first_not_of(" \t\r\n") == std::string::npos) {
+            awardedMarks = 0.0;
+            return true;
         }
 
         std::istringstream input(line);
@@ -39,6 +45,27 @@ bool readMarks(const std::string& prompt, double maximumMarks, double& awardedMa
         awardedMarks = value;
         return true;
     }
+}
+
+bool markQuestions(
+    ExamPaper* paper,
+    int firstQuestion,
+    int questionEnd,
+    const char* markerName) {
+    for (int index = firstQuestion; index < questionEnd; ++index) {
+        double awardedMarks;
+        std::ostringstream prompt;
+        prompt << "[" << markerName << "] " << paper->getQuestion(index);
+        if (!readMarks(prompt.str(), paper->getQuestionMaximumMarks(index), awardedMarks)) {
+            return false;
+        }
+        if (!paper->setQuestionMark(index, awardedMarks)) {
+            std::cerr << "[" << markerName
+                      << "] Could not record the question score." << std::endl;
+            return false;
+        }
+    }
+    return true;
 }
 
 bool readFlag(const std::string& prompt, bool& flagged) {
@@ -114,14 +141,7 @@ void Tutor::handle(AbstractExamPaper* abstractPaper) {
         std::cout << "[Tutor] Mark questions 1-"
                   << tutorQuestionCount << " for "
                   << paper->getModuleCode() << "." << std::endl;
-        double awardedMarks;
-        if (!readMarks("[Tutor] Enter subtotal",
-                       paper->getTutorMaximumMarks(), awardedMarks)) {
-            return;
-        }
-        if (!paper->setTutorMarks(awardedMarks)) {
-            std::cerr << "[Tutor] The subtotal is outside the assigned mark range."
-                      << std::endl;
+        if (!markQuestions(paper, 0, tutorQuestionCount, "Tutor")) {
             return;
         }
         if (!captureEscalationFlags(paper, "Tutor")) {
@@ -156,19 +176,17 @@ void AssistantLecturer::handle(AbstractExamPaper* abstractPaper) {
         return;
     }
 
-    std::cout << "[AssistantLecturer] Mark questions "
-              << paper->getTutorQuestionCount() + 1 << "-"
-              << paper->getQuestionCount() << " for "
-              << paper->getModuleCode() << "." << std::endl;
-    double awardedMarks;
-    if (!readMarks("[AssistantLecturer] Enter subtotal",
-                   paper->getAssistantLecturerMaximumMarks(), awardedMarks)) {
-        return;
-    }
-    if (!paper->setAssistantLecturerMarks(awardedMarks)) {
-        std::cerr << "[AssistantLecturer] The subtotal is outside the assigned mark range."
-                  << std::endl;
-        return;
+    const int firstAssistantQuestion = paper->getTutorQuestionCount();
+    const int questionCount = paper->getQuestionCount();
+    if (firstAssistantQuestion < questionCount) {
+        std::cout << "[AssistantLecturer] Mark questions "
+                  << firstAssistantQuestion + 1 << "-"
+                  << questionCount << " for "
+                  << paper->getModuleCode() << "." << std::endl;
+        if (!markQuestions(
+                paper, firstAssistantQuestion, questionCount, "AssistantLecturer")) {
+            return;
+        }
     }
     if (!captureEscalationFlags(paper, "AssistantLecturer")) {
         return;

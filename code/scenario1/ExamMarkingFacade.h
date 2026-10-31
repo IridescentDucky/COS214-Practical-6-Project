@@ -3,6 +3,9 @@
 
 #include "ExamPaperCollection.h"
 #include "ExamPaperCreator.h"
+#include "ExamResultsStrategy.h"
+#include "ExamStatisticsOriginator.h"
+#include "StatisticsCaretaker.h"
 
 #include <memory>
 #include <string>
@@ -16,6 +19,8 @@ private:
     ExamPaperCreator creator;
     ExamPaperCollection papers;
     std::vector<std::unique_ptr<ExamPaper> > ownedPapers;
+    ExamStatisticsOriginator statisticsOriginator;
+    StatisticsCaretaker statisticsCaretaker;
 
     bool ownsPaper(const ExamPaper* paper) const;
 
@@ -29,7 +34,9 @@ public:
         int year);
     void assignPaper(ExamPaper* paper, Marker* chainHead);
     void captureMarks(ExamPaper* paper);
-    void generateStatistics();
+    ExamMetricResult calculateMetric(const ExamPaper* paper, ExamMetric metric) const;
+    // The returned snapshot is caretaker-owned and remains valid until replaced or destroyed.
+    const StatisticsMemento* generateStatistics(int year);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #include "Marker.h"
 #include "States.h"
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -14,8 +15,6 @@ ExamPaper::ExamPaper(std::string code, int duration, double initialMarks, int ye
       marker(nullptr),
       tutorMarks(0.0),
       assistantLecturerMarks(0.0),
-      tutorMarksCaptured(false),
-      assistantLecturerMarksCaptured(false),
       physicalError(false),
       markDiscrepancy(false),
       manualEscalation(false),
@@ -25,10 +24,10 @@ AbstractExamPaper* ExamPaper::clonePaper() {
     ExamPaper* copy = new ExamPaper(moduleCode, examDuration, marks, year);
     copy->questions = questions;
     copy->questionMaximumMarks = questionMaximumMarks;
+    copy->questionMarks = questionMarks;
+    copy->questionMarksCaptured = questionMarksCaptured;
     copy->tutorMarks = tutorMarks;
     copy->assistantLecturerMarks = assistantLecturerMarks;
-    copy->tutorMarksCaptured = tutorMarksCaptured;
-    copy->assistantLecturerMarksCaptured = assistantLecturerMarksCaptured;
     copy->physicalError = physicalError;
     copy->markDiscrepancy = markDiscrepancy;
     copy->manualEscalation = manualEscalation;
@@ -121,9 +120,7 @@ void ExamPaper::setState(PaperState* state) {
     this->state = state;
 }
 
-std::string ExamPaper::getModuleCode(){
-    
-    std::cout << "[ExamPaper] module code: " << this->moduleCode << std::endl;
+const std::string& ExamPaper::getModuleCode() const {
     return this->moduleCode;
 }
 
@@ -157,6 +154,67 @@ int ExamPaper::getTutorQuestionCount() const {
     return bestCount;
 }
 
+int ExamPaper::getExamDuration() const {
+    return examDuration;
+}
+
+bool ExamPaper::isMarked() const {
+    return !questionMarks.empty() &&
+        std::find(questionMarksCaptured.begin(), questionMarksCaptured.end(), false) ==
+            questionMarksCaptured.end();
+}
+
+bool ExamPaper::setQuestionMark(int index, double awardedMarks) {
+    if (index < 0 || static_cast<std::size_t>(index) >= questions.size() ||
+        !std::isfinite(awardedMarks) || awardedMarks < 0.0 ||
+        awardedMarks > questionMaximumMarks[static_cast<std::size_t>(index)]) {
+        return false;
+    }
+
+    questionMarks[static_cast<std::size_t>(index)] = awardedMarks;
+    questionMarksCaptured[static_cast<std::size_t>(index)] = true;
+
+    const int tutorQuestionCount = getTutorQuestionCount();
+    tutorMarks = 0.0;
+    assistantLecturerMarks = 0.0;
+    for (std::size_t questionIndex = 0; questionIndex < questionMarks.size(); ++questionIndex) {
+        if (!questionMarksCaptured[questionIndex]) {
+            continue;
+        }
+
+        if (static_cast<int>(questionIndex) < tutorQuestionCount) {
+            tutorMarks += questionMarks[questionIndex];
+        } else {
+            assistantLecturerMarks += questionMarks[questionIndex];
+        }
+    }
+
+    if (isMarked()) {
+        marks = tutorMarks + assistantLecturerMarks;
+    }
+    return true;
+}
+
+double ExamPaper::getQuestionMark(int index) const {
+    if (!hasQuestionMark(index)) {
+        return 0.0;
+    }
+    return questionMarks[static_cast<std::size_t>(index)];
+}
+
+double ExamPaper::getQuestionMaximumMarks(int index) const {
+    if (index < 0 || static_cast<std::size_t>(index) >= questionMaximumMarks.size()) {
+        return 0.0;
+    }
+    return questionMaximumMarks[static_cast<std::size_t>(index)];
+}
+
+bool ExamPaper::hasQuestionMark(int index) const {
+    return index >= 0 &&
+        static_cast<std::size_t>(index) < questionMarksCaptured.size() &&
+        questionMarksCaptured[static_cast<std::size_t>(index)];
+}
+
 double ExamPaper::getTutorMaximumMarks() const {
     double total = 0.0;
     const int questionCount = getTutorQuestionCount();
@@ -176,34 +234,6 @@ double ExamPaper::getTutorMarks() const {
 
 double ExamPaper::getAssistantLecturerMarks() const {
     return assistantLecturerMarks;
-}
-
-bool ExamPaper::setTutorMarks(double awardedMarks) {
-    if (!std::isfinite(awardedMarks) || awardedMarks < 0.0 ||
-        awardedMarks > getTutorMaximumMarks()) {
-        return false;
-    }
-
-    tutorMarks = awardedMarks;
-    tutorMarksCaptured = true;
-    if (assistantLecturerMarksCaptured) {
-        marks = tutorMarks + assistantLecturerMarks;
-    }
-    return true;
-}
-
-bool ExamPaper::setAssistantLecturerMarks(double awardedMarks) {
-    if (!std::isfinite(awardedMarks) || awardedMarks < 0.0 ||
-        awardedMarks > getAssistantLecturerMaximumMarks()) {
-        return false;
-    }
-
-    assistantLecturerMarks = awardedMarks;
-    assistantLecturerMarksCaptured = true;
-    if (tutorMarksCaptured) {
-        marks = tutorMarks + assistantLecturerMarks;
-    }
-    return true;
 }
 
 void ExamPaper::flagPhysicalError() {
@@ -265,6 +295,9 @@ void ExamPaper::addQuestion(const std::string& question, double maximumMarks) {
     std::cout << "[ExamPaper] Added a question." << std::endl;
     questions.push_back(question);
     questionMaximumMarks.push_back(maximumMarks);
+    questionMarks.push_back(0.0);
+    questionMarksCaptured.push_back(false);
+    marks = 0.0;
 }
 
 const std::vector<std::string>& ExamPaper::getQuestions() const {

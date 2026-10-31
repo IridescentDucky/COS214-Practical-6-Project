@@ -32,6 +32,10 @@ double AbstractExamPaper::getMarks() const {
     return marks;
 }
 
+int AbstractExamPaper::getYear() const {
+    return year;
+}
+
 double AbstractExamPaper::getBonusMarks() {
     return 0.0;
 }
