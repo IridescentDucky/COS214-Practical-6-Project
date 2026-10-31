@@ -53,6 +53,12 @@ public:
     // void detach(Observer* observer) override;        //Observer
     // void notify() override;                          //Observer
 
+    void addTask(const std::string& name, int score, int maxScore) override;
+    double getAverageScore() const override;
+    const TaskRecord& getTask(int index) const override;
+    int getTaskCount() const override;
+    void updateTaskScore(int index, int newScore) override;
+    
 };
 
 #endif

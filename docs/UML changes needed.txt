@@ -58,6 +58,29 @@ Things the diagrams must change so they match the code and each other.
 
 [WAITING - Yoshua & Jonno] Rename generic state methods (list coming on Discord).
 
+[DO NOW]
+--> AbstractWorkItem:
+        - Added a struct called TaskRecord with the varaibles
+            - std::string name
+            - int score
+            - int maxScore
+        - Added this under protected:
+            - std::vector<TaskEscalationManager<T>*> observers;
+        - Added these functions for the vector: [theyre all pure abstract]
+                - addTask(const std::string& name, int score, int maxScore): void;
+                - getAverageScore() const: double;
+                - getTask(int index) const: TaskTecord&;
+                - getTaskCount() const: int;
+                - updateTaskScore(int index, int newScore): void
+
+--> WorkItem:
+        - Added these functions:
+                - addTask(const std::string& name, int score, int maxScore): void;
+                - getAverageScore() const: double;
+                - getTask(int index) const: TaskTecord&;
+                - getTaskCount() const: int;
+                - updateTaskScore(int index, int newScore): void
+
 
 === 2. GENERIC STATE DIAGRAM ===
 
