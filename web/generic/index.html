@@ -882,7 +882,12 @@ details.more[open] summary h3::before {
                 </select>
                 <button class="btn" type="button" id="strategy-set">Use this rule</button>
             </div>
-            <p class="note">When an item completes, the mediator scores its tasks with this rule, then tells the external system through the Adapter. In use: <strong id="strategy-current">Average</strong>.</p>
+            <p class="note">When an item completes, the mediator scores its tasks with this rule. In use: <strong id="strategy-current">Average</strong>.</p>
+            <div class="panel-head" style="margin:1rem 0 0.5rem">
+                <h3>External system</h3>
+                <span class="pattern">Adapter</span>
+            </div>
+            <p class="note">TIVIDY does not talk to the outside system directly. When an item completes, the mediator calls a Target interface, and the Adapter turns that into the external system&rsquo;s own call. Complete an item and look for the Adapter lines in the log.</p>
             <div class="panel-head" style="margin:1rem 0 0.5rem">
                 <h3>Templates</h3>
                 <span class="pattern">Prototype</span>
@@ -892,7 +897,7 @@ details.more[open] summary h3::before {
                 <h3>Escalation</h3>
                 <span class="pattern">Observer &middot; Chain of Responsibility</span>
             </div>
-            <p class="note">The mediator gives every item a watcher. Once an item is past its deadline, the watcher sends how late it is up the chain: the team lead handles under 3 time units late, the manager under 7, anything later is unhandled. Log time on an item to see it.</p>
+            <p class="note">The mediator gives every item a watcher. Once an item is past its deadline, the watcher sends how late it is up the chain: the team lead handles under 3 time units late, the manager under 7, the department head under 12, the director under 18 and the executive under 25. Anything later is unhandled. Log time on an item to see it.</p>
             <div class="panel-head" style="margin:1rem 0 0.5rem">
                 <h3>Work item factory</h3>
                 <span class="pattern">Factory Method</span>
@@ -1418,8 +1423,17 @@ function addLog(title, lines, error, actor) {
     const entry = document.createElement("div");
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     let problem = "";
-    const rows = lines.map((line) => {
-        const tag = classify(line, actor);
+    const tags = lines.map((line) => classify(line, actor));
+    tags.forEach((tag, i) => {
+        if (tag !== "Output") {
+            return;
+        }
+        const before = tags.slice(0, i).reverse().find((t) => t !== "Output");
+        const after = tags.slice(i + 1).find((t) => t !== "Output");
+        tags[i] = before === "Composite" ? before : after === "Decorator" ? after : before || after || "Output";
+    });
+    const rows = lines.map((line, i) => {
+        const tag = tags[i];
         if ((tag === "Rejected" || tag === "Guard") && !problem) {
             problem = line.replace(/^\[State\]\s*/, "");
         }

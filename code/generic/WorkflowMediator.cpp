@@ -1,7 +1,11 @@
 #include "WorkflowMediator.h"
 #include "WorkItem.h"
 #include "WorkItemIterator.h"
-#include "ConcreteHandler.h"
+#include "ConcreteHandlerA.h"
+#include "ConcreteHandlerB.h"
+#include "ConcreteHandlerC.h"
+#include "ConcreteHandlerD.h"
+#include "ConcreteHandlerE.h"
 #include "ConcreteStrategyA.h"
 #include "Adapter.h"
 
@@ -36,8 +40,14 @@ void WorkflowMediator<T>::addWorkItem(AbstractWorkItem<T>* item)
     {
         workItems.push_back(item);
 
-        TaskEscalationManager<T>* teamLead = new ConcreteHandler<T>("Team lead", 3);
-        teamLead->setSuccessor(new ConcreteHandler<T>("Manager", 7));
+        TaskEscalationManager<T>* teamLead = new ConcreteHandlerA<T>("Team lead", 3);
+        TaskEscalationManager<T>* manager = new ConcreteHandlerB<T>("Manager", 7);
+        TaskEscalationManager<T>* departmentHead = new ConcreteHandlerC<T>("Department head", 12);
+        TaskEscalationManager<T>* director = new ConcreteHandlerD<T>("Director", 18);
+        teamLead->setSuccessor(manager);
+        manager->setSuccessor(departmentHead);
+        departmentHead->setSuccessor(director);
+        director->setSuccessor(new ConcreteHandlerE<T>("Executive", 25));
         item->attach(teamLead);
         escalations.push_back(teamLead);
     }

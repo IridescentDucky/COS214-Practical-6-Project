@@ -1,5 +1,5 @@
-#ifndef ConcreteHandler_h
-#define ConcreteHandler_h
+#ifndef ConcreteHandlerE_h
+#define ConcreteHandlerE_h
 
 #include "TaskEscalationManager.h"
 
@@ -9,16 +9,16 @@
 using namespace std;
 
 template <typename T>
-class ConcreteHandler : public TaskEscalationManager<T> {
+class ConcreteHandlerE : public TaskEscalationManager<T> {
 private:
     string name;
 public:
-    ConcreteHandler(string name, T condition);
+    ConcreteHandlerE(string name, T condition);
     void handleRequest(T a);
 
     void update();//for observer
 
-    ~ConcreteHandler() override = default;
+    ~ConcreteHandlerE() override = default;
 };
 
 #endif

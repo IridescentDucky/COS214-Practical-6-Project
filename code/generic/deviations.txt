@@ -86,14 +86,16 @@ How the patterns connect (Mediator as the hub, as in the UML)
 - TIVIDY (Facade) only talks to the WorkflowMediator and the Creator. New facade operations so a client can
   reach the rest of the flow: logTime(), addTask(), setStrategy(), saveAsTemplate(), createFromTemplate().
 - WorkflowMediator now holds what the UML links it to:
-  - TaskEscalationManager: every work item it registers gets a "Team lead -> Manager" escalation chain
-    attached as its observer. The Mediator owns these chains.
+  - TaskEscalationManager: every work item it registers gets a five-level escalation chain attached as its
+    observer: Team lead (ConcreteHandlerA) -> Manager (B) -> Department head (C) -> Director (D) -> Executive (E).
+    The Mediator owns these chains.
   - Strategy: when an item completes, the Mediator scores its tasks with the current strategy
     (average by default). setStrategy() replaces it and the Mediator deletes the old one.
   - Target/Adapter: when an item completes, the Mediator notifies the external system through the Adapter.
   - PrototypeManager: stores template work items. createFromPrototype() clones one into a new work item.
 - Observer + Chain of Responsibility: the handler sends how many time units the item is past its deadline
-  (0 if on time). On time = not escalated; under 3 = team lead; under 7 = manager; more = unhandled.
+  (0 if on time). On time = not escalated; under 3 = team lead; under 7 = manager; under 12 = department head;
+  under 18 = director; under 25 = executive; more = unhandled.
   Logging time also notifies observers, so an item escalates as soon as it goes overdue.
 - Prototype: AbstractWorkItem has clone(id, mediator). A clone keeps the name, deadline and tasks but gets
   a new id, starts in Created and has no observers, data or time logged.

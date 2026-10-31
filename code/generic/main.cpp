@@ -60,6 +60,9 @@ int main()
     tividy.logTime(test, 7);
     tividy.logTime(test, 2);
     tividy.logTime(test, 4);
+    tividy.logTime(test, 7);
+    tividy.logTime(test, 7);
+    tividy.logTime(test, 5);
 
     std::cout << std::endl << "=== 6. Undo a change (Memento) ===" << std::endl;
     AbstractWorkItem<int>* buildItem = findItem(tividy, build);

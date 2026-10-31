@@ -15,7 +15,11 @@ set(WORKFLOW_SOURCES
     code/generic/Component.cpp
     code/generic/Composite.cpp
     code/generic/ConcreteCreator.cpp
-    code/generic/ConcreteHandler.cpp
+    code/generic/ConcreteHandlerA.cpp
+    code/generic/ConcreteHandlerB.cpp
+    code/generic/ConcreteHandlerC.cpp
+    code/generic/ConcreteHandlerD.cpp
+    code/generic/ConcreteHandlerE.cpp
     code/generic/ConcreteStrategyA.cpp
     code/generic/ConcreteStrategyB.cpp
     code/generic/ConcreteStrategyC.cpp

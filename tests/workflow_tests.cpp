@@ -3,7 +3,11 @@
 #include "Caretaker.h"
 #include "Composite.h"
 #include "ConcreteCreator.h"
-#include "ConcreteHandler.h"
+#include "ConcreteHandlerA.h"
+#include "ConcreteHandlerB.h"
+#include "ConcreteHandlerC.h"
+#include "ConcreteHandlerD.h"
+#include "ConcreteHandlerE.h"
 #include "ConcreteStrategyB.h"
 #include "PrototypeManager.h"
 #include "Iterator.h"
@@ -324,9 +328,9 @@ TEST(FactoryMethodTest, FacadeCreatesItemsThroughTheFactory)
 
 TEST(ChainOfResponsibilityTest, ReplacingASuccessorUsesTheNewOne)
 {
-    ConcreteHandler<int>* lead = new ConcreteHandler<int>("Lead", 3);
-    lead->setSuccessor(new ConcreteHandler<int>("Manager", 7));
-    lead->setSuccessor(new ConcreteHandler<int>("Director", 10));
+    ConcreteHandlerA<int>* lead = new ConcreteHandlerA<int>("Lead", 3);
+    lead->setSuccessor(new ConcreteHandlerA<int>("Manager", 7));
+    lead->setSuccessor(new ConcreteHandlerA<int>("Director", 10));
 
     std::ostringstream output;
     std::streambuf* original = std::cout.rdbuf(output.rdbuf());
@@ -339,8 +343,8 @@ TEST(ChainOfResponsibilityTest, ReplacingASuccessorUsesTheNewOne)
 
 TEST(ChainOfResponsibilityTest, SuccessorThatWouldLoopIsRejected)
 {
-    ConcreteHandler<int>* lead = new ConcreteHandler<int>("Lead", 3);
-    ConcreteHandler<int>* manager = new ConcreteHandler<int>("Manager", 7);
+    ConcreteHandlerA<int>* lead = new ConcreteHandlerA<int>("Lead", 3);
+    ConcreteHandlerA<int>* manager = new ConcreteHandlerA<int>("Manager", 7);
     lead->setSuccessor(manager);
 
     std::ostringstream output;
@@ -356,8 +360,8 @@ TEST(ChainOfResponsibilityTest, SuccessorThatWouldLoopIsRejected)
 
 TEST(ChainOfResponsibilityTest, RequestGoesToFirstHandlerThatCanTakeIt)
 {
-    ConcreteHandler<int>* lead = new ConcreteHandler<int>("Lead", 3);
-    lead->setSuccessor(new ConcreteHandler<int>("Manager", 7));
+    ConcreteHandlerA<int>* lead = new ConcreteHandlerA<int>("Lead", 3);
+    lead->setSuccessor(new ConcreteHandlerA<int>("Manager", 7));
 
     std::ostringstream output;
     std::streambuf* original = std::cout.rdbuf(output.rdbuf());
@@ -444,28 +448,40 @@ TEST(EscalationTest, OverdueWorkGoesFurtherUpTheChainTheLaterItIs)
 {
     TIVIDY<int> tividy;
     int id = tividy.createWorkItem("Design", 5);
-    std::string slightly;
-    std::string very;
-    std::string extremely;
+    const int extraTime[] = { 7, 2, 5, 6, 6, 10 };
+    const char* expected[] = {
+        "Team lead handled the request",
+        "Manager handled the request",
+        "Department head handled the request",
+        "Director handled the request",
+        "Executive handled the request",
+        "The request could not be handled"
+    };
+    for (int step = 0; step < 6; ++step)
     {
         OutputCapture output;
-        tividy.logTime(id, 7);
-        slightly = output.text();
+        tividy.logTime(id, extraTime[step]);
+        EXPECT_TRUE(output.contains(expected[step])) << "after logging " << extraTime[step] << " more: " << output.text();
     }
-    {
-        OutputCapture output;
-        tividy.logTime(id, 2);
-        very = output.text();
-    }
-    {
-        OutputCapture output;
-        tividy.logTime(id, 4);
-        extremely = output.text();
-    }
+}
 
-    EXPECT_NE(std::string::npos, slightly.find("Team lead handled the request"));
-    EXPECT_NE(std::string::npos, very.find("Manager handled the request"));
-    EXPECT_NE(std::string::npos, extremely.find("The request could not be handled"));
+TEST(ChainOfResponsibilityTest, FiveHandlerTypesCanFormOneChain)
+{
+    ConcreteHandlerA<int>* first = new ConcreteHandlerA<int>("A", 1);
+    ConcreteHandlerB<int>* second = new ConcreteHandlerB<int>("B", 2);
+    ConcreteHandlerC<int>* third = new ConcreteHandlerC<int>("C", 3);
+    ConcreteHandlerD<int>* fourth = new ConcreteHandlerD<int>("D", 4);
+    first->setSuccessor(second);
+    second->setSuccessor(third);
+    third->setSuccessor(fourth);
+    fourth->setSuccessor(new ConcreteHandlerE<int>("E", 5));
+
+    OutputCapture output;
+    first->handleRequest(4);
+    std::string text = output.text();
+    delete first;
+
+    EXPECT_EQ("A passed the request on\nB passed the request on\nC passed the request on\nD passed the request on\nE handled the request\n", text);
 }
 
 TEST(CompletionTest, MediatorScoresNotifiesExternalSystemAndDeliversDependents)
