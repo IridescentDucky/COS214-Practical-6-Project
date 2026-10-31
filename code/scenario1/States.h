@@ -77,7 +77,6 @@ public:
 class FailedState :public PaperState{
 public:
     explicit FailedState(AbstractExamPaper* paper) : PaperState(paper) {}
-    void pause() override;
 };
 
 //----------- end. -----------------------------------------------

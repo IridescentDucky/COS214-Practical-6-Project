@@ -70,6 +70,58 @@ TEST(Scenario1StateTest, ExecutesNormalPaperLifecycle)
     EXPECT_EQ(nullptr, paper.getState());
 }
 
+TEST(Scenario1StateTest, MarkingCanAdvanceThroughValidation)
+{
+    ExamPaper paper("COS214", 180, 0.0, 2026);
+    paper.getState()->nextState();
+    paper.getState()->nextState();
+
+    paper.getState()->validate();
+    ASSERT_TRUE(dynamic_cast<ValidatedState*>(paper.getState()) != nullptr);
+
+    paper.getState()->nextState();
+    EXPECT_TRUE(dynamic_cast<MarkedState*>(paper.getState()) != nullptr);
+}
+
+TEST(Scenario1StateTest, MarkingCanCompleteUsingNextState)
+{
+    ExamPaper paper("COS214", 180, 0.0, 2026);
+    paper.getState()->nextState();
+    paper.getState()->nextState();
+
+    paper.getState()->nextState();
+    EXPECT_TRUE(dynamic_cast<MarkedState*>(paper.getState()) != nullptr);
+}
+
+TEST(Scenario1StateTest, MarkingCanEnterExceptionAndPauseForRecovery)
+{
+    ExamPaper paper("COS214", 180, 0.0, 2026);
+    paper.getState()->nextState();
+    paper.getState()->nextState();
+
+    paper.getState()->createException();
+    ASSERT_TRUE(dynamic_cast<ExceptionState*>(paper.getState()) != nullptr);
+
+    paper.getState()->pause();
+    ASSERT_TRUE(dynamic_cast<PausedState*>(paper.getState()) != nullptr);
+
+    paper.getState()->resumeMarking();
+    EXPECT_TRUE(dynamic_cast<MarkingState*>(paper.getState()) != nullptr);
+}
+
+TEST(Scenario1StateTest, MarkingCanFailAndFailureCannotBePaused)
+{
+    ExamPaper paper("COS214", 180, 0.0, 2026);
+    paper.getState()->nextState();
+    paper.getState()->nextState();
+
+    paper.getState()->fail();
+    ASSERT_TRUE(dynamic_cast<FailedState*>(paper.getState()) != nullptr);
+
+    paper.getState()->pause();
+    EXPECT_TRUE(dynamic_cast<FailedState*>(paper.getState()) != nullptr);
+}
+
 TEST(Scenario1ComponentTest, DecoratorsAndGroupsAggregateBonusMarksAndExtraTime)
 {
     ExamPaper paper("COS214", 180, 0.0, 2026);

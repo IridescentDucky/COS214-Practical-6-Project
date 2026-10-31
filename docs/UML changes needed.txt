@@ -140,10 +140,17 @@ the corresponding transitions:
    CapturedState.nextState()      -> archived terminal (null state pointer)
 
 The ArchivedPaper terminal has no corresponding state class in the class diagram;
-the implementation uses a null state pointer to represent it. Other state methods
-not covered by the normal lifecycle remain stubs. State objects retain a
-non-owning pointer to their paper so their UML no-argument methods can perform
-transitions.
+the implementation uses a null state pointer to represent it. State objects retain
+a non-owning pointer to their paper so their UML no-argument methods can perform
+transitions. Additional transitions are:
+   MarkingState.nextState()       -> MarkedState (same as completeMarking())
+   MarkingState.validate()        -> ValidatedState
+   ValidatedState.nextState()     -> MarkedState
+   MarkingState.createException() -> ExceptionState
+   ExceptionState.pause()         -> PausedState
+   PausedState.resumeMarking()    -> MarkingState
+   MarkingState.fail()            -> FailedState
+FailedState is terminal; pause() is not overridden and therefore does not change it.
 
 Observer notifications originate at AbstractExamPaper. Attach the chain head as
 an observer; its update starts the chain, which forwards using Marker::next.
