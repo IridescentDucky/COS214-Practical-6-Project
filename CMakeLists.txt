@@ -16,13 +16,11 @@ set(WORKFLOW_SOURCES
     code/generic/Composite.cpp
     code/generic/ConcreteCreator.cpp
     code/generic/ConcreteHandler.cpp
-    code/generic/ConcreteObserver.cpp
     code/generic/ConcreteStrategyA.cpp
     code/generic/ConcreteStrategyB.cpp
     code/generic/ConcreteStrategyC.cpp
     code/generic/Creator.cpp
     code/generic/Decorator.cpp
-    code/generic/Observer.cpp
     code/generic/State.cpp
     code/generic/TIVIDY.cpp
     code/generic/TaskEscalationManager.cpp
@@ -45,7 +43,8 @@ target_include_directories(game_core PUBLIC code/scenario2)
 include(FetchContent)
 FetchContent_Declare(
     googletest
-    URL https://codeload.github.com/google/googletest/zip/refs/tags/release-1.12.1)
+    URL https://codeload.github.com/google/googletest/zip/refs/tags/release-1.12.1
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 set(gtest_force_shared_crt ON CACHE BOOL "Use shared CRT on Windows" FORCE)
 FetchContent_MakeAvailable(googletest)
 

@@ -18,7 +18,7 @@ public:
 
     void update();//for observer
 
-    ~ConcreteHandler();
+    ~ConcreteHandler() override = default;
 };
 
 #endif

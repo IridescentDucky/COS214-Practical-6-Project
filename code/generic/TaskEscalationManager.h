@@ -16,6 +16,7 @@ public:
 
     virtual void handleRequest(T a) = 0;
     void setSuccessor(TaskEscalationManager<T>* next);
+    void setWorkItem(AbstractWorkItem<T>* item) { workItem = item; }
 
     virtual ~TaskEscalationManager();
 

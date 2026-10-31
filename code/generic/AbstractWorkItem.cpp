@@ -40,7 +40,10 @@ AbstractWorkItem<T>::~AbstractWorkItem(){
 
 template <typename T>
 void AbstractWorkItem<T>::attach(TaskEscalationManager<T>* observer) {
-
+    if (observer == nullptr) {
+        return;
+    }
+    observer->setWorkItem(this);
     this->observers.push_back(observer);
 }
 
@@ -48,6 +51,7 @@ template <typename T>
 void AbstractWorkItem<T>::detach(TaskEscalationManager<T>* observer) {
     for (typename std::vector<TaskEscalationManager<T>*>::iterator it = observers.begin(); it != observers.end(); ++it){
         if (*it == observer){
+            observer->setWorkItem(nullptr);
             this->observers.erase(it);        //stole algo from Iterator slides hehe
             break;
         }

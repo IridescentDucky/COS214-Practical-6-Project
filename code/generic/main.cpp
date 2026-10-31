@@ -46,9 +46,11 @@ int main()
     std::cout << std::endl << "=== 4. Observer ===" << std::endl;
     WorkItem<int> review(10, "Review", 5, nullptr);
     {
-        ConcreteObserver<int> watcher(&review, nullptr);
+        ConcreteHandler<int> watcher("Review watcher", 1);
+        review.attach(&watcher);
         review.handleState();
         review.handleState();
+        review.detach(&watcher);
     }
 
     std::cout << std::endl << "=== 5. Memento ===" << std::endl;

@@ -1,4 +1,5 @@
 #include "ConcreteHandler.h"
+#include "AbstractWorkItem.h"
 #include "State.h"
 
 template <typename T>
@@ -21,13 +22,6 @@ void ConcreteHandler<T>::handleRequest(T a){
 }
 
 template <typename T>
-ConcreteHandler<T>::~ConcreteHandler() {
-    delete this->successor;
-
-    this->successor = nullptr;
-}
-
-template <typename T>
 void ConcreteHandler<T>::update() {
 
     if (this->workItem == nullptr) {
@@ -38,7 +32,7 @@ void ConcreteHandler<T>::update() {
 
     std::cout << name << " was notified that WorkItem has changed state to " << currentState->getName() << std::endl;
 
-    handleRequest(this->condition);     //handleRequest takes in a T, condition is of type T
+    handleRequest(static_cast<T>(this->workItem->getScore()));
 }
 
 template class ConcreteHandler<int>;

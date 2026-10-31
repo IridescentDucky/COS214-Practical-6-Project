@@ -5,7 +5,7 @@
 #include "ConcreteCreator.h"
 #include "ConcreteHandler.h"
 #include "Iterator.h"
-#include "Observer.h"
+#include "TaskEscalationManager.h"
 #include "TIVIDY.h"
 #include "WorkItem.h"
 #include "WorkflowMediator.h"
@@ -17,10 +17,14 @@
 
 namespace
 {
-class CountingObserver : public Observer
+class CountingObserver : public TaskEscalationManager<int>
 {
 public:
-    CountingObserver() : updateCount(0) {}
+    CountingObserver() : TaskEscalationManager<int>(0), updateCount(0) {}
+
+    void handleRequest(int) override
+    {
+    }
 
     void update() override
     {

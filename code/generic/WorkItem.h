@@ -21,6 +21,7 @@ private:
     int deadline;
     int timeSpent;
     std::string data;
+    std::vector<TaskRecord> tasks;
     //std::vector<Observer*> observers; // Subject holds its observers.
     
 public:
