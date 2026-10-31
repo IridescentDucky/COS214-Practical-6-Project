@@ -5,6 +5,8 @@
 #include "ConcreteStrategyB.h"
 #include "Iterator.h"
 #include "TIVIDY.h"
+#include "StatsOriginator.h"
+#include "StatsCaretaker.h"
 
 #include <iostream>
 
@@ -95,6 +97,29 @@ int main()
     tividy.advanceWork(redesign);
     tividy.printStatus();
 
+    
+    std::cout << std::endl << "=== 10. Storing stats and retrieving them (Strategy and Memento) ===" << std::endl;
+    
+    AbstractWorkItem<int>* designItemForStats = findItem(tividy, design);
+    StatsOriginator<int> statsOriginator(2026);
+    StatsCaretaker statsCaretaker;
+
+    // calculating stats and printing the state and then storing the stats
+    statsOriginator.calculateStats(designItemForStats);
+    statsOriginator.printState();
+    statsCaretaker.saveMemento(statsOriginator.createMemento());
+
+    // writing in new object with different stats
+    statsOriginator.calculateStats(buildItem);
+    statsOriginator.printState();
+
+    // restoring the initial object's stats
+    statsOriginator.restoreFromMemento(statsCaretaker.getMemento());
+    statsOriginator.printState();
+    
+    // testing getMemento()
+    StatsMemento* retrieved = statsCaretaker.getMemento();
+    std::cout << "[Main]: testing if memento was got: " << retrieved->getYear() << std::endl;
 
     return 0;
 }
