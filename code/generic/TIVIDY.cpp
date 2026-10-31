@@ -1,17 +1,19 @@
 #include "TIVIDY.h"
 #include "WorkItem.h"
 #include "WorkflowMediator.h"
+#include "ConcreteCreator.h"
 
 #include <iostream>
 
 template <typename T>
-TIVIDY<T>::TIVIDY() : mediator(new WorkflowMediator<T>()), nextId(1)
+TIVIDY<T>::TIVIDY() : mediator(new WorkflowMediator<T>()), creator(new ConcreteCreator<T>()), nextId(1)
 {
 }
 
 template <typename T>
 TIVIDY<T>::~TIVIDY()
 {
+    delete creator;
     delete mediator;
 }
 
@@ -29,7 +31,7 @@ AbstractWorkItem<T>* TIVIDY<T>::find(int id) const
 template <typename T>
 int TIVIDY<T>::createWorkItem(const std::string& name, int deadline)
 {
-    AbstractWorkItem<T>* item = new WorkItem<T>(nextId++, name, deadline, mediator);
+    AbstractWorkItem<T>* item = creator->createWorkItem(nextId++, name, deadline, mediator);
     mediator->addWorkItem(item);
     std::cout << "  [TIVIDY] Created '" << name << "' (id " << item->getId() << ")" << std::endl;
     return item->getId();
@@ -74,6 +76,69 @@ void TIVIDY<T>::resumeWork(int id)
     {
         item->resume();
     }
+}
+
+template <typename T>
+void TIVIDY<T>::logTime(int id, int units)
+{
+    if (units <= 0)
+    {
+        std::cout << "  [TIVIDY] Time logged must be positive" << std::endl;
+        return;
+    }
+    AbstractWorkItem<T>* item = find(id);
+    if (item != nullptr)
+    {
+        item->addTimeSpent(units);
+    }
+}
+
+template <typename T>
+void TIVIDY<T>::addTask(int id, const std::string& name, int score, int maxScore)
+{
+    if (score < 0 || maxScore <= 0 || score > maxScore)
+    {
+        std::cout << "  [TIVIDY] Task score must be between 0 and a positive maximum" << std::endl;
+        return;
+    }
+    AbstractWorkItem<T>* item = find(id);
+    if (item != nullptr)
+    {
+        item->addTask(name, score, maxScore);
+    }
+}
+
+template <typename T>
+void TIVIDY<T>::setStrategy(Strategy<T>* strategy)
+{
+    mediator->setStrategy(strategy);
+}
+
+template <typename T>
+int TIVIDY<T>::saveAsTemplate(int id)
+{
+    AbstractWorkItem<T>* item = find(id);
+    if (item == nullptr)
+    {
+        return -1;
+    }
+    int index = mediator->savePrototype(item);
+    std::cout << "  [TIVIDY] Saved '" << item->getName() << "' as template " << index << std::endl;
+    return index;
+}
+
+template <typename T>
+int TIVIDY<T>::createFromTemplate(int templateIndex)
+{
+    AbstractWorkItem<T>* item = mediator->createFromPrototype(templateIndex, nextId);
+    if (item == nullptr)
+    {
+        std::cout << "  [TIVIDY] No template " << templateIndex << std::endl;
+        return -1;
+    }
+    nextId++;
+    std::cout << "  [TIVIDY] Created '" << item->getName() << "' (id " << item->getId() << ") from template " << templateIndex << std::endl;
+    return item->getId();
 }
 
 template <typename T>

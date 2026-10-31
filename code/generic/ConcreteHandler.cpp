@@ -29,10 +29,16 @@ void ConcreteHandler<T>::update() {
     }
 
     State<T>* currentState = this->workItem->getState();
+    int overdue = this->workItem->getOverdue();
 
-    std::cout << name << " was notified that WorkItem has changed state to " << currentState->getName() << std::endl;
-
-    handleRequest(static_cast<T>(this->workItem->getScore()));
+    std::cout << name << " was notified that " << this->workItem->getName() << " is " << currentState->getName();
+    if (overdue > 0) {
+        std::cout << " and " << overdue << " time unit(s) overdue" << std::endl;
+        handleRequest(static_cast<T>(overdue));
+    }
+    else {
+        std::cout << std::endl;
+    }
 }
 
 template class ConcreteHandler<int>;

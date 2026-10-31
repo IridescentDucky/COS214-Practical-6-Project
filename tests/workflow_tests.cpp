@@ -4,6 +4,8 @@
 #include "Composite.h"
 #include "ConcreteCreator.h"
 #include "ConcreteHandler.h"
+#include "ConcreteStrategyB.h"
+#include "PrototypeManager.h"
 #include "Iterator.h"
 #include "TaskEscalationManager.h"
 #include "TIVIDY.h"
@@ -42,6 +44,57 @@ void complete(WorkItem<int>& item)
     item.handleState();
     item.handleState();
 }
+
+void completeThroughFacade(TIVIDY<int>& tividy, int id)
+{
+    tividy.advanceWork(id);
+    tividy.advanceWork(id);
+    tividy.submitWork(id, "done");
+    tividy.advanceWork(id);
+}
+
+AbstractWorkItem<int>* findThroughIterator(const TIVIDY<int>& tividy, int id)
+{
+    AbstractWorkItem<int>* found = nullptr;
+    Iterator<int>* it = tividy.createIterator();
+    while (it->hasNext())
+    {
+        AbstractWorkItem<int>* item = it->next();
+        if (item->getId() == id)
+        {
+            found = item;
+        }
+    }
+    delete it;
+    return found;
+}
+
+class OutputCapture
+{
+public:
+    OutputCapture() : original(std::cout.rdbuf(buffer.rdbuf()))
+    {
+    }
+
+    ~OutputCapture()
+    {
+        std::cout.rdbuf(original);
+    }
+
+    std::string text() const
+    {
+        return buffer.str();
+    }
+
+    bool contains(const std::string& part) const
+    {
+        return buffer.str().find(part) != std::string::npos;
+    }
+
+private:
+    std::ostringstream buffer;
+    std::streambuf* original;
+};
 }
 
 TEST(StateTest, ValidDataCompletesAndInvalidDataReturnsToInProgress)
@@ -212,25 +265,87 @@ TEST(DecoratorTest, BonusesStackOnTheWrappedWorkItem)
 
 TEST(CompositeTest, GroupAddsUpItsChildren)
 {
+    WorkItem<int> first(1, "First", 5, nullptr);
     WorkItem<int> second(2, "Second", 5, nullptr);
+    BonusTimeDecorator<int> extended(&second, 4);
     Composite<int> group("Sprint");
-    WorkItem<int>* first = new WorkItem<int>(1, "First", 5, nullptr);
-    group.add(first);
-    group.add(new BonusTimeDecorator<int>(&second, 4));
+    group.add(&first);
+    group.add(&extended);
 
     EXPECT_EQ(4, group.getTime());
-    EXPECT_TRUE(group.getChild(0) == first);
+    EXPECT_TRUE(group.getChild(0) == &first);
     EXPECT_TRUE(group.getChild(5) == nullptr);
 }
 
-TEST(FactoryMethodTest, CreatorMakesANewWorkItem)
+TEST(CompositeTest, GroupDoesNotDeleteWorkItemsOwnedByTheFacade)
+{
+    TIVIDY<int> tividy;
+    tividy.createWorkItem("Design", 5);
+    Iterator<int>* it = tividy.createIterator();
+    AbstractWorkItem<int>* item = it->next();
+    delete it;
+    {
+        Composite<int> group("Sprint");
+        group.add(item);
+    }
+
+    EXPECT_EQ("Created", tividy.getWorkItemState(1));
+}
+
+TEST(FactoryMethodTest, CreatorMakesTheRequestedWorkItem)
 {
     ConcreteCreator<int> creator;
-    AbstractWorkItem<int>* item = creator.createWorkItem();
+    AbstractWorkItem<int>* item = creator.createWorkItem(7, "Report", 3, nullptr);
 
     ASSERT_TRUE(item != nullptr);
+    EXPECT_EQ(7, item->getId());
+    EXPECT_EQ("Report", item->getName());
     EXPECT_EQ("Created", item->getStateName());
     delete item;
+}
+
+TEST(FactoryMethodTest, FacadeCreatesItemsThroughTheFactory)
+{
+    TIVIDY<int> tividy;
+    std::ostringstream output;
+    std::streambuf* original = std::cout.rdbuf(output.rdbuf());
+    int id = tividy.createWorkItem("Design", 5);
+    std::cout.rdbuf(original);
+
+    EXPECT_EQ(1, id);
+    EXPECT_NE(std::string::npos, output.str().find("[Factory] Creating WorkItem 'Design'"));
+}
+
+TEST(ChainOfResponsibilityTest, ReplacingASuccessorUsesTheNewOne)
+{
+    ConcreteHandler<int>* lead = new ConcreteHandler<int>("Lead", 3);
+    lead->setSuccessor(new ConcreteHandler<int>("Manager", 7));
+    lead->setSuccessor(new ConcreteHandler<int>("Director", 10));
+
+    std::ostringstream output;
+    std::streambuf* original = std::cout.rdbuf(output.rdbuf());
+    lead->handleRequest(9);
+    std::cout.rdbuf(original);
+    delete lead;
+
+    EXPECT_EQ("Lead passed the request on\nDirector handled the request\n", output.str());
+}
+
+TEST(ChainOfResponsibilityTest, SuccessorThatWouldLoopIsRejected)
+{
+    ConcreteHandler<int>* lead = new ConcreteHandler<int>("Lead", 3);
+    ConcreteHandler<int>* manager = new ConcreteHandler<int>("Manager", 7);
+    lead->setSuccessor(manager);
+
+    std::ostringstream output;
+    std::streambuf* original = std::cout.rdbuf(output.rdbuf());
+    manager->setSuccessor(lead);
+    lead->setSuccessor(lead);
+    lead->handleRequest(9);
+    std::cout.rdbuf(original);
+    delete lead;
+
+    EXPECT_NE(std::string::npos, output.str().find("The request could not be handled"));
 }
 
 TEST(ChainOfResponsibilityTest, RequestGoesToFirstHandlerThatCanTakeIt)
@@ -305,4 +420,135 @@ TEST(IteratorTest, EmptyMediatorHasNothingToVisit)
     EXPECT_FALSE(it->hasNext());
     EXPECT_TRUE(it->next() == nullptr);
     delete it;
+}
+
+TEST(EscalationTest, OnTimeWorkIsObservedButNotEscalated)
+{
+    TIVIDY<int> tividy;
+    int id = tividy.createWorkItem("Design", 5);
+    OutputCapture output;
+    tividy.advanceWork(id);
+    tividy.logTime(id, 5);
+
+    EXPECT_TRUE(output.contains("Team lead was notified that Design is Delivered"));
+    EXPECT_FALSE(output.contains("handled the request"));
+}
+
+TEST(EscalationTest, OverdueWorkGoesFurtherUpTheChainTheLaterItIs)
+{
+    TIVIDY<int> tividy;
+    int id = tividy.createWorkItem("Design", 5);
+    std::string slightly;
+    std::string very;
+    std::string extremely;
+    {
+        OutputCapture output;
+        tividy.logTime(id, 7);
+        slightly = output.text();
+    }
+    {
+        OutputCapture output;
+        tividy.logTime(id, 2);
+        very = output.text();
+    }
+    {
+        OutputCapture output;
+        tividy.logTime(id, 4);
+        extremely = output.text();
+    }
+
+    EXPECT_NE(std::string::npos, slightly.find("Team lead handled the request"));
+    EXPECT_NE(std::string::npos, very.find("Manager handled the request"));
+    EXPECT_NE(std::string::npos, extremely.find("The request could not be handled"));
+}
+
+TEST(CompletionTest, MediatorScoresNotifiesExternalSystemAndDeliversDependents)
+{
+    TIVIDY<int> tividy;
+    int design = tividy.createWorkItem("Design", 5);
+    int build = tividy.createWorkItem("Build", 5);
+    tividy.addTask(design, "Wireframes", 6, 10);
+    tividy.addTask(design, "Flows", 8, 10);
+    tividy.addDependency(design, build);
+
+    OutputCapture output;
+    completeThroughFacade(tividy, design);
+
+    EXPECT_TRUE(output.contains("[Strategy A] Calculated overall average score: 7"));
+    EXPECT_TRUE(output.contains("(Adaptee) Specified request recieved"));
+    EXPECT_EQ("Delivered", tividy.getWorkItemState(build));
+}
+
+TEST(CompletionTest, SwappingTheStrategyChangesHowCompletedWorkIsScored)
+{
+    TIVIDY<int> tividy;
+    int design = tividy.createWorkItem("Design", 5);
+    tividy.addTask(design, "Wireframes", 6, 10);
+    tividy.addTask(design, "Flows", 9, 10);
+    tividy.setStrategy(new ConcreteStrategyB<int>());
+
+    OutputCapture output;
+    completeThroughFacade(tividy, design);
+
+    EXPECT_TRUE(output.contains("[Strategy B] Calculated max score: 9"));
+}
+
+TEST(PrototypeTest, TemplateCloneIsANewIndependentItem)
+{
+    TIVIDY<int> tividy;
+    int design = tividy.createWorkItem("Design", 5);
+    tividy.addTask(design, "Wireframes", 6, 10);
+    completeThroughFacade(tividy, design);
+    int templateIndex = tividy.saveAsTemplate(design);
+
+    int first = tividy.createFromTemplate(templateIndex);
+    int second = tividy.createFromTemplate(templateIndex);
+    AbstractWorkItem<int>* firstItem = findThroughIterator(tividy, first);
+    firstItem->updateTaskScore(0, 1);
+    AbstractWorkItem<int>* secondItem = findThroughIterator(tividy, second);
+
+    EXPECT_EQ(0, templateIndex);
+    EXPECT_EQ(2, first);
+    EXPECT_EQ(3, second);
+    EXPECT_EQ("Design", firstItem->getName());
+    EXPECT_EQ("Created", firstItem->getStateName());
+    EXPECT_EQ(1, secondItem->getTaskCount());
+    EXPECT_EQ(6, secondItem->getTask(0).score);
+}
+
+TEST(PrototypeTest, UnknownTemplatesAndItemsAreRejected)
+{
+    TIVIDY<int> tividy;
+    EXPECT_EQ(-1, tividy.saveAsTemplate(42));
+    EXPECT_EQ(-1, tividy.createFromTemplate(0));
+    EXPECT_EQ(-1, tividy.createFromTemplate(-1));
+}
+
+TEST(PrototypeTest, ManagerOwnsAndRemovesItsPrototypes)
+{
+    PrototypeManager<int> manager;
+    AbstractWorkItem<int>* prototype = new WorkItem<int>(1, "Template", 5, nullptr);
+    manager.addPrototype(prototype);
+    manager.addPrototype(prototype);
+    EXPECT_EQ(1, manager.getPrototypeCount());
+    EXPECT_TRUE(manager.getPrototype(0) == prototype);
+    EXPECT_TRUE(manager.getPrototype(1) == nullptr);
+
+    manager.removePrototype(prototype);
+    EXPECT_EQ(0, manager.getPrototypeCount());
+    manager.addPrototype(new WorkItem<int>(2, "Kept", 5, nullptr));
+}
+
+TEST(FacadeTest, InvalidTimeAndTasksAreRejected)
+{
+    TIVIDY<int> tividy;
+    int id = tividy.createWorkItem("Design", 5);
+    tividy.logTime(id, 0);
+    tividy.logTime(id, -3);
+    tividy.addTask(id, "Too high", 11, 10);
+    tividy.addTask(id, "Negative", -1, 10);
+
+    AbstractWorkItem<int>* item = findThroughIterator(tividy, id);
+    EXPECT_EQ(0, item->getOverdue());
+    EXPECT_EQ(0, item->getTaskCount());
 }

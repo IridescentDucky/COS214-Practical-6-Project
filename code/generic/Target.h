@@ -7,6 +7,7 @@ using namespace std;
 
 class Target {
 public:	
+	virtual ~Target() {}
 	virtual void request() = 0;
 };
 

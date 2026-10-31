@@ -21,6 +21,7 @@ set(WORKFLOW_SOURCES
     code/generic/ConcreteStrategyC.cpp
     code/generic/Creator.cpp
     code/generic/Decorator.cpp
+    code/generic/PrototypeManager.cpp
     code/generic/State.cpp
     code/generic/TIVIDY.cpp
     code/generic/TaskEscalationManager.cpp

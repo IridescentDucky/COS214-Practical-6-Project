@@ -12,6 +12,8 @@
 #include "AbstractWorkItem.h"
 #include "WorkItem.h"
 #include "Iterator.h"
+#include "Creator.h"
+#include "Strategy.h"
 
 template <typename T>
 class AbstractWorkItem;
@@ -32,6 +34,11 @@ public:
     void submitWork(int id, const std::string& data);
     void pauseWork(int id);
     void resumeWork(int id);
+    void logTime(int id, int units);
+    void addTask(int id, const std::string& name, int score, int maxScore);
+    void setStrategy(Strategy<T>* strategy);
+    int saveAsTemplate(int id);
+    int createFromTemplate(int templateIndex);
     void printStatus() const;
     bool addDependency(int predecessorId, int successorId);
     std::string getWorkItemState(int id) const;
@@ -43,6 +50,7 @@ private:
     AbstractWorkItem<T>* find(int id) const;
 
     WorkflowMediator<T>* mediator;
+    Creator<T>* creator;
     int nextId;
 };
 

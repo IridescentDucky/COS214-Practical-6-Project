@@ -12,6 +12,8 @@ private:
 public:
     Caretaker() = default;
     ~Caretaker();
+    Caretaker(const Caretaker&) = delete;
+    Caretaker& operator=(const Caretaker&) = delete;
 
     void addMemento(WorkItemMemento<T>* m);
     WorkItemMemento<T>* getMemento(int index) const;

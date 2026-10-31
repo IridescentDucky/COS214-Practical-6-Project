@@ -5,10 +5,10 @@
 
 
 template <typename T>
-AbstractWorkItem<T>* ConcreteCreator<T>::factoryMethod(){
-    std::cout << "Creating a WorkItem" << std::endl;
+AbstractWorkItem<T>* ConcreteCreator<T>::factoryMethod(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator){
+    std::cout << "  [Factory] Creating WorkItem '" << name << "'" << std::endl;
 
-    return new WorkItem<T>(0, "WorkItem", 0, nullptr);
+    return new WorkItem<T>(id, name, deadline, mediator);
 }
 
 template class ConcreteCreator<int>;

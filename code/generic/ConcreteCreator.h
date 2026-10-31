@@ -6,7 +6,7 @@
 template <typename T>
 class ConcreteCreator : public Creator<T> {
 protected:
-    AbstractWorkItem<T>* factoryMethod();
+    AbstractWorkItem<T>* factoryMethod(int id, const std::string& name, int deadline, WorkflowMediator<T>* mediator);
 };
 
 #endif

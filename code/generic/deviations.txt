@@ -62,3 +62,39 @@ Observer:
 Abstract Factory:
 - Removed relationship with Mediator cause its forcing a relationship. What is mediator coordinating here? Added a relationship with TIVIDY(Facade) so the Facade can use runWorkflow to create an instance of a workflow from either Factory 1 or Factory 2. The Mediator already has a responsibility and thats to coordinate the AbstractWorkItem objects. So giving Factory to Facade provides a simple interface for the Client to use.
   
+
+=======================================================================
+Ownership and lifetime rules (creation / deletion)
+
+- TIVIDY owns the WorkflowMediator and the Creator. The Mediator owns every work item and deletes them.
+- Factory Method: TIVIDY creates every work item through Creator::createWorkItem(id, name, deadline, mediator),
+  so factoryMethod() now takes the item's details instead of always making the same item.
+- Chain of Responsibility: the UML shows composition, so each handler owns its successor and deletes it.
+  Successors must be created with new. Replacing a successor deletes the old one, and a successor that
+  would make the chain loop is rejected.
+- Observer: a handler watches one work item at a time. Attaching it elsewhere moves it, and whichever of
+  the two is destroyed first detaches from the other, so neither is left pointing at a deleted object.
+- Composite: the UML shows aggregation, so a group does not own or delete its children. This lets a
+  group hold work items that the Mediator owns.
+- Decorator: a decorator wraps a component without owning it, so the component must outlive its decorators.
+- Classes that own objects (work items, Mediator, Memento, Caretaker, handlers) cannot be copied,
+  because a copy would delete the same objects twice.
+
+=======================================================================
+How the patterns connect (Mediator as the hub, as in the UML)
+
+- TIVIDY (Facade) only talks to the WorkflowMediator and the Creator. New facade operations so a client can
+  reach the rest of the flow: logTime(), addTask(), setStrategy(), saveAsTemplate(), createFromTemplate().
+- WorkflowMediator now holds what the UML links it to:
+  - TaskEscalationManager: every work item it registers gets a "Team lead -> Manager" escalation chain
+    attached as its observer. The Mediator owns these chains.
+  - Strategy: when an item completes, the Mediator scores its tasks with the current strategy
+    (average by default). setStrategy() replaces it and the Mediator deletes the old one.
+  - Target/Adapter: when an item completes, the Mediator notifies the external system through the Adapter.
+  - PrototypeManager: stores template work items. createFromPrototype() clones one into a new work item.
+- Observer + Chain of Responsibility: the handler sends how many time units the item is past its deadline
+  (0 if on time). On time = not escalated; under 3 = team lead; under 7 = manager; more = unhandled.
+  Logging time also notifies observers, so an item escalates as soon as it goes overdue.
+- Prototype: AbstractWorkItem has clone(id, mediator). A clone keeps the name, deadline and tasks but gets
+  a new id, starts in Created and has no observers, data or time logged.
+- Memento, Composite and Decorator are used by the client around work items (as in the UML), not through the facade.
