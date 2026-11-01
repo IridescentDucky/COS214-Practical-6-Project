@@ -81,7 +81,9 @@ public:
 
     /** @brief Checks whether the deadline has not been exceeded. */
     bool isWithinDeadline() const;
-    /** @brief Checks whether the submitted data is valid. */
+    /** @brief Checks whether the result is ready for validation.
+     *  @return True if every task is scored, or if there are no tasks and data was submitted.
+     */
     bool hasValidData() const;
     /** @brief Notifies the mediator about a workflow change. */
     void notifyWorkflow();
@@ -92,6 +94,11 @@ public:
 
     /** @brief Adds a task with its score and maximum score. */
     void addTask(const std::string& name, int score, int maxScore) override;
+    /** @brief Adds a task that has not been scored yet.
+     *  @param name Task name.
+     *  @param maxScore Maximum task score.
+     */
+    void addTask(const std::string& name, int maxScore) override;
     /** @brief Calculates the average task score. */
     double getAverageScore() const override;
     /** @brief Gets a task by its zero-based index. */

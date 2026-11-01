@@ -135,7 +135,9 @@ Things the diagrams must change so they match the code and each other.
    Failed     --nextState-->                        Archived
    Exception  --nextState-->                        InProgress
    Exception  --validate-->                         Validation
-   Archived   = final state
+   Exception  --failed-->                           Failed
+   Archived   = final state (keeps the outcome: Succeeded if it came from Completed, Failed if from Failed)
+   Guard on Validation --nextState--> Completed: [valid] = every task scored, or data submitted if the item has no tasks
 
 [WAITING - Yoshua & Jonno] Redo once the generic state set is final.
 

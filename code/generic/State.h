@@ -21,6 +21,10 @@ public:
      *  @return A newly allocated state copy.
      */
     virtual State<T>* clone() const = 0;
+    /** @brief Gets how work in this state finished.
+     *  @return "Succeeded", "Failed", or empty while the work is still running.
+     */
+    virtual std::string getOutcome() const;
 
     /** @brief Advances the work item to its next state. */
     virtual void nextState(WorkItem<T>* item);
@@ -110,7 +114,7 @@ public:
     void resume(WorkItem<T>* item) override;
 };
 
-/** @brief Terminal state for successfully completed work. */
+/** @brief State for successfully completed work, before it is archived. */
 template <typename T>
 class Completed : public State<T>
 {
@@ -119,7 +123,11 @@ public:
     std::string getName() const override;
     /** @brief Clones this state. */
     State<T>* clone() const override;
-    /** @brief Handles an attempted transition from completion. */
+    /** @brief Gets the outcome of completed work.
+     *  @return "Succeeded".
+     */
+    std::string getOutcome() const override;
+    /** @brief Archives the completed work, keeping its outcome. */
     void nextState(WorkItem<T>* item) override;
 };
 
@@ -140,7 +148,7 @@ public:
     void failed(WorkItem<T>* item) override;
 };
 
-/** @brief Terminal state for work that has failed. */
+/** @brief State for work that has failed, before it is archived. */
 template <typename T>
 class Failed : public State<T>
 {
@@ -149,7 +157,11 @@ public:
     std::string getName() const override;
     /** @brief Clones this state. */
     State<T>* clone() const override;
-    /** @brief Handles an attempted transition from failure. */
+    /** @brief Gets the outcome of failed work.
+     *  @return "Failed".
+     */
+    std::string getOutcome() const override;
+    /** @brief Archives the failed work, keeping its outcome. */
     void nextState(WorkItem<T>* item) override;
 };
 
@@ -158,12 +170,24 @@ template <typename T>
 class Archived : public State<T>
 {
 public:
+    /** @brief Creates an archived state.
+     *  @param outcome Outcome of the state the work came from.
+     */
+    explicit Archived(const std::string& outcome = "");
     /** @brief Gets the state name. */
     std::string getName() const override;
     /** @brief Clones this state. */
     State<T>* clone() const override;
-    /** @brief Handles an attempted transition from archive. */
+    /** @brief Gets the outcome kept from before archiving.
+     *  @return "Succeeded" or "Failed".
+     */
+    std::string getOutcome() const override;
+    /** @brief Rejects the transition, because archived work is final. */
     void nextState(WorkItem<T>* item) override;
+
+private:
+    /** @brief Outcome kept from the state before archiving. */
+    std::string outcome;
 };
 
 /** @brief State for work that encountered an exception. */
@@ -179,6 +203,8 @@ public:
     void nextState(WorkItem<T>* item) override;
     /** @brief Validates work after exception handling. */
     void validate(WorkItem<T>* item) override;
+    /** @brief Fails work whose exception cannot be resolved. */
+    void failed(WorkItem<T>* item) override;
 };
 
 #endif

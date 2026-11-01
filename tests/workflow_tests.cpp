@@ -575,7 +575,9 @@ TEST(PrototypeTest, TemplateCloneIsANewIndependentItem)
     EXPECT_EQ("Design", firstItem->getName());
     EXPECT_EQ("Created", firstItem->getStateName());
     EXPECT_EQ(1, secondItem->getTaskCount());
-    EXPECT_EQ(6, secondItem->getTask(0).score);
+    EXPECT_EQ(10, secondItem->getTask(0).maxScore);
+    EXPECT_FALSE(secondItem->getTask(0).scored);
+    EXPECT_TRUE(firstItem->getTask(0).scored);
 }
 
 TEST(PrototypeTest, UnknownTemplatesAndItemsAreRejected)
@@ -703,4 +705,88 @@ TEST(ConfigurationTest, TemplateCopiesCanBeNamed)
     EXPECT_EQ("Paper u24675815", findThroughIterator(tividy, named)->getName());
     EXPECT_EQ("Master paper", findThroughIterator(tividy, unnamed)->getName());
     EXPECT_EQ(1, findThroughIterator(tividy, named)->getTaskCount());
+}
+
+TEST(StateTest, ArchivedWorkRemembersWhetherItSucceededOrFailed)
+{
+    WorkItem<int> done(1, "Done", 5, nullptr);
+    complete(done);
+    EXPECT_EQ("Succeeded", done.getOutcome());
+    done.handleState();
+    EXPECT_EQ("Archived", done.getStateName());
+    EXPECT_EQ("Succeeded", done.getOutcome());
+
+    WorkItem<int> dropped(2, "Dropped", 5, nullptr);
+    dropped.handleState();
+    dropped.handleState();
+    EXPECT_EQ("", dropped.getOutcome());
+    dropped.failed();
+    dropped.handleState();
+    EXPECT_EQ("Archived", dropped.getStateName());
+    EXPECT_EQ("Failed", dropped.getOutcome());
+
+    Caretaker<int> history;
+    history.addMemento(dropped.createMemento());
+    dropped.setMemento(history.getMemento(0));
+    EXPECT_EQ("Failed", dropped.getOutcome());
+}
+
+TEST(StateTest, WorkWithTasksIsValidOnlyOnceEveryTaskIsScored)
+{
+    TIVIDY<int> tividy;
+    int paper = tividy.createWorkItem("Paper", 5);
+    tividy.addTask(paper, "Question 1", 10);
+    tividy.addTask(paper, "Question 2", 15);
+    tividy.advanceWork(paper);
+    tividy.advanceWork(paper);
+    tividy.scoreTask(paper, 0, 8);
+
+    OutputCapture output;
+    tividy.submitWork(paper, "");
+    tividy.advanceWork(paper);
+    EXPECT_EQ("InProgress", tividy.getWorkItemState(paper));
+    EXPECT_TRUE(output.contains("Paper is not valid yet"));
+
+    tividy.scoreTask(paper, 1, 0);
+    tividy.submitWork(paper, "");
+    tividy.advanceWork(paper);
+    EXPECT_EQ("Completed", tividy.getWorkItemState(paper));
+}
+
+TEST(StateTest, WorkWithoutTasksNeedsSubmittedData)
+{
+    TIVIDY<int> tividy;
+    int memo = tividy.createWorkItem("Memo", 5);
+    tividy.advanceWork(memo);
+    tividy.advanceWork(memo);
+    tividy.submitWork(memo, "");
+    tividy.advanceWork(memo);
+    EXPECT_EQ("InProgress", tividy.getWorkItemState(memo));
+    tividy.submitWork(memo, "memo final");
+    tividy.advanceWork(memo);
+    EXPECT_EQ("Completed", tividy.getWorkItemState(memo));
+}
+
+TEST(FacadeTest, UnscoredTasksNeedAPositiveMaximum)
+{
+    TIVIDY<int> tividy;
+    int paper = tividy.createWorkItem("Paper", 5);
+    OutputCapture output;
+    tividy.addTask(paper, "Question 1", 0);
+    tividy.addTask(paper, "Question 2", 10);
+    EXPECT_TRUE(output.contains("Task maximum must be positive"));
+    EXPECT_EQ(1, findThroughIterator(tividy, paper)->getTaskCount());
+    EXPECT_FALSE(findThroughIterator(tividy, paper)->getTask(0).scored);
+}
+
+TEST(StateTest, UnresolvableExceptionCanFail)
+{
+    WorkItem<int> item(1, "Paper", 5, nullptr);
+    item.handleState();
+    item.handleState();
+    item.exception();
+    item.failed();
+    EXPECT_EQ("Failed", item.getStateName());
+    item.handleState();
+    EXPECT_EQ("Failed", item.getOutcome());
 }
