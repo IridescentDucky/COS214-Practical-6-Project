@@ -10,6 +10,11 @@
 
 #include <iostream>
 
+/** @brief Finds a work item in a facade's collection.
+ *  @param tividy Facade containing the work items.
+ *  @param id Identifier of the item to find.
+ *  @return The matching item, or null if no item has that ID.
+ */
 AbstractWorkItem<int>* findItem(const TIVIDY<int>& tividy, int id)
 {
     AbstractWorkItem<int>* found = nullptr;
@@ -26,6 +31,9 @@ AbstractWorkItem<int>* findItem(const TIVIDY<int>& tividy, int id)
     return found;
 }
 
+/** @brief Runs the generic workflow examples and demonstrations.
+ *  @return Zero when all demonstrations complete.
+ */
 int main()
 {
     TIVIDY<int> tividy;

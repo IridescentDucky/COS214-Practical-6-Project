@@ -8,6 +8,7 @@ bin/
 code/generic/errors.txt
 errors.txt
 *.log
+docs/api/generic/
 
 .vscode/
 .idea/

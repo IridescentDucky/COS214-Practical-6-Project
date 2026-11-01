@@ -9,6 +9,7 @@
 #include "ConcreteStrategyC.h"
 #include <iostream>
 
+/** @brief Calculates and restores aggregate statistics for work-item tasks. */
 template <typename T>
 class StatsOriginator {
     
@@ -23,14 +24,28 @@ private:
     Strategy<T>* strategyC;
 
 public:
+    /** @brief Creates a statistics originator for a year.
+     *  @param y Year associated with the statistics.
+     */
     StatsOriginator(int y = 0);
+    /** @brief Releases the owned scoring strategies. */
     ~StatsOriginator();
     StatsOriginator(const StatsOriginator&) = delete;
     StatsOriginator& operator=(const StatsOriginator&) = delete;
 
+    /** @brief Calculates average, maximum, and minimum marks for a work item.
+     *  @param workItem Work item whose task scores are evaluated.
+     */
     void calculateStats(AbstractWorkItem<T>* workItem);
+    /** @brief Captures the current statistics in a memento.
+     *  @return A newly allocated snapshot.
+     */
     StatsMemento* createMemento() const;
+    /** @brief Restores statistics from a snapshot.
+     *  @param m Snapshot to restore.
+     */
     void restoreFromMemento(StatsMemento* m);
+    /** @brief Prints the current statistics state. */
     void printState() const;
 };
 
