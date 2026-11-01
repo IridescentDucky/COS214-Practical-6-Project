@@ -87,7 +87,7 @@ How the patterns connect (Mediator as the hub, as in the UML)
   reach the rest of the flow: logTime(), addTask(), setStrategy(), saveAsTemplate(), createFromTemplate().
 - WorkflowMediator now holds what the UML links it to:
   - TaskEscalationManager: every work item it registers gets a five-level escalation chain attached as its
-    observer: Team lead (ConcreteHandlerA) -> Manager (B) -> Department head (C) -> Director (D) -> Executive (E).
+    observer: Team lead -> Manager -> Department head -> Director -> Executive by default, all ConcreteHandlerA.
     The Mediator owns these chains.
   - Strategy: when an item completes, the Mediator scores its tasks with the current strategy
     (average by default). setStrategy() replaces it and the Mediator deletes the old one.
@@ -100,3 +100,23 @@ How the patterns connect (Mediator as the hub, as in the UML)
 - Prototype: AbstractWorkItem has clone(id, mediator). A clone keeps the name, deadline and tasks but gets
   a new id, starts in Created and has no observers, data or time logged.
 - Memento, Composite and Decorator are used by the client around work items (as in the UML), not through the facade.
+
+=======================================================================
+One generic engine for every scenario (configured, not coded)
+
+- The scenarios (exam marking, game studio) are no longer separate class hierarchies. They are workflow
+  definitions loaded into this engine: "all process rules live in the definition, not the engine" (WfMC, 1996).
+  code/scenario1, code/scenario2 and web/scenario1, web/scenario2 stay in the repo as history but are no
+  longer built or served.
+- Chain of Responsibility: the levels are data. setEscalationLevels() takes 1 to 5 (name, limit) pairs with
+  rising limits, e.g. Tutor -> Assistant lecturer -> Lecturer -> Module coordinator. The Mediator builds every
+  level from ConcreteHandlerA (the "late by less than" handler; B-E use other comparisons) and rebuilds the chains
+  of existing work items when the levels change.
+  Team lead -> Manager -> Department head -> Director -> Executive is only the default.
+- Adapter: the Adaptee has a name (setExternalSystem()), e.g. "Student records system" or "Store publisher".
+- New facade operations: setEscalationLevels(), getEscalationLevels(), setExternalSystem(), getExternalSystem(),
+  scoreTask() (mark a question / score a test case) and createFromTemplate(index, name) so each copy of a
+  template is its own named instance (e.g. one exam paper per student).
+- AbstractWorkItem has rename(), used for named template copies.
+- The engine states stay generic. A definition gives them display names in the UI
+  (e.g. Created = Printed, InProgress = Marking, Validation = Moderation for exam marking).

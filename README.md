@@ -1,6 +1,6 @@
 # COS214 Practical 6 Project
 
-This repository contains the Generic Workflow, Exam Marking (Scenario 1), and Game (Scenario 2) projects, along with their design diagrams.
+This repository contains TIVIDY, a generic workflow engine, along with its design diagrams. The exam marking and game scenarios run on it as workflow definitions (see below).
 
 ## Dependencies
 
@@ -45,50 +45,6 @@ Or run all registered tests with CTest:
 ctest --test-dir build --output-on-failure -C Debug
 ```
 
-## Exam Marking (Scenario 1)
-
-### Run
-
-```powershell
-.\build\exam_scenario1_demo.exe
-```
-
-The demo prompts for question marks and escalation flags. Enter a score for each question, then answer each escalation prompt with `y` or `n`.
-
-### Test
-
-```powershell
-.\build\scenario1_tests.exe
-```
-
-Scenario 1 tests cover paper lifecycle transitions, validation, exceptions, pause/resume and failure; marker notification and chain routing, including Lecturer escalation; invalid and non-finite question scores and escalation resolutions; facade ownership and rejection of foreign papers; question metric calculations; cohort statistics and year filtering; and decorators/groups.
-
-Or run all registered tests with CTest:
-
-```powershell
-ctest --test-dir build --output-on-failure -C Debug
-```
-
-## Game (Scenario 2)
-
-Scenario 2 is not yet complete. The commands below are placeholders and will be updated when its application and tests are ready.
-
-### Dependencies
-
-TBD — document Scenario 2-specific dependencies, if any.
-
-### Build
-
-TBD — document the Scenario 2 build target and command.
-
-### Run
-
-TBD — document the Scenario 2 executable and run command.
-
-### Test
-
-TBD — document the Scenario 2 test target and command.
-
 ## Run the UI
 
 Docker is required. From the repository root:
@@ -98,6 +54,23 @@ docker compose up --build
 ```
 
 Then open <http://localhost:8080>.
+
+## One engine, any workflow
+TIVIDY is a generic workflow engine. A scenario is a **workflow definition** (data) loaded into it, not new classes.
+In the UI, pick a definition in the *Workflow definition* panel, or build your own, then **Apply to engine**,
+or **Start fresh with example** to load the definition's sample work:
+
+| Definition | Escalation chain | External system | Scoring |
+|---|---|---|---|
+| Software project | Team lead → Manager → Department head → Director → Executive | Release tracker | Average |
+| Exam marking | Tutor → Assistant lecturer → Lecturer → Module coordinator | Student records system | Average |
+| Game studio | Lead developer → Producer → Studio head → Publisher | Store publisher | Lowest |
+| Blank | Your own (1 to 5 levels) | Your own | Your choice |
+
+A definition sets the workflow's vocabulary (what a unit of work and its parts are called), the state names shown,
+the escalation chain, the external system, the scoring rule and the names of the extra behaviours.
+
+`code/scenario1`, `code/scenario2`, `web/scenario1` and `web/scenario2` are kept for history only. They are not built or served.
 
 ## Google Docs - research
 

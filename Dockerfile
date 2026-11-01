@@ -8,6 +8,6 @@ RUN g++ -std=c++11 -O2 -pthread -static-libstdc++ -static-libgcc -Icode/generic 
 FROM debian:bookworm-slim
 WORKDIR /app
 COPY --from=build /src/tividy .
-COPY web/ web/
+COPY web/generic/ web/generic/
 EXPOSE 8080
 CMD ["./tividy"]

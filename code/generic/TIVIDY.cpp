@@ -109,6 +109,27 @@ void TIVIDY<T>::addTask(int id, const std::string& name, int score, int maxScore
 }
 
 template <typename T>
+void TIVIDY<T>::scoreTask(int id, int index, int score)
+{
+    AbstractWorkItem<T>* item = find(id);
+    if (item == nullptr)
+    {
+        return;
+    }
+    if (index < 0 || index >= item->getTaskCount())
+    {
+        std::cout << "  [TIVIDY] " << item->getName() << " has no task " << index << std::endl;
+        return;
+    }
+    if (score < 0 || score > item->getTask(index).maxScore)
+    {
+        std::cout << "  [TIVIDY] Task score must be between 0 and " << item->getTask(index).maxScore << std::endl;
+        return;
+    }
+    item->updateTaskScore(index, score);
+}
+
+template <typename T>
 void TIVIDY<T>::setStrategy(Strategy<T>* strategy)
 {
     mediator->setStrategy(strategy);
@@ -128,7 +149,7 @@ int TIVIDY<T>::saveAsTemplate(int id)
 }
 
 template <typename T>
-int TIVIDY<T>::createFromTemplate(int templateIndex)
+int TIVIDY<T>::createFromTemplate(int templateIndex, const std::string& name)
 {
     AbstractWorkItem<T>* item = mediator->createFromPrototype(templateIndex, nextId);
     if (item == nullptr)
@@ -137,8 +158,45 @@ int TIVIDY<T>::createFromTemplate(int templateIndex)
         return -1;
     }
     nextId++;
+    item->rename(name);
     std::cout << "  [TIVIDY] Created '" << item->getName() << "' (id " << item->getId() << ") from template " << templateIndex << std::endl;
     return item->getId();
+}
+
+template <typename T>
+bool TIVIDY<T>::setEscalationLevels(const std::vector<std::pair<std::string, T> >& levels)
+{
+    if (!mediator->setEscalationLevels(levels))
+    {
+        std::cout << "  [TIVIDY] Escalation needs 1 to 5 named levels with rising limits" << std::endl;
+        return false;
+    }
+    std::cout << "  [TIVIDY] Escalation chain is now";
+    for (typename std::vector<std::pair<std::string, T> >::size_type i = 0; i < levels.size(); ++i)
+    {
+        std::cout << (i > 0 ? " -> " : " ") << levels[i].first << " (<" << levels[i].second << ")";
+    }
+    std::cout << std::endl;
+    return true;
+}
+
+template <typename T>
+const std::vector<std::pair<std::string, T> >& TIVIDY<T>::getEscalationLevels() const
+{
+    return mediator->getEscalationLevels();
+}
+
+template <typename T>
+void TIVIDY<T>::setExternalSystem(const std::string& name)
+{
+    mediator->setExternalSystem(name);
+    std::cout << "  [TIVIDY] Completed work is now reported to " << mediator->getExternalSystem() << std::endl;
+}
+
+template <typename T>
+std::string TIVIDY<T>::getExternalSystem() const
+{
+    return mediator->getExternalSystem();
 }
 
 template <typename T>
