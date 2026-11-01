@@ -110,7 +110,10 @@ template <typename T>
 AbstractWorkItem<T>* WorkItem<T>::clone(int id, WorkflowMediator<T>* mediator) const
 {
     WorkItem<T>* copy = new WorkItem<T>(id, this->name, deadline, mediator);
-    copy->tasks = tasks;
+    for (std::size_t i = 0; i < tasks.size(); ++i)
+    {
+        copy->tasks.push_back(TaskRecord(tasks[i].name, tasks[i].maxScore));
+    }
     return copy;
 }
 
@@ -147,7 +150,18 @@ bool WorkItem<T>::isWithinDeadline() const
 template <typename T>
 bool WorkItem<T>::hasValidData() const
 {
-    return !data.empty();
+    if (tasks.empty())
+    {
+        return !data.empty();
+    }
+    for (std::size_t i = 0; i < tasks.size(); ++i)
+    {
+        if (!tasks[i].scored)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 template <typename T>
@@ -233,6 +247,13 @@ void WorkItem<T>::addTask(const std::string& name, int score, int maxScore) {
 }
 
 template <typename T>
+void WorkItem<T>::addTask(const std::string& name, int maxScore) {
+    
+    std::cout << "[WorkItem] Added task: " << name << " (not scored yet, out of " << maxScore << ")" << std::endl;
+    this->tasks.push_back(TaskRecord(name, maxScore));
+}
+
+template <typename T>
 double WorkItem<T>::getAverageScore() const {
     
     if (this->tasks.empty()) {
@@ -275,6 +296,7 @@ void WorkItem<T>::updateTaskScore(int index, int newScore) {
     }
     
     this->tasks[static_cast<std::size_t>(index)].score = newScore;
+    this->tasks[static_cast<std::size_t>(index)].scored = true;
     
     std::cout << "[WorkItem] Updated: " << this->tasks[static_cast<std::size_t>(index)].name
               << " score to " << newScore << std::endl;

@@ -109,6 +109,21 @@ void TIVIDY<T>::addTask(int id, const std::string& name, int score, int maxScore
 }
 
 template <typename T>
+void TIVIDY<T>::addTask(int id, const std::string& name, int maxScore)
+{
+    if (maxScore <= 0)
+    {
+        std::cout << "  [TIVIDY] Task maximum must be positive" << std::endl;
+        return;
+    }
+    AbstractWorkItem<T>* item = find(id);
+    if (item != nullptr)
+    {
+        item->addTask(name, maxScore);
+    }
+}
+
+template <typename T>
 void TIVIDY<T>::scoreTask(int id, int index, int score)
 {
     AbstractWorkItem<T>* item = find(id);
@@ -226,7 +241,12 @@ void TIVIDY<T>::printStatus() const
     while (it->hasNext())
     {
         AbstractWorkItem<T>* item = it->next();
-        std::cout << "    " << item->getId() << " " << item->getName() << ": " << item->getStateName() << std::endl;
+        std::cout << "    " << item->getId() << " " << item->getName() << ": " << item->getStateName();
+        if (!item->getOutcome().empty())
+        {
+            std::cout << " [" << item->getOutcome() << "]";
+        }
+        std::cout << std::endl;
     }
     delete it;
 }

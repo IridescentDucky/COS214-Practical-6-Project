@@ -60,6 +60,12 @@ public:
     void logTime(int id, int units);
     /** @brief Adds a scored task to a work item. */
     void addTask(int id, const std::string& name, int score, int maxScore);
+    /** @brief Adds a task that has not been scored yet.
+     *  @param id Work-item ID.
+     *  @param name Task name.
+     *  @param maxScore Positive maximum task score.
+     */
+    void addTask(int id, const std::string& name, int maxScore);
     /** @brief Updates a task's score.
      *  @param id Work-item ID.
      *  @param index Zero-based task index.

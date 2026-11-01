@@ -17,15 +17,21 @@ struct TaskRecord {
     std::string name;
     int score;
     int maxScore;
+    bool scored;
 
     /** @brief Creates an empty task record. */
-    TaskRecord() : name(""), score(0), maxScore(0) {}
+    TaskRecord() : name(""), score(0), maxScore(0), scored(false) {}
     /** @brief Creates a task record with the supplied score values.
      *  @param n Task name.
      *  @param s Current task score.
      *  @param ms Maximum task score.
      */
-    TaskRecord(const std::string& n, int s, int ms) : name(n), score(s), maxScore(ms) {}
+    TaskRecord(const std::string& n, int s, int ms) : name(n), score(s), maxScore(ms), scored(true) {}
+    /** @brief Creates a task record that has not been scored yet.
+     *  @param n Task name.
+     *  @param ms Maximum task score.
+     */
+    TaskRecord(const std::string& n, int ms) : name(n), score(0), maxScore(ms), scored(false) {}
 };
 
 // template <typename T>
@@ -74,6 +80,10 @@ public:
     void rename(const std::string& name);
     /** @brief Gets the current workflow state name. */
     std::string getStateName() const;
+    /** @brief Gets how the work item finished.
+     *  @return "Succeeded", "Failed", or empty while the work is still running.
+     */
+    std::string getOutcome() const;
 
     /** @brief Advances the work item's workflow state. */
     virtual void handleState() = 0; //STATE FUNCTIONS
@@ -160,6 +170,11 @@ public:
     // For task vector
     /** @brief Adds a scored task to the work item. */
     virtual void addTask(const std::string& name, int score, int maxScore) = 0;
+    /** @brief Adds a task that has not been scored yet.
+     *  @param name Task name.
+     *  @param maxScore Maximum task score.
+     */
+    virtual void addTask(const std::string& name, int maxScore) = 0;
     /** @brief Calculates the average score of the work item's tasks. */
     virtual double getAverageScore() const = 0;
     /** @brief Gets a task by index.
@@ -176,4 +191,4 @@ public:
     virtual void updateTaskScore(int index, int newScore) = 0;
 };
 
-#endif 
+#endif

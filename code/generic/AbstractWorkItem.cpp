@@ -36,6 +36,12 @@ std::string AbstractWorkItem<T>::getStateName() const
     return this->state->getName();
 }
 
+template <typename T>
+std::string AbstractWorkItem<T>::getOutcome() const
+{
+    return this->state->getOutcome();
+}
+
 
 template <typename T>
 AbstractWorkItem<T>::~AbstractWorkItem(){
