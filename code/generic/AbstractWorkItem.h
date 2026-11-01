@@ -18,9 +18,11 @@ struct TaskRecord {
     std::string name;
     int score;
     int maxScore;
+    bool scored;
 
-    TaskRecord() : name(""), score(0), maxScore(0) {}
-    TaskRecord(const std::string& n, int s, int ms) : name(n), score(s), maxScore(ms) {}
+    TaskRecord() : name(""), score(0), maxScore(0), scored(false) {}
+    TaskRecord(const std::string& n, int s, int ms) : name(n), score(s), maxScore(ms), scored(true) {}
+    TaskRecord(const std::string& n, int ms) : name(n), score(0), maxScore(ms), scored(false) {}
 };
 
 // template <typename T>
@@ -56,6 +58,7 @@ public:
     std::string getName() const;
     void rename(const std::string& name);
     std::string getStateName() const;
+    std::string getOutcome() const;
 
     virtual void handleState() = 0; //STATE FUNCTIONS
     virtual void paused() = 0;
@@ -93,6 +96,7 @@ public:
     
     // For task vector
     virtual void addTask(const std::string& name, int score, int maxScore) = 0;
+    virtual void addTask(const std::string& name, int maxScore) = 0;
     virtual double getAverageScore() const = 0;
     virtual const TaskRecord& getTask(int index) const = 0;
     virtual int getTaskCount() const = 0;

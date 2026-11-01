@@ -11,6 +11,12 @@ void State<T>::reject(const std::string& operation) const
 }
 
 template <typename T>
+std::string State<T>::getOutcome() const
+{
+    return "";
+}
+
+template <typename T>
 void State<T>::nextState(WorkItem<T>*)
 {
     State<T>::reject("nextState");
@@ -191,9 +197,15 @@ State<T>* Completed<T>::clone() const
 }
 
 template <typename T>
+std::string Completed<T>::getOutcome() const
+{
+    return "Succeeded";
+}
+
+template <typename T>
 void Completed<T>::nextState(WorkItem<T>* item)
 {
-    item->setState(new Archived<T>());
+    item->setState(new Archived<T>(getOutcome()));
 }
 
 //validation
@@ -219,6 +231,7 @@ void Validation<T>::nextState(WorkItem<T>* item)
     }
     else
     {
+        std::cout << "  [State] " << item->getName() << " is not valid yet: every task needs a score, or the result needs data if there are no tasks" << std::endl;
         item->setState(new InProgress<T>());
     }
 }
@@ -249,12 +262,23 @@ State<T>* Failed<T>::clone() const
 }
 
 template <typename T>
+std::string Failed<T>::getOutcome() const
+{
+    return "Failed";
+}
+
+template <typename T>
 void Failed<T>::nextState(WorkItem<T>* item)
 {
-    item->setState(new Archived<T>());
+    item->setState(new Archived<T>(getOutcome()));
 }
 
 //archived
+template <typename T>
+Archived<T>::Archived(const std::string& outcome) : outcome(outcome)
+{
+}
+
 template <typename T>
 std::string Archived<T>::getName() const
 {
@@ -264,7 +288,13 @@ std::string Archived<T>::getName() const
 template <typename T>
 State<T>* Archived<T>::clone() const
 {
-    return new Archived<T>();
+    return new Archived<T>(outcome);
+}
+
+template <typename T>
+std::string Archived<T>::getOutcome() const
+{
+    return outcome;
 }
 
 template <typename T>
@@ -298,6 +328,12 @@ template <typename T>
 void Exception<T>::validate(WorkItem<T>* item)
 {
     item->setState(new Validation<T>());
+}
+
+template <typename T>
+void Exception<T>::failed(WorkItem<T>* item)
+{
+    item->setState(new Failed<T>());
 }
 
 template class State<int>;

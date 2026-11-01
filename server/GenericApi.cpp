@@ -159,6 +159,7 @@ std::string snapshotJson(const GenericSession& current, const std::string& actio
              << "{\"id\":" << item->getId()
              << ",\"name\":" << quote(item->getName())
              << ",\"state\":" << quote(item->getStateName())
+             << ",\"outcome\":" << quote(item->getOutcome())
              << ",\"data\":" << quote(item->get())
              << ",\"deadline\":" << extra.deadline
              << ",\"timeSpent\":" << extra.timeSpent
@@ -169,7 +170,7 @@ std::string snapshotJson(const GenericSession& current, const std::string& actio
         {
             const TaskRecord& task = item->getTask(i);
             json << (i > 0 ? "," : "") << "{\"name\":" << quote(task.name) << ",\"score\":" << task.score
-                 << ",\"max\":" << task.maxScore << "}";
+                 << ",\"max\":" << task.maxScore << ",\"scored\":" << (task.scored ? "true" : "false") << "}";
         }
         json << "]}";
         first = false;
@@ -364,8 +365,14 @@ std::map<std::string, ItemAction> buildItemActions()
     {
         std::string name = nameParam(req, "name", "task");
         int maxScore = intParam(req, "max", 1, 1000);
-        int score = intParam(req, "score", 0, maxScore);
-        s.tividy.addTask(item->getId(), name, score, maxScore);
+        if (req.get_param_value("score").find_first_not_of(" \t") == std::string::npos)
+        {
+            s.tividy.addTask(item->getId(), name, maxScore);
+        }
+        else
+        {
+            s.tividy.addTask(item->getId(), name, intParam(req, "score", 0, maxScore), maxScore);
+        }
     };
     actions["score"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request& req)
     {

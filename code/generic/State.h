@@ -13,6 +13,7 @@ public:
     
     virtual std::string getName() const = 0;
     virtual State<T>* clone() const = 0;
+    virtual std::string getOutcome() const;
 
     virtual void nextState(WorkItem<T>* item);
     virtual void paused(WorkItem<T>* item);
@@ -80,6 +81,7 @@ class Completed : public State<T>
 public:
     std::string getName() const override;
     State<T>* clone() const override;
+    std::string getOutcome() const override;
     void nextState(WorkItem<T>* item) override;
 };
 
@@ -102,6 +104,7 @@ class Failed : public State<T>
 public:
     std::string getName() const override;
     State<T>* clone() const override;
+    std::string getOutcome() const override;
     void nextState(WorkItem<T>* item) override;
 };
 
@@ -110,9 +113,14 @@ template <typename T>
 class Archived : public State<T>
 {
 public:
+    explicit Archived(const std::string& outcome = "");
     std::string getName() const override;
     State<T>* clone() const override;
+    std::string getOutcome() const override;
     void nextState(WorkItem<T>* item) override;
+
+private:
+    std::string outcome;
 };
 
 //exception
@@ -124,6 +132,7 @@ public:
     State<T>* clone() const override;
     void nextState(WorkItem<T>* item) override;
     void validate(WorkItem<T>* item) override;
+    void failed(WorkItem<T>* item) override;
 };
 
 #endif

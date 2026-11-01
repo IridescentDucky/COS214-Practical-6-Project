@@ -59,6 +59,7 @@ public:
     // void notify() override;                          //Observer
 
     void addTask(const std::string& name, int score, int maxScore) override;
+    void addTask(const std::string& name, int maxScore) override;
     double getAverageScore() const override;
     const TaskRecord& getTask(int index) const override;
     int getTaskCount() const override;

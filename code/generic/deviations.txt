@@ -120,3 +120,29 @@ One generic engine for every scenario (configured, not coded)
 - AbstractWorkItem has rename(), used for named template copies.
 - The engine states stay generic. A definition gives them display names in the UI
   (e.g. Created = Printed, InProgress = Marking, Validation = Moderation for exam marking).
+- Outcome of finished work: each state reports getOutcome() ("" while running). Completed gives "Succeeded",
+  Failed gives "Failed", and Archived is created with the outcome of the state it came from, so archived work
+  still says whether it succeeded or failed (also kept through Memento snapshots). AbstractWorkItem::getOutcome()
+  asks its state, so there are no type checks.
+
+=======================================================================
+Lifecycle logic (checked for the generic engine and both scenarios)
+
+- Valid result: work with tasks is valid once every task has a score (tasks can be added unscored with
+  addTask(id, name, maxScore)); work without tasks is valid once data was submitted. So marking a paper
+  means scoring its questions, not typing text.
+- Template copies keep the task names and maximums but not the scores: a template is the definition,
+  the scores belong to one instance.
+- Exception --failed--> Failed was added: a raised problem that cannot be resolved can now fail.
+- Failed --nextState--> Archived closes the record; the archive keeps "Failed", so failed work is never lost.
+- Scenario names for the same 9 states:
+    Generic      Exam marking      Game studio
+    Created      Received          Concept
+    Delivered    With marker       Assigned
+    InProgress   Marking           In development
+    Paused       Marking paused    On hold
+    Validation   Moderation        QA review
+    Exception    Mark query        Bug found
+    Completed    Marks captured    Signed off
+    Failed       Void              Cut
+    Archived     Archived          Closed (was "Shipped", which made no sense for cut work)

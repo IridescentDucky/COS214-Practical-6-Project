@@ -38,6 +38,7 @@ public:
     void resumeWork(int id);
     void logTime(int id, int units);
     void addTask(int id, const std::string& name, int score, int maxScore);
+    void addTask(int id, const std::string& name, int maxScore);
     void scoreTask(int id, int index, int score);
     void setStrategy(Strategy<T>* strategy);
     int saveAsTemplate(int id);
