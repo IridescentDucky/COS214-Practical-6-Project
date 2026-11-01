@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[])
 {
-    std::string webRoot = argc > 1 ? argv[1] : "web";
+    std::string webRoot = argc > 1 ? argv[1] : "web/generic";
     int port = argc > 2 ? std::stoi(argv[2]) : 8080;
 
     httplib::Server server;

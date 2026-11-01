@@ -55,6 +55,7 @@ struct GenericSession
     std::vector<ItemTemplate> templates;
     std::string strategy = "Average";
     std::vector<Group> groups;
+    std::map<std::string, std::string> labels;
 };
 
 struct ScoringRule
@@ -196,7 +197,18 @@ std::string snapshotJson(const GenericSession& current, const std::string& actio
         }
         json << "],\"score\":" << group.composite->getScore() << ",\"time\":" << group.composite->getTime() << "}";
     }
-    json << "],\"action\":" << quote(action) << ",\"log\":[";
+    json << "],\"escalation\":[";
+    const std::vector<std::pair<std::string, int> >& levels = current.tividy.getEscalationLevels();
+    for (std::vector<std::pair<std::string, int> >::size_type i = 0; i < levels.size(); ++i)
+    {
+        json << (i > 0 ? "," : "") << "{\"name\":" << quote(levels[i].first) << ",\"limit\":" << levels[i].second << "}";
+    }
+    json << "],\"external\":" << quote(current.tividy.getExternalSystem()) << ",\"labels\":{";
+    for (std::map<std::string, std::string>::const_iterator it = current.labels.begin(); it != current.labels.end(); ++it)
+    {
+        json << (it == current.labels.begin() ? "" : ",") << quote(it->first) << ":" << quote(it->second);
+    }
+    json << "},\"action\":" << quote(action) << ",\"log\":[";
     for (std::vector<std::string>::size_type i = 0; i < log.size(); ++i)
     {
         json << (i > 0 ? "," : "") << quote(log[i]);
@@ -205,9 +217,8 @@ std::string snapshotJson(const GenericSession& current, const std::string& actio
     return json.str();
 }
 
-std::string nameParam(const httplib::Request& req, const std::string& key, const std::string& what)
+std::string trimName(const std::string& name, const std::string& what)
 {
-    std::string name = req.get_param_value(key);
     std::string::size_type start = name.find_first_not_of(" \t");
     std::string::size_type end = name.find_last_not_of(" \t");
     if (start == std::string::npos)
@@ -220,6 +231,11 @@ std::string nameParam(const httplib::Request& req, const std::string& key, const
         throw RequestError("Name must be 40 characters or fewer");
     }
     return trimmed;
+}
+
+std::string nameParam(const httplib::Request& req, const std::string& key, const std::string& what)
+{
+    return trimName(req.get_param_value(key), what);
 }
 
 void registerItem(GenericSession& s, int id, int deadline)
@@ -351,6 +367,16 @@ std::map<std::string, ItemAction> buildItemActions()
         int score = intParam(req, "score", 0, maxScore);
         s.tividy.addTask(item->getId(), name, score, maxScore);
     };
+    actions["score"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request& req)
+    {
+        if (item->getTaskCount() == 0)
+        {
+            throw RequestError(item->getName() + " has no tasks to score");
+        }
+        int index = intParam(req, "index", 0, item->getTaskCount() - 1);
+        int score = intParam(req, "score", 0, item->getTask(index).maxScore);
+        s.tividy.scoreTask(item->getId(), index, score);
+    };
     actions["template"] = [](GenericSession& s, AbstractWorkItem<int>* item, const httplib::Request&)
     {
         if (s.tividy.saveAsTemplate(item->getId()) < 0)
@@ -383,12 +409,15 @@ std::map<std::string, ItemAction> buildItemActions()
         Component<int>* current = item;
         if (req.get_param_value("score") == "1")
         {
-            wrappers.push_back(std::unique_ptr<Component<int> >(new BonusScoreDecorator<int>(current, 10, 2)));
+            int bonus = intParam(req, "bonus", 0, 1000);
+            int multiplier = intParam(req, "multiplier", 1, 10);
+            wrappers.push_back(std::unique_ptr<Component<int> >(new BonusScoreDecorator<int>(current, bonus, multiplier)));
             current = wrappers.back().get();
         }
         if (req.get_param_value("time") == "1")
         {
-            wrappers.push_back(std::unique_ptr<Component<int> >(new BonusTimeDecorator<int>(current, 3)));
+            int extra = intParam(req, "extra", 0, 1000);
+            wrappers.push_back(std::unique_ptr<Component<int> >(new BonusTimeDecorator<int>(current, extra)));
             current = wrappers.back().get();
         }
         current->display();
@@ -479,6 +508,55 @@ void registerGenericApi(httplib::Server& server)
         });
     });
 
+    server.Post("/api/generic/workflow", [](const httplib::Request& req, httplib::Response& res)
+    {
+        runAction(res, "Load workflow definition", [&](GenericSession& s)
+        {
+            std::size_t count = req.get_param_value_count("level");
+            if (count != req.get_param_value_count("limit"))
+            {
+                throw RequestError("Every escalation level needs a limit");
+            }
+            std::vector<std::pair<std::string, int> > levels;
+            for (std::size_t i = 0; i < count; ++i)
+            {
+                std::string name = trimName(req.get_param_value("level", i), "escalation level");
+                int limit = 0;
+                try
+                {
+                    limit = std::stoi(req.get_param_value("limit", i));
+                }
+                catch (const std::exception&)
+                {
+                    throw RequestError("Escalation limits must be whole numbers");
+                }
+                if (limit < 1 || limit > 1000)
+                {
+                    throw RequestError("Escalation limits must be between 1 and 1000");
+                }
+                levels.push_back(std::make_pair(name, limit));
+            }
+            std::string external = trimName(req.get_param_value("external"), "external system");
+
+            std::map<std::string, std::string> labels;
+            for (httplib::Params::const_iterator it = req.params.begin(); it != req.params.end(); ++it)
+            {
+                if (it->first.compare(0, 6, "label.") == 0 && it->first.size() > 6 && it->second.size() <= 80)
+                {
+                    labels[it->first.substr(6)] = it->second;
+                }
+            }
+
+            if (!s.tividy.setEscalationLevels(levels))
+            {
+                throw RequestError("Escalation needs 1 to 5 named levels whose limits keep rising");
+            }
+            s.tividy.setExternalSystem(external);
+            s.labels = labels;
+            std::cout << "[UI] Workflow definition loaded: " << (labels.count("workflow") ? labels["workflow"] : "Custom workflow") << std::endl;
+        });
+    });
+
     server.Post("/api/generic/strategy", [](const httplib::Request& req, httplib::Response& res)
     {
         static const std::map<std::string, ScoringRule> rules = {
@@ -508,7 +586,9 @@ void registerGenericApi(httplib::Server& server)
             {
                 throw RequestError("No template " + std::to_string(index));
             }
-            int id = s.tividy.createFromTemplate(index);
+            std::string name = req.get_param_value("name").find_first_not_of(" \t") == std::string::npos
+                ? std::string() : nameParam(req, "name", "copy");
+            int id = s.tividy.createFromTemplate(index, name);
             if (id < 0)
             {
                 throw RequestError("Could not create from that template");

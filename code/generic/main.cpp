@@ -121,5 +121,30 @@ int main()
     StatsMemento* retrieved = statsCaretaker.getMemento();
     std::cout << "[Main]: testing if memento was got: " << retrieved->getYear() << std::endl;
 
+    std::cout << std::endl << "=== 11. Same engine, another workflow: exam marking (configuration, not new classes) ===" << std::endl;
+    TIVIDY<int> exams;
+    std::vector<std::pair<std::string, int> > markers;
+    markers.push_back(std::make_pair(std::string("Tutor"), 2));
+    markers.push_back(std::make_pair(std::string("Assistant lecturer"), 4));
+    markers.push_back(std::make_pair(std::string("Lecturer"), 7));
+    markers.push_back(std::make_pair(std::string("Module coordinator"), 10));
+    exams.setEscalationLevels(markers);
+    exams.setExternalSystem("Student records system");
+    int memo = exams.createWorkItem("Memo", 2);
+    int master = exams.createWorkItem("Master paper", 3);
+    exams.addTask(master, "Question 1", 0, 10);
+    exams.addTask(master, "Question 2", 0, 15);
+    int paper = exams.createFromTemplate(exams.saveAsTemplate(master), "Paper u24675815");
+    exams.addDependency(memo, paper);
+    exams.advanceWork(memo);
+    exams.advanceWork(memo);
+    exams.submitWork(memo, "memo final");
+    exams.advanceWork(memo);
+    exams.advanceWork(paper);
+    exams.scoreTask(paper, 0, 8);
+    exams.scoreTask(paper, 1, 12);
+    exams.logTime(paper, 5);
+    exams.printStatus();
+
     return 0;
 }

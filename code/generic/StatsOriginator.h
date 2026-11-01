@@ -25,6 +25,8 @@ private:
 public:
     StatsOriginator(int y = 0);
     ~StatsOriginator();
+    StatsOriginator(const StatsOriginator&) = delete;
+    StatsOriginator& operator=(const StatsOriginator&) = delete;
 
     void calculateStats(AbstractWorkItem<T>* workItem);
     StatsMemento* createMemento() const;

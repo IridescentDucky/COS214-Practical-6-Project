@@ -54,6 +54,7 @@ public:
 
     int getId() const;
     std::string getName() const;
+    void rename(const std::string& name);
     std::string getStateName() const;
 
     virtual void handleState() = 0; //STATE FUNCTIONS

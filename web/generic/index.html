@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TIVIDY Core</title>
+<title>TIVIDY Workflow Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -575,6 +575,58 @@ details.more[open] summary h3::before {
     font-size: 0.75rem;
 }
 
+.def-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.def-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.def-form h3 {
+    margin-top: 0.4rem;
+}
+
+.level-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 4.2rem auto;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.level-row .btn,
+.task-row .btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+}
+
+.state-row {
+    display: grid;
+    grid-template-columns: 6.2rem minmax(0, 1fr);
+    gap: 0.4rem;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+}
+
+.task-row input {
+    width: 4.2rem;
+    padding: 0.3rem 0.4rem;
+}
+
+.workflow-name {
+    margin-left: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--muted);
+}
+
 .task-form {
     display: grid;
     grid-template-columns: 1fr 4.5rem 4.5rem auto;
@@ -799,16 +851,15 @@ details.more[open] summary h3::before {
 </head>
 <body>
 <header>
-    <div class="logo">TIVIDY <span>Core</span></div>
+    <div class="logo">TIVIDY <span>Engine</span><span class="workflow-name" id="workflow-name"></span></div>
     <div class="header-actions">
-        <a class="back" href="/">&larr; All worlds</a>
         <button class="btn ghost" id="reset" type="button">Reset</button>
     </div>
 </header>
 
 <div class="steps" aria-label="How to use this page">
-    <span><b>1</b>Create work items (or load the example)</span>
-    <span><b>2</b>Link items that depend on each other</span>
+    <span><b>1</b>Pick a workflow definition (or build your own) and apply it</span>
+    <span><b>2</b>Create work, or start fresh with the definition&rsquo;s example</span>
     <span><b>3</b>Select an item and follow its <strong>Next step</strong></span>
     <span><b>4</b>Watch the real C++ patterns react in the Event log</span>
 </div>
@@ -817,7 +868,74 @@ details.more[open] summary h3::before {
     <div class="column">
         <section class="panel">
             <div class="panel-head">
-                <h2>New work item</h2>
+                <h2>Workflow definition</h2>
+                <span class="pattern">Data, not code</span>
+            </div>
+            <label class="field">Start from
+                <select id="def-preset">
+                    <option value="project">Software project</option>
+                    <option value="exam">Exam marking</option>
+                    <option value="game">Game studio</option>
+                    <option value="custom">Blank: build your own</option>
+                </select>
+            </label>
+            <p class="note" id="def-summary"></p>
+            <details class="more" id="def-details">
+                <summary><h3>Edit this definition</h3><span class="pattern">Any scenario</span></summary>
+                <div class="more-body def-form">
+                    <label class="field">Workflow name
+                        <input id="def-workflow" maxlength="60">
+                    </label>
+                    <div class="def-pair">
+                        <label class="field">One unit of work is a
+                            <input id="def-item" maxlength="30">
+                        </label>
+                        <label class="field">Its parts are called
+                            <input id="def-task" maxlength="30">
+                        </label>
+                    </div>
+                    <div class="def-pair">
+                        <label class="field">Time is counted in
+                            <input id="def-unit" maxlength="20">
+                        </label>
+                        <label class="field">Scoring rule
+                            <select id="def-rule">
+                                <option value="average">Average</option>
+                                <option value="highest">Highest</option>
+                                <option value="lowest">Lowest</option>
+                            </select>
+                        </label>
+                    </div>
+                    <label class="field">External system told about completed work
+                        <input id="def-external" maxlength="40">
+                    </label>
+                    <h3>Escalation chain, lowest first (1 to 5 levels)</h3>
+                    <p class="note" style="margin:0">Each level handles work that is less than its limit late.</p>
+                    <div class="def-form" id="def-levels"></div>
+                    <div class="row"><button class="btn" type="button" id="def-level-add">Add level</button></div>
+                    <h3>State names</h3>
+                    <div class="def-form" id="def-states"></div>
+                    <h3>Extra behaviour names</h3>
+                    <div class="def-pair">
+                        <label class="field">Score bonus
+                            <input id="def-bonus" maxlength="30">
+                        </label>
+                        <label class="field">Time bonus
+                            <input id="def-extra" maxlength="30">
+                        </label>
+                    </div>
+                </div>
+            </details>
+            <div class="row" style="margin-top:0.8rem">
+                <button class="btn primary" type="button" id="def-apply">Apply to engine</button>
+                <button class="btn" type="button" id="def-example">Start fresh with example</button>
+            </div>
+            <p class="note">Applying keeps existing work and rebuilds every escalation chain. Starting fresh clears the session and loads this definition&rsquo;s example.</p>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2 id="new-heading">New work item</h2>
                 <span class="pattern">Facade</span>
             </div>
             <form class="create" id="create-form">
@@ -827,14 +945,14 @@ details.more[open] summary h3::before {
                 <label class="field">Deadline
                     <input id="new-deadline" type="number" min="1" max="1000" value="5" required>
                 </label>
-                <button class="btn primary" type="submit">Create work item</button>
+                <button class="btn primary" type="submit" id="create-btn">Create work item</button>
             </form>
-            <p class="note">The deadline is in time units. Work logged past it trips the deadline guard when finishing.</p>
+            <p class="note" id="create-note">The deadline is in time units. Work logged past it trips the deadline guard when finishing.</p>
         </section>
 
         <section class="panel">
             <div class="panel-head">
-                <h2>Work items</h2>
+                <h2 id="items-heading">Work items</h2>
                 <span class="pattern" title="This list is built by walking the mediator with a WorkItemIterator">Iterator &middot; <span id="item-count">0 items</span></span>
             </div>
             <ul class="items" id="items"></ul>
@@ -887,22 +1005,23 @@ details.more[open] summary h3::before {
                 <h3>External system</h3>
                 <span class="pattern">Adapter</span>
             </div>
-            <p class="note">TIVIDY does not talk to the outside system directly. When an item completes, the mediator calls a Target interface, and the Adapter turns that into the external system&rsquo;s own call. Complete an item and look for the Adapter lines in the log.</p>
+            <p class="note" id="external-note"></p>
             <div class="panel-head" style="margin:1rem 0 0.5rem">
                 <h3>Templates</h3>
                 <span class="pattern">Prototype</span>
             </div>
+            <input id="template-name" maxlength="40" placeholder="Name for the next copy (optional)" aria-label="Name for the next copy">
             <ul class="deps" id="templates"></ul>
             <div class="panel-head" style="margin:1rem 0 0.5rem">
                 <h3>Escalation</h3>
                 <span class="pattern">Observer &middot; Chain of Responsibility</span>
             </div>
-            <p class="note">The mediator gives every item a watcher. Once an item is past its deadline, the watcher sends how late it is up the chain: the team lead handles under 3 time units late, the manager under 7, the department head under 12, the director under 18 and the executive under 25. Anything later is unhandled. Log time on an item to see it.</p>
+            <p class="note" id="escalation-note"></p>
             <div class="panel-head" style="margin:1rem 0 0.5rem">
                 <h3>Work item factory</h3>
                 <span class="pattern">Factory Method</span>
             </div>
-            <p class="note">Every new item, from the form above or the example, is made by the creator&rsquo;s factory method. Look for the Factory lines in the log.</p>
+            <p class="note">Every new piece of work, from the form or the example, is made by the creator&rsquo;s factory method. Look for the Factory lines in the log.</p>
         </section>
 
         <section class="panel">
@@ -1029,6 +1148,73 @@ const LABELS = {
     task: "Add task", template: "Save as template"
 };
 
+const STATES = ["Created", "Delivered", "InProgress", "Paused", "Validation", "Exception", "Completed", "Failed", "Archived"];
+
+const DEFINITIONS = {
+    project: {
+        workflow: "Software project", item: "Work item", task: "Task", unit: "days", rule: "average",
+        external: "Release tracker", bonusScore: "Bonus score", bonusTime: "Extra time",
+        levels: [["Team lead", 3], ["Manager", 7], ["Department head", 12], ["Director", 18], ["Executive", 25]],
+        states: {},
+        example: {
+            items: [
+                { name: "Design", deadline: 5, tasks: [["Wireframes", 8, 10], ["User flows", 6, 10]] },
+                { name: "Build", deadline: 4, tasks: [["API", 7, 10]] },
+                { name: "Test", deadline: 3, tasks: [] }
+            ],
+            links: [["Design", "Build"], ["Build", "Test"]],
+            groups: [["Sprint 1", ["Design", "Build", "Test"]]],
+            select: "Design"
+        }
+    },
+    exam: {
+        workflow: "COS214 exam marking", item: "Exam paper", task: "Question", unit: "days", rule: "average",
+        external: "Student records system", bonusScore: "Extra marks", bonusTime: "Concession time",
+        levels: [["Tutor", 2], ["Assistant lecturer", 4], ["Lecturer", 7], ["Module coordinator", 10]],
+        states: {
+            Created: "Printed", Delivered: "With markers", InProgress: "Marking", Paused: "Marking paused",
+            Validation: "Moderation", Exception: "Mark query", Completed: "Marks captured", Failed: "Void", Archived: "Archived"
+        },
+        example: {
+            items: [
+                { name: "Memo", deadline: 2, tasks: [] },
+                { name: "Master paper", deadline: 3, tasks: [["Question 1", 0, 10], ["Question 2", 0, 15], ["Question 3", 0, 25]], template: true }
+            ],
+            copies: [["Master paper", "Paper u24675815"], ["Master paper", "Paper u25108582"]],
+            links: [["Memo", "Paper u24675815"], ["Memo", "Paper u25108582"]],
+            groups: [["Semester test 1", ["Paper u24675815", "Paper u25108582"]]],
+            select: "Memo"
+        }
+    },
+    game: {
+        workflow: "Game studio release", item: "Deliverable", task: "Test case", unit: "weeks", rule: "lowest",
+        external: "Store publisher", bonusScore: "Polish bonus", bonusTime: "Deadline extension",
+        levels: [["Lead developer", 2], ["Producer", 4], ["Studio head", 7], ["Publisher", 11]],
+        states: {
+            Created: "Concept", Delivered: "Assigned", InProgress: "In development", Paused: "On hold",
+            Validation: "QA review", Exception: "Bug found", Completed: "Signed off", Failed: "Cut", Archived: "Shipped"
+        },
+        example: {
+            items: [
+                { name: "Story and script", deadline: 3, tasks: [["Plot", 8, 10], ["Dialogue", 7, 10]] },
+                { name: "Art assets", deadline: 4, tasks: [["Characters", 6, 10], ["Levels", 9, 10]] },
+                { name: "Gameplay code", deadline: 5, tasks: [["Combat", 5, 10], ["Saving", 9, 10]] },
+                { name: "Release build", deadline: 2, tasks: [["Age rating", 10, 10]] }
+            ],
+            links: [["Story and script", "Art assets"], ["Story and script", "Gameplay code"], ["Art assets", "Release build"], ["Gameplay code", "Release build"]],
+            groups: [["Milestone 1", ["Art assets", "Gameplay code"]]],
+            select: "Story and script"
+        }
+    },
+    custom: {
+        workflow: "My workflow", item: "Work item", task: "Task", unit: "time units", rule: "average",
+        external: "External system", bonusScore: "Bonus score", bonusTime: "Extra time",
+        levels: [["Level 1", 3], ["Level 2", 7]],
+        states: {},
+        example: null
+    }
+};
+
 let model = { items: [], dependencies: [] };
 let selectedId = null;
 let busy = false;
@@ -1038,6 +1224,23 @@ const $ = (id) => document.getElementById(id);
 
 function escapeHtml(text) {
     return String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
+}
+
+function labels() {
+    return model.labels || {};
+}
+
+function word(key) {
+    return labels()[key] || DEFINITIONS.project[key];
+}
+
+function stateLabel(state) {
+    return labels()[state] || state;
+}
+
+function badge(state) {
+    const shown = stateLabel(state);
+    return '<span class="badge" data-state="' + state + '" title="Engine state: ' + state + '">' + escapeHtml(shown) + "</span>";
 }
 
 function triggersFrom(state) {
@@ -1105,6 +1308,7 @@ function render() {
     if (!selectedItem() && model.items.length > 0) {
         selectedId = model.items[model.items.length - 1].id;
     }
+    renderDefinition();
     renderItems();
     renderDetail();
     renderDependencies();
@@ -1117,11 +1321,11 @@ function taskTotal(item) {
 }
 
 function renderItems() {
-    $("item-count").textContent = model.items.length + (model.items.length === 1 ? " item" : " items");
+    $("item-count").textContent = model.items.length + " " + word("item").toLowerCase() + (model.items.length === 1 ? "" : "s");
     const list = $("items");
     if (model.items.length === 0) {
-        list.innerHTML = '<li class="empty">No work items yet.<br>Create one above, or load a ready-made example.<br><button class="btn primary" type="button" id="example">Load example workflow</button></li>';
-        $("example").addEventListener("click", loadExample);
+        list.innerHTML = '<li class="empty">No ' + escapeHtml(word("item").toLowerCase()) + 's yet.<br>Create one above, or load the definition&rsquo;s example.<br><button class="btn primary" type="button" id="example">Start fresh with example</button></li>';
+        $("example").addEventListener("click", startFresh);
         return;
     }
     list.innerHTML = model.items.map((item) => {
@@ -1130,7 +1334,7 @@ function renderItems() {
         const over = item.timeSpent > item.deadline;
         return '<li><button type="button" class="item' + (item.id === selectedId ? " selected" : "") + '" data-id="' + item.id + '">'
             + '<div class="item-top"><span class="item-name">' + escapeHtml(item.name) + ' <span class="item-id">#' + item.id + '</span></span>'
-            + '<span class="badge" data-state="' + item.state + '">' + item.state + '</span></div>'
+            + badge(item.state) + "</div>"
             + '<div class="item-meta"><span>Time ' + item.timeSpent + "/" + item.deadline + (over ? " (overdue)" : "") + '</span>'
             + (item.tasks.length ? "<span>Score " + taskTotal(item) + "</span>" : "")
             + (item.snapshots ? "<span>" + item.snapshots + " snapshot" + (item.snapshots > 1 ? "s" : "") + "</span>" : "")
@@ -1144,6 +1348,10 @@ function renderItems() {
             render();
         });
     });
+}
+
+function textSize(text) {
+    return text.length > 16 ? ' style="font-size:9.5px"' : text.length > 12 ? ' style="font-size:11px"' : "";
 }
 
 function diagram(current) {
@@ -1165,7 +1373,7 @@ function diagram(current) {
         const isLive = from === current;
         const cls = "edge" + (isLive ? " live" : "");
         const marker = isLive ? "url(#arrow-live)" : "url(#arrow)";
-        const title = "<title>" + from + " → " + to + ": " + triggers.join(" / ") + "</title>";
+        const title = "<title>" + escapeHtml(stateLabel(from)) + " → " + escapeHtml(stateLabel(to)) + ": " + triggers.join(" / ") + "</title>";
         const [fx, fy] = center(from);
         if (from === to) {
             return '<path class="' + cls + '" marker-end="' + marker + '" d="M' + (fx - 16) + " " + (fy - hh - 2)
@@ -1188,10 +1396,11 @@ function diagram(current) {
         const [cx, cy] = center(name);
         const cls = "node" + (name === current ? " current" : reachable.has(name) ? " next" : "");
         return '<g class="' + cls + '"><rect x="' + (cx - hw) + '" y="' + (cy - hh) + '" width="' + hw * 2 + '" height="' + hh * 2 + '" rx="9"/>'
-            + '<text x="' + cx + '" y="' + cy + '">' + name + "</text></g>";
+            + "<title>Engine state: " + name + "</title>"
+            + '<text x="' + cx + '" y="' + cy + '"' + textSize(stateLabel(name)) + ">" + escapeHtml(stateLabel(name)) + "</text></g>";
     }).join("");
 
-    return '<svg viewBox="0 0 840 260" role="img" aria-label="Lifecycle diagram, current state ' + current + '">'
+    return '<svg viewBox="0 0 840 260" role="img" aria-label="Lifecycle diagram, current state ' + escapeHtml(stateLabel(current)) + '">'
         + '<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#1f4688"/></marker>'
         + '<marker id="arrow-live" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#7aa6ff"/></marker></defs>'
         + edges + nodes + "</svg>";
@@ -1250,7 +1459,7 @@ function nextStepCard(item) {
     }
 
     return '<div class="next"><div class="next-label">Next step</div>'
-        + '<p class="next-text">' + guide.text + "</p>"
+        + '<p class="next-text">' + guide.text.replace(/\bitem\b/g, word("item").toLowerCase()) + "</p>"
         + (warning ? '<div class="warn">' + warning + "</div>" : "")
         + actions + "</div>";
 }
@@ -1259,9 +1468,9 @@ function renderDetail() {
     const panel = $("detail");
     const item = selectedItem();
     if (!item) {
-        panel.innerHTML = '<div class="panel-head"><h2>Work item lifecycle</h2><span class="pattern">State</span></div>'
+        panel.innerHTML = '<div class="panel-head"><h2>' + escapeHtml(word("item")) + ' lifecycle</h2><span class="pattern">State</span></div>'
             + '<div class="diagram">' + diagram("Created") + "</div>"
-            + '<p class="note">Every work item moves through these states. Create an item, or load the example workflow, and it will appear here with a guided next step.</p>';
+            + '<p class="note">Every ' + escapeHtml(word("item").toLowerCase()) + ' moves through these states. Create one, or start fresh with the example, and it will appear here with a guided next step.</p>';
         return;
     }
 
@@ -1278,24 +1487,32 @@ function renderDetail() {
         + '<div class="row"><select id="restore-index" aria-label="Snapshot to restore"' + (item.snapshots ? "" : " disabled") + ">" + (restoreOptions || "<option>No snapshots yet</option>") + "</select>"
         + '<button class="btn" type="button" data-action="restore" data-label="Restore snapshot"' + (item.snapshots ? "" : " disabled") + ">Restore</button></div>";
 
-    const tasks = '<p class="note" style="margin-top:0">Tasks are what the scoring rule (Strategy) works on when this item completes. Score: <strong>' + taskTotal(item) + "</strong>.</p>"
-        + '<ul class="deps">' + (item.tasks.map((t) => "<li><span class=\"grow\">" + escapeHtml(t.name) + '</span><span class="meta">' + t.score + "/" + t.max + "</span></li>").join("")
-            || '<li class="empty-note">No tasks yet.</li>') + "</ul>"
-        + '<div class="task-form"><input id="task-name" maxlength="40" placeholder="Task, e.g. Wireframes" aria-label="Task name">'
+    const taskWord = word("task");
+    const tasks = '<p class="note" style="margin-top:0">' + escapeHtml(taskWord) + 's are what the scoring rule (Strategy) works on when this ' + escapeHtml(word("item").toLowerCase()) + ' completes. Total: <strong>' + taskTotal(item) + "</strong>.</p>"
+        + '<ul class="deps">' + (item.tasks.map((t, i) => '<li class="task-row"><span class="grow">' + escapeHtml(t.name) + "</span>"
+            + '<input type="number" min="0" max="' + t.max + '" value="' + t.score + '" data-task-score="' + i + '" aria-label="Score for ' + escapeHtml(t.name) + '">'
+            + '<span class="meta">/ ' + t.max + "</span>"
+            + '<button class="btn" type="button" data-score-task="' + i + '">Set</button></li>').join("")
+            || '<li class="empty-note">No ' + escapeHtml(taskWord.toLowerCase()) + "s yet.</li>") + "</ul>"
+        + '<div class="task-form"><input id="task-name" maxlength="40" placeholder="' + escapeHtml(taskWord) + ' name" aria-label="' + escapeHtml(taskWord) + ' name">'
         + '<input id="task-score" type="number" min="0" max="1000" value="7" aria-label="Score">'
         + '<input id="task-max" type="number" min="1" max="1000" value="10" aria-label="Out of">'
-        + button("task", "Add task") + "</div>";
+        + button("task", "Add " + taskWord.toLowerCase()) + "</div>";
 
-    const reuse = '<p class="note" style="margin-top:0">Save this item as a template. Items made from it are clones: same name, deadline and tasks, but a fresh id and lifecycle.</p>'
+    const reuse = '<p class="note" style="margin-top:0">Save this ' + escapeHtml(word("item").toLowerCase()) + ' as a template. Copies made from it are clones: same deadline and ' + escapeHtml(word("task").toLowerCase()) + 's, but their own name, id and lifecycle.</p>'
         + '<div class="row" style="margin-top:0.7rem">' + button("template", "Save as template") + "</div>";
 
     const decorator = '<p class="note" style="margin-top:0">Wrap the item in decorators to raise its score (its task total) and its time allowance without changing the WorkItem class.</p>'
-        + '<div class="checks" style="margin-top:0.7rem"><label><input type="checkbox" id="deco-score" checked> Bonus score (+10, &times;2)</label><label><input type="checkbox" id="deco-time"> Extra time (+3)</label></div>'
+        + '<div class="checks" style="margin-top:0.7rem"><label><input type="checkbox" id="deco-score" checked> ' + escapeHtml(word("bonusScore")) + "</label>"
+        + '<label>+<input type="number" id="deco-bonus" min="0" max="1000" value="10" aria-label="Bonus amount" style="width:4rem"></label>'
+        + '<label>&times;<input type="number" id="deco-multiplier" min="1" max="10" value="1" aria-label="Multiplier" style="width:3.4rem"></label></div>'
+        + '<div class="checks" style="margin-top:0.5rem"><label><input type="checkbox" id="deco-time"> ' + escapeHtml(word("bonusTime")) + "</label>"
+        + '<label>+<input type="number" id="deco-extra" min="0" max="1000" value="3" aria-label="Extra time" style="width:4rem"> ' + escapeHtml(word("unit")) + "</label></div>"
         + '<div class="row" style="margin-top:0.6rem">' + button("decorate", "Apply decorators") + "</div>";
 
     panel.innerHTML = '<div class="detail-head"><div><div class="detail-title">' + escapeHtml(item.name) + ' <span class="item-id">#' + item.id + '</span></div>'
         + '<div class="detail-sub">Submitted work: ' + (item.data ? "“" + escapeHtml(item.data) + "”" : "none yet") + " · Time " + item.timeSpent + "/" + item.deadline + (item.overdue ? " (" + item.overdue + " overdue)" : "") + "</div></div>"
-        + '<span class="badge" data-state="' + item.state + '">' + item.state + "</span></div>"
+        + badge(item.state) + "</div>"
         + nextStepCard(item)
         + '<div class="diagram-wrap"><div class="panel-head" style="margin:0"><h3>Lifecycle</h3><span class="pattern">State</span></div>'
         + '<div class="diagram">' + diagram(item.state) + "</div>"
@@ -1305,7 +1522,7 @@ function renderDetail() {
         + section("memento", "Snapshots", "Memento", memento)
         + section("decorator", "Extra behaviour", "Decorator", decorator)
         + section("reuse", "Reuse", "Prototype", reuse)
-        + '<p class="note">The mediator attached a watcher to this item (Observer). It hears about every change and escalates the item up the chain once it is overdue.</p>';
+        + '<p class="note">The mediator attached a watcher to this ' + escapeHtml(word("item").toLowerCase()) + " (Observer). It hears about every change and escalates it up the chain (" + escapeHtml((model.escalation || []).map((l) => l.name).join(" → ")) + ") once it is overdue.</p>";
 
     panel.querySelectorAll("details.more").forEach((el) => {
         el.addEventListener("toggle", () => {
@@ -1324,10 +1541,21 @@ function renderDetail() {
                 submit: () => ({ data: $("submit-data").value }),
                 time: () => ({ units: $("time-units").value }),
                 restore: () => ({ index: $("restore-index").value }),
-                decorate: () => ({ score: $("deco-score").checked ? "1" : "0", time: $("deco-time").checked ? "1" : "0" }),
+                decorate: () => ({
+                    score: $("deco-score").checked ? "1" : "0", bonus: $("deco-bonus").value, multiplier: $("deco-multiplier").value,
+                    time: $("deco-time").checked ? "1" : "0", extra: $("deco-extra").value
+                }),
                 task: () => ({ name: $("task-name").value, score: $("task-score").value, max: $("task-max").value })
             };
             itemAction(action, extras[action] ? extras[action]() : {}, btn.dataset.label);
+        });
+    });
+
+    panel.querySelectorAll("[data-score-task]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const index = btn.dataset.scoreTask;
+            const input = panel.querySelector('[data-task-score="' + index + '"]');
+            itemAction("score", { index: index, score: input.value }, "Score " + item.tasks[Number(index)].name);
         });
     });
 
@@ -1365,15 +1593,23 @@ function renderDependencies() {
 
 function renderServices() {
     $("strategy-current").textContent = model.strategy || "Average";
+    $("external-note").innerHTML = "TIVIDY does not talk to <strong>" + escapeHtml(model.external || "the external system")
+        + "</strong> directly. When a " + escapeHtml(word("item").toLowerCase()) + " completes, the mediator calls a Target interface, and the Adapter turns that into the external system&rsquo;s own call.";
+    const levels = model.escalation || [];
+    $("escalation-note").innerHTML = "The mediator gives every " + escapeHtml(word("item").toLowerCase()) + " a watcher. Once it is past its deadline, the watcher sends how many "
+        + escapeHtml(word("unit")) + " late it is up the chain: "
+        + levels.map((l) => "<strong>" + escapeHtml(l.name) + "</strong> handles under " + l.limit).join(", ")
+        + ". Anything later is unhandled.";
     const templates = model.templates || [];
     $("templates").innerHTML = templates.map((t, i) => '<li><span class="grow">' + escapeHtml(t.name) + ' <span class="meta">deadline ' + t.deadline + "</span></span>"
         + '<button class="btn" type="button" data-template="' + i + '">Create from it</button></li>').join("")
-        || '<li class="empty-note">No templates yet. Open an item and use Reuse &rarr; Save as template.</li>';
+        || '<li class="empty-note">No templates yet. Open a ' + escapeHtml(word("item").toLowerCase()) + ' and use Reuse &rarr; Save as template.</li>';
     $("templates").querySelectorAll("[data-template]").forEach((btn) => {
         btn.addEventListener("click", async () => {
             const t = templates[Number(btn.dataset.template)];
-            const data = await call("/templates/" + btn.dataset.template, {}, "Create from template · " + t.name);
+            const data = await call("/templates/" + btn.dataset.template, { name: $("template-name").value }, "Create from template · " + t.name);
             if (data && !data.error) {
+                $("template-name").value = "";
                 selectedId = data.items[data.items.length - 1].id;
                 render();
             }
@@ -1460,26 +1696,180 @@ function toast(message) {
     toastTimer = setTimeout(() => el.classList.remove("show"), 3600);
 }
 
-async function loadExample() {
-    const steps = [["Design", 5, [["Wireframes", 8], ["User flows", 6]]], ["Build", 4, [["API", 7]]], ["Test", 3, []]];
-    const ids = [];
-    for (const [name, deadline, tasks] of steps) {
-        const data = await call("/items", { name: name, deadline: deadline }, "Create work item · " + name);
+function definitionFromModel() {
+    const preset = DEFINITIONS[labels().preset] || DEFINITIONS.project;
+    if (!model.labels || !model.labels.workflow) {
+        return JSON.parse(JSON.stringify(DEFINITIONS.project));
+    }
+    const states = {};
+    STATES.forEach((state) => {
+        if (labels()[state]) {
+            states[state] = labels()[state];
+        }
+    });
+    const rule = (model.strategy || "Average").toLowerCase();
+    return {
+        workflow: word("workflow"), item: word("item"), task: word("task"), unit: word("unit"), rule: rule,
+        external: model.external, bonusScore: word("bonusScore"), bonusTime: word("bonusTime"),
+        levels: (model.escalation || []).map((l) => [l.name, l.limit]), states: states, example: preset.example
+    };
+}
+
+function levelRow(name, limit) {
+    return '<div class="level-row"><input data-level-name maxlength="40" value="' + escapeHtml(name) + '" aria-label="Level name">'
+        + '<input data-level-limit type="number" min="1" max="1000" value="' + limit + '" aria-label="Late by less than">'
+        + '<button class="btn" type="button" data-level-remove>Remove</button></div>';
+}
+
+function wireLevels() {
+    const rows = $("def-levels").querySelectorAll(".level-row");
+    rows.forEach((row) => {
+        row.querySelector("[data-level-remove]").disabled = rows.length <= 1;
+        row.querySelector("[data-level-remove]").onclick = () => {
+            row.remove();
+            wireLevels();
+        };
+    });
+    $("def-level-add").disabled = rows.length >= 5;
+}
+
+function fillForm(def) {
+    $("def-workflow").value = def.workflow;
+    $("def-item").value = def.item;
+    $("def-task").value = def.task;
+    $("def-unit").value = def.unit;
+    $("def-rule").value = def.rule;
+    $("def-external").value = def.external;
+    $("def-bonus").value = def.bonusScore;
+    $("def-extra").value = def.bonusTime;
+    $("def-levels").innerHTML = def.levels.map(([name, limit]) => levelRow(name, limit)).join("");
+    wireLevels();
+    $("def-states").innerHTML = STATES.map((state) => '<label class="state-row">' + state
+        + '<input data-state-label="' + state + '" maxlength="24" value="' + escapeHtml(def.states[state] || state) + '"></label>').join("");
+}
+
+function readForm() {
+    const preset = $("def-preset").value;
+    const pairs = [
+        ["label.preset", preset], ["label.workflow", $("def-workflow").value.trim() || "My workflow"],
+        ["label.item", $("def-item").value.trim() || "Work item"], ["label.task", $("def-task").value.trim() || "Task"],
+        ["label.unit", $("def-unit").value.trim() || "time units"], ["label.bonusScore", $("def-bonus").value.trim() || "Bonus score"],
+        ["label.bonusTime", $("def-extra").value.trim() || "Extra time"], ["external", $("def-external").value]
+    ];
+    $("def-levels").querySelectorAll(".level-row").forEach((row) => {
+        pairs.push(["level", row.querySelector("[data-level-name]").value]);
+        pairs.push(["limit", row.querySelector("[data-level-limit]").value]);
+    });
+    $("def-states").querySelectorAll("[data-state-label]").forEach((input) => {
+        const value = input.value.trim();
+        if (value && value !== input.dataset.stateLabel) {
+            pairs.push(["label." + input.dataset.stateLabel, value]);
+        }
+    });
+    return pairs;
+}
+
+let formShownFor = null;
+function renderDefinition() {
+    const key = labels().preset || "project";
+    if (formShownFor === null) {
+        $("def-preset").value = key;
+        fillForm(definitionFromModel());
+        formShownFor = key;
+    }
+    const item = word("item");
+    $("workflow-name").textContent = model.labels && model.labels.workflow ? "· " + model.labels.workflow : "";
+    $("new-heading").textContent = "New " + item.toLowerCase();
+    $("create-btn").textContent = "Create " + item.toLowerCase();
+    $("items-heading").textContent = item + "s";
+    $("create-note").textContent = "The deadline is in " + word("unit") + ". Time logged past it trips the deadline guard when finishing, and escalates.";
+    const levels = model.escalation || [];
+    $("def-summary").innerHTML = model.labels && model.labels.workflow
+        ? "Running <strong>" + escapeHtml(model.labels.workflow) + "</strong>: " + levels.length + " escalation level" + (levels.length === 1 ? "" : "s")
+            + ", " + escapeHtml((model.strategy || "average").toLowerCase()) + " scoring, reporting to " + escapeHtml(model.external || "") + "."
+        : "No definition applied yet, so the engine runs its defaults. Pick one and apply it.";
+}
+
+async function applyDefinition() {
+    const data = await call("/workflow", readForm(), "Apply definition · " + ($("def-workflow").value.trim() || "My workflow"));
+    if (!data || data.error) {
+        return false;
+    }
+    const rule = $("def-rule");
+    await call("/strategy", { rule: rule.value }, "Scoring rule · " + rule.options[rule.selectedIndex].text);
+    formShownFor = $("def-preset").value;
+    return true;
+}
+
+async function startFresh() {
+    if (model.items.length && !confirm("Clear every " + word("item").toLowerCase() + " and start fresh with this definition?")) {
+        return;
+    }
+    selectedId = null;
+    await call("/reset", {}, "Reset workspace");
+    if (!(await applyDefinition())) {
+        return;
+    }
+    const example = (DEFINITIONS[$("def-preset").value] || {}).example;
+    if (!example) {
+        toast("Fresh session ready. Create your first " + word("item").toLowerCase() + ".");
+        return;
+    }
+    const ids = {};
+    const latest = (data) => data.items[data.items.length - 1].id;
+    for (const entry of example.items) {
+        const data = await call("/items", { name: entry.name, deadline: entry.deadline }, "Create · " + entry.name);
         if (!data || data.error) {
             return;
         }
-        const id = data.items[data.items.length - 1].id;
-        ids.push(id);
-        for (const [task, score] of tasks) {
-            await call("/items/" + id + "/task", { name: task, score: score, max: 10 }, "Add task · " + task);
+        ids[entry.name] = latest(data);
+        for (const [task, score, max] of entry.tasks) {
+            await call("/items/" + ids[entry.name] + "/task", { name: task, score: score, max: max }, "Add " + word("task").toLowerCase() + " · " + task);
         }
     }
-    await call("/dependencies", { from: ids[0], to: ids[1] }, "Link Design → Build");
-    await call("/dependencies", { from: ids[1], to: ids[2] }, "Link Build → Test");
-    selectedId = ids[0];
+    const templates = [];
+    for (const [source, copy] of example.copies || []) {
+        let index = templates.indexOf(source);
+        if (index < 0) {
+            await call("/items/" + ids[source] + "/template", {}, "Save as template · " + source);
+            templates.push(source);
+            index = templates.length - 1;
+        }
+        const data = await call("/templates/" + index, { name: copy }, "Create from template · " + copy);
+        if (!data || data.error) {
+            return;
+        }
+        ids[copy] = latest(data);
+    }
+    for (const [first, then] of example.links || []) {
+        await call("/dependencies", { from: ids[first], to: ids[then] }, "Link " + first + " → " + then);
+    }
+    for (const [name, members] of example.groups || []) {
+        const data = await call("/groups", { name: name }, "Create group · " + name);
+        if (!data || data.error) {
+            return;
+        }
+        const index = data.groups.length - 1;
+        for (const member of members) {
+            await call("/groups/" + index + "/add", { item: ids[member] }, "Add " + member + " to " + name);
+        }
+    }
+    selectedId = ids[example.select];
     render();
-    toast("Example loaded. Follow the Next step for Design.");
+    toast(model.labels.workflow + " loaded. Follow the Next step for " + example.select + ".");
 }
+
+$("def-preset").addEventListener("change", () => {
+    fillForm(JSON.parse(JSON.stringify(DEFINITIONS[$("def-preset").value])));
+});
+
+$("def-level-add").addEventListener("click", () => {
+    $("def-levels").insertAdjacentHTML("beforeend", levelRow("Level " + ($("def-levels").children.length + 1), 3 * ($("def-levels").children.length + 1)));
+    wireLevels();
+});
+
+$("def-apply").addEventListener("click", applyDefinition);
+$("def-example").addEventListener("click", startFresh);
 
 $("create-form").addEventListener("submit", async (event) => {
     event.preventDefault();

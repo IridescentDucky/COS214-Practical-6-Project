@@ -7,6 +7,8 @@
 
 #include <vector>
 #include <map>
+#include <string>
+#include <utility>
 
 template <typename T>
 class AbstractWorkItem;
@@ -41,14 +43,21 @@ public:
     void setStrategy(Strategy<T>* strategy);
     int savePrototype(AbstractWorkItem<T>* item);
     AbstractWorkItem<T>* createFromPrototype(int index, int id);
+    bool setEscalationLevels(const std::vector<std::pair<std::string, T> >& levels);
+    const std::vector<std::pair<std::string, T> >& getEscalationLevels() const;
+    void setExternalSystem(const std::string& name);
+    std::string getExternalSystem() const;
 
     Iterator<T>* createIterator() const override;
 private:
     friend class WorkItemIterator<T>;
 
+    TaskEscalationManager<T>* createChain() const;
+
     std::vector<AbstractWorkItem<T>*> workItems;
     std::map<int, std::vector<int> > dependencies;
     std::vector<TaskEscalationManager<T>*> escalations;
+    std::vector<std::pair<std::string, T> > levels;
     Strategy<T>* strategy;
     Adaptee* externalSystem;
     Target* external;

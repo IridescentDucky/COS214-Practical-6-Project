@@ -53,3 +53,28 @@ Why Change Was Made:
     The pattern could not provide generic functionality useful across diverse industry workflows. 
 Updates to Relevant Diagrams: 
     UML Class Diagram: Removed the Strategy pattern.
+
+REVISION 5: Scenarios become workflow definitions run by the generic engine
+Problem / Question Considered:
+    The exam and game scenarios were built as separate class hierarchies (ExamPaper, Marker, GameWorker, their own states, strategies and
+    facades) beside TIVIDY. The scenario was defining its own architecture, which the brief forbids: "Your selected scenario must not
+    determine the complete architecture of the generic workflow manager", and our research found "all process rules live in the
+    definition, not the engine" (WfMC, 1996).
+Original Design / Assumption:
+    Each scenario needed its own classes and its own UI. The generic engine hard-coded its escalation chain
+    (Team lead -> Manager -> Department head -> Director -> Executive) and its external system.
+Change Made:
+    The escalation chain (1 to 5 named levels with rising limits), the external system's name and the scoring rule are now set at run time
+    through the facade (setEscalationLevels, setExternalSystem, setStrategy). Added scoreTask and named template copies so instances
+    can be marked and told apart. The web UI loads a workflow definition (exam marking, game studio, software project, or one the user
+    builds) that also names the work, its parts, its states and its extra behaviours. The scenario code and pages stay in the repository
+    but are no longer built or served.
+Why Change Was Made:
+    So one engine runs any process without being rewritten, as the brief and our research require. Exam marking is now Tutor ->
+    Assistant lecturer -> Lecturer -> Module coordinator escalation, a master paper template copied per student (Prototype),
+    questions as scored tasks (Strategy), concessions as Decorators and a semester test as a Composite, all on the generic classes.
+Updates to Relevant Diagrams:
+    Generic Class Diagram: add setEscalationLevels(), getEscalationLevels(), setExternalSystem(), getExternalSystem(), scoreTask() and
+    createFromTemplate(index, name) to TIVIDY and the matching operations to WorkflowMediator; add -levels to WorkflowMediator; add
+    -name, setName() and getName() to Adaptee; add rename() to AbstractWorkItem. The scenario class diagrams become object/configuration
+    examples of the generic diagram rather than separate designs.

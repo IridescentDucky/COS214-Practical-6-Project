@@ -22,6 +22,15 @@ std::string AbstractWorkItem<T>::getName() const
 }
 
 template <typename T>
+void AbstractWorkItem<T>::rename(const std::string& name)
+{
+    if (!name.empty())
+    {
+        this->name = name;
+    }
+}
+
+template <typename T>
 std::string AbstractWorkItem<T>::getStateName() const
 {
     return this->state->getName();

@@ -2,10 +2,6 @@
 #include "WorkItem.h"
 #include "WorkItemIterator.h"
 #include "ConcreteHandlerA.h"
-#include "ConcreteHandlerB.h"
-#include "ConcreteHandlerC.h"
-#include "ConcreteHandlerD.h"
-#include "ConcreteHandlerE.h"
 #include "ConcreteStrategyA.h"
 #include "Adapter.h"
 
@@ -15,6 +11,11 @@ template <typename T>
 WorkflowMediator<T>::WorkflowMediator()
     : strategy(new ConcreteStrategyA<T>()), externalSystem(new Adaptee()), external(new Adapter(externalSystem))
 {
+    levels.push_back(std::make_pair(std::string("Team lead"), static_cast<T>(3)));
+    levels.push_back(std::make_pair(std::string("Manager"), static_cast<T>(7)));
+    levels.push_back(std::make_pair(std::string("Department head"), static_cast<T>(12)));
+    levels.push_back(std::make_pair(std::string("Director"), static_cast<T>(18)));
+    levels.push_back(std::make_pair(std::string("Executive"), static_cast<T>(25)));
 }
 
 template <typename T>
@@ -40,17 +41,80 @@ void WorkflowMediator<T>::addWorkItem(AbstractWorkItem<T>* item)
     {
         workItems.push_back(item);
 
-        TaskEscalationManager<T>* teamLead = new ConcreteHandlerA<T>("Team lead", 3);
-        TaskEscalationManager<T>* manager = new ConcreteHandlerA<T>("Manager", 7);
-        TaskEscalationManager<T>* departmentHead = new ConcreteHandlerA<T>("Department head", 12);
-        TaskEscalationManager<T>* director = new ConcreteHandlerA<T>("Director", 18);
-        teamLead->setSuccessor(manager);
-        manager->setSuccessor(departmentHead);
-        departmentHead->setSuccessor(director);
-        director->setSuccessor(new ConcreteHandlerA<T>("Executive", 25));
-        item->attach(teamLead);
-        escalations.push_back(teamLead);
+        TaskEscalationManager<T>* chain = createChain();
+        item->attach(chain);
+        escalations.push_back(chain);
     }
+}
+
+template <typename T>
+TaskEscalationManager<T>* WorkflowMediator<T>::createChain() const
+{
+    TaskEscalationManager<T>* first = nullptr;
+    TaskEscalationManager<T>* last = nullptr;
+    for (typename std::vector<std::pair<std::string, T> >::size_type i = 0; i < levels.size(); ++i)
+    {
+        TaskEscalationManager<T>* handler = new ConcreteHandlerA<T>(levels[i].first, levels[i].second);
+        if (last == nullptr)
+        {
+            first = handler;
+        }
+        else
+        {
+            last->setSuccessor(handler);
+        }
+        last = handler;
+    }
+    return first;
+}
+
+template <typename T>
+bool WorkflowMediator<T>::setEscalationLevels(const std::vector<std::pair<std::string, T> >& levels)
+{
+    if (levels.empty() || levels.size() > 5)
+    {
+        return false;
+    }
+    for (typename std::vector<std::pair<std::string, T> >::size_type i = 0; i < levels.size(); ++i)
+    {
+        if (levels[i].first.empty() || (i > 0 && !(levels[i - 1].second < levels[i].second)))
+        {
+            return false;
+        }
+    }
+
+    for (TaskEscalationManager<T>* escalation : escalations)
+    {
+        delete escalation;
+    }
+    escalations.clear();
+    this->levels = levels;
+
+    for (AbstractWorkItem<T>* item : workItems)
+    {
+        TaskEscalationManager<T>* chain = createChain();
+        item->attach(chain);
+        escalations.push_back(chain);
+    }
+    return true;
+}
+
+template <typename T>
+const std::vector<std::pair<std::string, T> >& WorkflowMediator<T>::getEscalationLevels() const
+{
+    return levels;
+}
+
+template <typename T>
+void WorkflowMediator<T>::setExternalSystem(const std::string& name)
+{
+    externalSystem->setName(name);
+}
+
+template <typename T>
+std::string WorkflowMediator<T>::getExternalSystem() const
+{
+    return externalSystem->getName();
 }
 
 template <typename T>
@@ -109,7 +173,7 @@ void WorkflowMediator<T>::notify(AbstractWorkItem<T>* colleague)
     }
 
     strategy->algorithm(colleague);
-    std::cout << "  [Mediator] Telling the external system that " << colleague->getName() << " is complete" << std::endl;
+    std::cout << "  [Mediator] Telling " << externalSystem->getName() << " that " << colleague->getName() << " is complete" << std::endl;
     external->request();
 
     std::map<int, std::vector<int> >::const_iterator dependency = dependencies.find(colleague->getId());

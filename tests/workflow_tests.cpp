@@ -19,6 +19,8 @@
 #include <gtest/gtest.h>
 
 #include <sstream>
+#include <string>
+#include <utility>
 #include <vector>
 
 namespace
@@ -534,7 +536,8 @@ TEST(CompletionTest, MediatorScoresNotifiesExternalSystemAndDeliversDependents)
     completeThroughFacade(tividy, design);
 
     EXPECT_TRUE(output.contains("[Strategy A] Calculated overall average score: 7"));
-    EXPECT_TRUE(output.contains("(Adaptee) Specified request recieved"));
+    EXPECT_TRUE(output.contains("[Mediator] Telling External system that Design is complete"));
+    EXPECT_TRUE(output.contains("(Adaptee) External system recorded the update"));
     EXPECT_EQ("Delivered", tividy.getWorkItemState(build));
 }
 
@@ -610,4 +613,94 @@ TEST(FacadeTest, InvalidTimeAndTasksAreRejected)
     AbstractWorkItem<int>* item = findThroughIterator(tividy, id);
     EXPECT_EQ(0, item->getOverdue());
     EXPECT_EQ(0, item->getTaskCount());
+}
+
+TEST(ConfigurationTest, EscalationChainFollowsTheWorkflowDefinition)
+{
+    TIVIDY<int> tividy;
+    int paper = tividy.createWorkItem("Paper", 2);
+    std::vector<std::pair<std::string, int> > markers;
+    markers.push_back(std::make_pair(std::string("Tutor"), 2));
+    markers.push_back(std::make_pair(std::string("Lecturer"), 5));
+    ASSERT_TRUE(tividy.setEscalationLevels(markers));
+    int later = tividy.createWorkItem("Late paper", 2);
+
+    OutputCapture first;
+    tividy.logTime(paper, 5);
+    EXPECT_TRUE(first.contains("Tutor passed the request on"));
+    EXPECT_TRUE(first.contains("Lecturer handled the request"));
+    EXPECT_FALSE(first.contains("Team lead"));
+
+    OutputCapture second;
+    tividy.logTime(later, 3);
+    EXPECT_TRUE(second.contains("Tutor handled the request"));
+    EXPECT_EQ(2u, tividy.getEscalationLevels().size());
+}
+
+TEST(ConfigurationTest, InvalidEscalationChainsAreRejected)
+{
+    TIVIDY<int> tividy;
+    std::vector<std::pair<std::string, int> > none;
+    std::vector<std::pair<std::string, int> > falling;
+    falling.push_back(std::make_pair(std::string("A"), 5));
+    falling.push_back(std::make_pair(std::string("B"), 3));
+    std::vector<std::pair<std::string, int> > tooMany;
+    for (int i = 1; i <= 6; ++i)
+    {
+        tooMany.push_back(std::make_pair(std::string("Level"), i));
+    }
+    std::vector<std::pair<std::string, int> > unnamed(1, std::make_pair(std::string(), 3));
+
+    OutputCapture output;
+    EXPECT_FALSE(tividy.setEscalationLevels(none));
+    EXPECT_FALSE(tividy.setEscalationLevels(falling));
+    EXPECT_FALSE(tividy.setEscalationLevels(tooMany));
+    EXPECT_FALSE(tividy.setEscalationLevels(unnamed));
+    EXPECT_EQ("Team lead", tividy.getEscalationLevels()[0].first);
+    EXPECT_EQ(5u, tividy.getEscalationLevels().size());
+}
+
+TEST(ConfigurationTest, ExternalSystemIsNamedByTheDefinition)
+{
+    TIVIDY<int> tividy;
+    tividy.setExternalSystem("Student records system");
+    int memo = tividy.createWorkItem("Memo", 3);
+
+    OutputCapture output;
+    completeThroughFacade(tividy, memo);
+
+    EXPECT_EQ("Student records system", tividy.getExternalSystem());
+    EXPECT_TRUE(output.contains("[Mediator] Telling Student records system that Memo is complete"));
+    EXPECT_TRUE(output.contains("(Adaptee) Student records system recorded the update"));
+}
+
+TEST(ConfigurationTest, TasksCanBeScoredWithinTheirMaximum)
+{
+    TIVIDY<int> tividy;
+    int paper = tividy.createWorkItem("Paper", 3);
+    tividy.addTask(paper, "Question 1", 0, 10);
+
+    OutputCapture output;
+    tividy.scoreTask(paper, 0, 8);
+    tividy.scoreTask(paper, 0, 11);
+    tividy.scoreTask(paper, 1, 5);
+
+    EXPECT_EQ(8, findThroughIterator(tividy, paper)->getTask(0).score);
+    EXPECT_TRUE(output.contains("Task score must be between 0 and 10"));
+    EXPECT_TRUE(output.contains("Paper has no task 1"));
+}
+
+TEST(ConfigurationTest, TemplateCopiesCanBeNamed)
+{
+    TIVIDY<int> tividy;
+    int master = tividy.createWorkItem("Master paper", 3);
+    tividy.addTask(master, "Question 1", 0, 10);
+    int index = tividy.saveAsTemplate(master);
+
+    int named = tividy.createFromTemplate(index, "Paper u24675815");
+    int unnamed = tividy.createFromTemplate(index);
+
+    EXPECT_EQ("Paper u24675815", findThroughIterator(tividy, named)->getName());
+    EXPECT_EQ("Master paper", findThroughIterator(tividy, unnamed)->getName());
+    EXPECT_EQ(1, findThroughIterator(tividy, named)->getTaskCount());
 }

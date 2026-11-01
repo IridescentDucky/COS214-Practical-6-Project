@@ -2,6 +2,8 @@
 #define TIVIDY_H
 
 #include <string>
+#include <utility>
+#include <vector>
 
 // #include "AbstractWorkflowFactory.h"    //Abstract Fac
 // #include "ConcreteWorkflowFactory1.h"   //Factory
@@ -36,9 +38,14 @@ public:
     void resumeWork(int id);
     void logTime(int id, int units);
     void addTask(int id, const std::string& name, int score, int maxScore);
+    void scoreTask(int id, int index, int score);
     void setStrategy(Strategy<T>* strategy);
     int saveAsTemplate(int id);
-    int createFromTemplate(int templateIndex);
+    int createFromTemplate(int templateIndex, const std::string& name = "");
+    bool setEscalationLevels(const std::vector<std::pair<std::string, T> >& levels);
+    const std::vector<std::pair<std::string, T> >& getEscalationLevels() const;
+    void setExternalSystem(const std::string& name);
+    std::string getExternalSystem() const;
     void printStatus() const;
     bool addDependency(int predecessorId, int successorId);
     std::string getWorkItemState(int id) const;
