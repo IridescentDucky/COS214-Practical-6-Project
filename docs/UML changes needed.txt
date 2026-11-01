@@ -42,20 +42,20 @@ Things the diagrams must change so they match the code and each other.
    +createIterator() : Iterator*
    +runWorkflow(factory : AbstractWorkflowFactory*)
 
-[???] WorkItemState: add +getName() : string and +clone() : WorkItemState*
+[Done] WorkItemState: add +getName() : string and +clone() : WorkItemState*
    (clone is used by the Memento).
 
-[DO NOW] WorkItem: add the helpers the states use:
+[Done] WorkItem: add the helpers the states use:
    +isWithinDeadline() : bool, +hasValidData() : bool, +notifyWorkflow(), +addTimeSpent(units : int)
 
-[DO NOW] AbstractWorkItem: show state and mediator as protected (#), not private (-).
+[Done] AbstractWorkItem: show state and mediator as protected (#), not private (-).
 
 [DO NOW] AbstractWorkItem to WorkItemState: change the hollow diamond (aggregation) to a
    filled diamond (composition). The work item deletes its old state on every change.
 
 [WAITING - Yoshua & Jonno] Rename generic state methods (list coming on Discord).
 
-[DO NOW]
+[Done]
 --> AbstractWorkItem:
         - Added a struct called TaskRecord with the varaibles
             - std::string name
@@ -79,7 +79,7 @@ Things the diagrams must change so they match the code and each other.
                 - updateTaskScore(int index, int newScore): void
 
 
-[DO NOW]
+[Done]
 
 --> StatsOriginator [TEMPLATE]:
         - private:
